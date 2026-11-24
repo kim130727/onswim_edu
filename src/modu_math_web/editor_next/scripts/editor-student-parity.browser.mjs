@@ -59,6 +59,22 @@ async function checkInlineFeedback(preview, expectedText) {
   assert.ok(Math.abs(result.y + result.height / 2 - submit.y - submit.height / 2) <= 1, 'Grading feedback shares the button row');
 }
 
+async function checkChoiceText(problem) {
+  await problem.locator('.modu-panel-choice').first().waitFor();
+  const sizes = await problem.evaluate((root) => ({
+    prompt: getComputedStyle(root.querySelector('.modu-student-prompt')).fontSize,
+    choices: [...root.querySelectorAll('.modu-panel-choice')].map((button) => ({
+      font: getComputedStyle(button).fontSize,
+      height: button.getBoundingClientRect().height,
+      fits: button.scrollWidth <= button.clientWidth + 1,
+    })),
+  }));
+  for (const choice of sizes.choices) {
+    assert.equal(choice.font, sizes.prompt);
+    assert.ok(choice.height >= 44 && choice.fits, 'Choice text fits a touch-sized button');
+  }
+}
+
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.setDefaultTimeout(30000);
@@ -78,12 +94,24 @@ try {
   await preview.waitFor();
   const choice = preview.getByRole('button', { name: '(3) 60 × 4', exact: true });
   await choice.waitFor();
+  await checkChoiceText(preview);
   const output = resolve('../../../.tmp/student-parity');
   mkdirSync(output, { recursive: true });
   await page.screenshot({ path: resolve(output, 'multiplication-preview.png'), fullPage: true });
   await choice.click();
-  await preview.getByTestId('preview-submit-btn').click();
   await checkInlineFeedback(preview, '맞았어요!');
+
+  for (const [file, option] of [
+    ['S3_초등_3_008976.dsl.py', '[data-testid^="canvas-choice-"] >> nth=2'],
+    ['S3_초등_3_008978.dsl.py', '[data-testid="panel-choice-0-0"]'],
+  ]) {
+    const selection = `ko/TS_01.초등학교 3학년_01.객관식/1학기_02단원_평면도형/${file}`;
+    await page.goto(`${editor}/editor-konva/?problem=${encodeURIComponent(selection)}`);
+    await page.getByTitle(selection, { exact: true }).waitFor();
+    await page.getByRole('button', { name: '앱처럼 풀어보기', exact: true }).click();
+    await preview.locator(option).click();
+    await checkInlineFeedback(preview, '맞았어요!');
+  }
 
   await page.goto(`${editor}/editor-konva/?problem=${encodeURIComponent(longOptions)}`);
   await page.getByTitle(longOptions, { exact: true }).waitFor();
@@ -126,7 +154,7 @@ try {
   assert.equal((await submit.boundingBox()).y, submitTop);
   assert.equal((await reset.boundingBox()).y, resetTop);
   assert.ok(submitTop < (await scroll.boundingBox()).y);
-  await submit.click();
+  await preview.getByTestId('renderer-input-slot-1').press('Enter');
   await checkInlineFeedback(preview, '맞았어요!');
   assert.equal((await submit.boundingBox()).y, submitTop);
   await reset.click();
@@ -185,8 +213,22 @@ try {
   await page.setViewportSize({ width: 390, height: 750 });
   await waitForKeypadPlacement(page, answer, '.modu-answer-panel', true);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
+
+  await page.setViewportSize({ width: 280, height: 640 });
+  await page.evaluate(() => {
+    window.postMessage({ type: 'modu-math:student-content', content: {
+      id: 'choice-text-regression',
+      prompt: '몫이 6인 나눗셈식을 찾아 선택하세요.',
+      input_schema: { fields: [{ type: 'choice', choices: [
+        { label: '42 ÷ 7 = 6', value: '1' },
+        { label: '123456789÷123456789=12345678901234567890', value: '2' },
+      ] }] },
+    } }, window.location.origin);
+  });
+  await checkChoiceText(page.locator('.student-preview-standalone'));
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 280);
   assert.deepEqual(errors, []);
-  console.log(`Student parity, choice grading, and responsive canvas and keypad layouts passed. Screenshot: ${output}`);
+  console.log(`Student parity, choice typography and grading, and responsive canvas and keypad layouts passed. Screenshot: ${output}`);
 } finally {
   await browser.close();
 }

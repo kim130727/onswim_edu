@@ -2,6 +2,7 @@ import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { App } from "../App";
+import { PracticeLearningScreen } from "../screens/PracticeLearningScreen";
 import { StudentApiClient } from "../services/api";
 
 describe("Student React App (auth, session persistence, locale, practice)", () => {
@@ -11,6 +12,27 @@ describe("Student React App (auth, session persistence, locale, practice)", () =
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("grades a practice choice immediately without regrading the same selection", async () => {
+    const api = new StudentApiClient("");
+    vi.spyOn(api, "getStudentProblem").mockResolvedValue({
+      id: 7,
+      revision: "r1",
+      input_schema: { fields: [{ type: "choice", choices: [{ label: "○", value: "circle" }, { label: "×", value: "cross" }] }] },
+    });
+    const submit = vi.spyOn(api, "submitPracticeAttempt").mockResolvedValue({ is_correct: false });
+    render(<PracticeLearningScreen api={api} locale="ko" onBack={() => {}}
+      initialContext={{
+        problemId: 7, list: [], index: 0, page: 1, totalCount: 1, scope: "public",
+        classroomId: null, grade: null, category: null, goalDone: 0, goalTarget: 5,
+      }} />);
+    const choice = await screen.findByRole("button", { name: "○" });
+    fireEvent.click(choice);
+    expect(await screen.findByTestId("practice-grading-feedback")).toHaveTextContent("다시 생각해 볼까요?");
+    expect(submit).toHaveBeenCalledWith({ problem: 7, submitted_answer: "circle", content_revision: "r1" });
+    fireEvent.click(choice);
+    expect(submit).toHaveBeenCalledTimes(1);
   });
 
   it("logs in, persists session across remount, switches language, and logs out", async () => {

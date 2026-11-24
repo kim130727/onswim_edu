@@ -175,7 +175,7 @@ export interface RendererCanvasProps {
   inputsEnabled: boolean;
   fields?: AssignmentField[];
   locale?: StudentLocale;
-  onFieldsChanged?: (values: string[]) => void;
+  onFieldsChanged?: (values: string[], selected?: boolean) => void;
   canvasChoices?: CanvasChoiceSpec[];
   selectedChoices?: Set<string>;
   onChoiceTap?: (choiceValue: string) => void;
@@ -249,12 +249,12 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     setActiveIndex(null);
   }, [renderer]);
 
-  const emitSlotTexts = (nextTexts: string[]) => {
+  const emitSlotTexts = (nextTexts: string[], selected = false) => {
     setSlotTexts(nextTexts);
     if (fieldValues !== null && onFieldsChanged) {
       const nextFields = collectFieldValuesFromSlots(slots, bindings, nextTexts, fieldValues.length);
       lastEmitted.current = nextFields;
-      onFieldsChanged(nextFields);
+      onFieldsChanged(nextFields, selected);
     }
   };
 
@@ -794,7 +794,7 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
             if (activeSlot.operatorOnly) {
               const nextTexts = [...slotTexts];
               nextTexts[activeIndex] = next;
-              emitSlotTexts(nextTexts);
+              emitSlotTexts(nextTexts, true);
               closeKeypad();
             } else {
               handleSlotInput(activeIndex, next, next.length > (slotTexts[activeIndex] ?? "").length || activeSlot.maxLength === 1);

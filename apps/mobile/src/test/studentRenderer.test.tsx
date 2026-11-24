@@ -224,11 +224,20 @@ describe("shared student-renderer", () => {
       },
     });
     const onPanelChange = vi.fn();
-    render(
-      <StudentProblemView item={panelItem} value={null} enabled={true} locale="ko" onChange={onPanelChange} />,
+    const onPanelSelect = vi.fn();
+    const { rerender } = render(
+      <StudentProblemView item={panelItem} value={null} enabled locale="ko"
+        onChange={onPanelChange} onAnswerSelected={onPanelSelect} />,
     );
     fireEvent.click(screen.getByText("(3) 60 × 4"));
-    expect(onPanelChange).toHaveBeenCalledWith("3");
+    expect(onPanelSelect).toHaveBeenCalledWith("3");
+    expect(onPanelChange).not.toHaveBeenCalled();
+    const panelMulti = { ...panelItem, fields: [{ ...panelItem.fields[0], type: "multi_choice" }] };
+    rerender(<StudentProblemView item={panelMulti} value={null} enabled locale="ko"
+      onChange={onPanelChange} onAnswerSelected={onPanelSelect} />);
+    fireEvent.click(screen.getByText("(3) 60 × 4"));
+    expect(onPanelChange).toHaveBeenCalledWith(["3"]);
+    expect(onPanelSelect).toHaveBeenCalledTimes(1);
 
     const canvasItem = normalizeProblemContent({
       id: 31,
@@ -249,12 +258,18 @@ describe("shared student-renderer", () => {
         ],
       },
     });
-    const onCanvasChoice = vi.fn();
-    render(
-      <StudentProblemView item={canvasItem} value={null} enabled={true} locale="ko" onChange={onCanvasChoice} />,
-    );
+    const onCanvasChange = vi.fn();
+    const onCanvasSelect = vi.fn();
+    rerender(<StudentProblemView item={canvasItem} value={null} enabled locale="ko"
+      onChange={onCanvasChange} onAnswerSelected={onCanvasSelect} />);
     fireEvent.click(screen.getByTestId("canvas-choice-2"));
-    expect(onCanvasChoice).toHaveBeenCalledWith("2");
+    expect(onCanvasSelect).toHaveBeenCalledWith("2");
+    expect(onCanvasChange).not.toHaveBeenCalled();
+    rerender(<StudentProblemView item={{ ...canvasItem, canvasSelectMulti: true }} value={null} enabled locale="ko"
+      onChange={onCanvasChange} onAnswerSelected={onCanvasSelect} />);
+    fireEvent.click(screen.getByTestId("canvas-choice-2"));
+    expect(onCanvasChange).toHaveBeenCalledWith(["2"]);
+    expect(onCanvasSelect).toHaveBeenCalledTimes(1);
   });
 
   it("projects visual renderer removing duplicate prompt while preserving diagram labels and resolving relative images", () => {

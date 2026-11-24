@@ -9,19 +9,21 @@ export interface AnswerInputPanelProps {
   enabled: boolean;
   locale: StudentLocale;
   onChange: (nextValue: unknown) => void;
+  onAnswerSelected?: (nextValue: unknown) => void;
 }
 
 export function AnswerInputPanel(props: AnswerInputPanelProps) {
   return <AnswerFields key={`${props.item.id}:${props.item.revision}`} {...props} />;
 }
 
-function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPanelProps) {
+function AnswerFields({ item, value, enabled, locale, onChange, onAnswerSelected }: AnswerInputPanelProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const values = item.fields.length > 1 && Array.isArray(value) ? value : [value ?? ""];
   const activeField = enabled && activeIndex !== null ? item.fields[activeIndex] : undefined;
 
-  const updateField = (index: number, nextVal: string) => {
-    onChange(item.fields.length === 1
+  const updateField = (index: number, nextVal: string, selected = false) => {
+    const update = selected ? onAnswerSelected ?? onChange : onChange;
+    update(item.fields.length === 1
       ? nextVal
       : item.fields.map((_, i) => i === index ? nextVal : values[i] ?? ""));
   };
@@ -53,7 +55,7 @@ function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPan
                           const previous = Array.isArray(value) ? value : [];
                           onChange(selected ? previous.filter((entry) => entry !== choice.value) : [...previous, choice.value]);
                         } else {
-                          updateField(index, choice.value);
+                          updateField(index, choice.value, true);
                         }
                       }}>
                       {choice.label}
@@ -118,10 +120,9 @@ function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPan
           maxLength={activeField.maxLength}
           onClose={() => setActiveIndex(null)}
           onChange={(next) => {
-            updateField(activeIndex, next);
-            if (activeField.type === "comparison_operator" || activeField.type === "operator") {
-              setActiveIndex(null);
-            }
+            const symbol = activeField.type === "comparison_operator" || activeField.type === "operator";
+            updateField(activeIndex, next, symbol);
+            if (symbol) setActiveIndex(null);
           }}
         />
       )}

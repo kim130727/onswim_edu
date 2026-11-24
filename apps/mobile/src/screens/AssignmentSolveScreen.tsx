@@ -422,7 +422,10 @@ export const AssignmentSolveScreen: React.FC<AssignmentSolveScreenProps> = ({
       )}
 
       {currentItem && normalizedItem && (
-        <div className="student-solve-grid">
+        <form className="student-solve-grid" onSubmit={(event) => {
+          event.preventDefault();
+          if (canSendItem) void handleSubmitItem();
+        }}>
           <div className="student-problem-card">
             <div className="student-question-num">
               {translateStudent(locale, "question", { number: currentItem.position + 1 })}
@@ -468,11 +471,10 @@ export const AssignmentSolveScreen: React.FC<AssignmentSolveScreenProps> = ({
 
             <div className="student-controls-actions student-sticky-action-bar">
               <button
-                type="button"
+                type="submit"
                 className="student-btn primary"
                 data-testid="assignment-send-btn"
                 disabled={!canSendItem}
-                onClick={() => void handleSubmitItem()}
               >
                 {busy
                   ? translateStudent(locale, "waiting")
@@ -570,7 +572,7 @@ export const AssignmentSolveScreen: React.FC<AssignmentSolveScreenProps> = ({
               {!canFinish && <p className="student-muted">{translateStudent(locale, "finishHelp")}</p>}
             </div>
           </div>
-        </div>
+        </form>
       )}
     </div>
   );

@@ -52,8 +52,11 @@ try {
   assert.equal(await preview.getByText('요소 편집', { exact: true }).count(), 0);
   await page.screenshot({ path: resolve(output, 'loaded.png'), fullPage: true });
   const answer = preview.getByRole('textbox').first();
-  await answer.fill('5');
-  await preview.getByTestId('preview-submit-btn').click();
+  await answer.click();
+  await preview.locator('.modu-math-keypad').getByRole('button', { name: '5', exact: true }).click();
+  assert.equal(await answer.inputValue(), '5');
+  assert.ok(await answer.evaluate((input) => document.activeElement === input));
+  await page.keyboard.press('Enter');
   await preview.getByText('맞았어요!', { exact: true }).waitFor();
   await page.screenshot({ path: resolve(output, 'solve.png'), fullPage: true });
   await page.getByRole('button', { name: '편집으로 돌아가기', exact: true }).click();

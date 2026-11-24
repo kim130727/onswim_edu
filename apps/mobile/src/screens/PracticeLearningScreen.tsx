@@ -57,6 +57,7 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
   const [grading, setGrading] = useState<GradingResultModel | null>(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [toast, setToast] = useState("");
+  const submissionInProgress = useRef(false);
 
   const currentProblemId = list[index]?.id ?? initialContext.problemId;
   const answerRef = useRef<unknown>(null);
@@ -116,13 +117,14 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
     return () => window.clearInterval(timer);
   }, [api, currentProblemId, loadProblem]);
 
-  const handleSubmit = async () => {
-    if (!item || submitting) return;
-    if (!isAnswerComplete(answer, item.fields)) return;
+  const handleSubmit = async (value = answer) => {
+    if (!item || submissionInProgress.current || grading?.correct === true || !isAnswerComplete(value, item.fields)) return;
+    submissionInProgress.current = true;
     setSubmitting(true);
     setError("");
+    setGrading(null);
     try {
-      const normalized = normalizeSubmissionAnswer(answer, item.fields.length);
+      const normalized = normalizeSubmissionAnswer(value, item.fields.length);
       const res = await api.submitPracticeAttempt({
         problem: currentProblemId,
         submitted_answer: normalized,
@@ -155,11 +157,13 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
         setGrading(buildGradingResult(locale, null, err instanceof Error ? err.message : translateStudent(locale, "error")));
       }
     } finally {
+      submissionInProgress.current = false;
       setSubmitting(false);
     }
   };
 
   const goStep = async (delta: -1 | 1) => {
+    if (submissionInProgress.current) return;
     const nextIdx = index + delta;
     if (nextIdx >= 0 && nextIdx < list.length) {
       setIndex(nextIdx);
@@ -189,6 +193,10 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
 
   const absolutePos = (page - 1) * 50 + index + 1;
   const canSubmit = Boolean(item && !submitting && grading?.correct !== true && isAnswerComplete(answer, item.fields));
+  const changeAnswer = (value: unknown) => {
+    setAnswer(value);
+    if (grading && grading.correct === false) setGrading(null);
+  };
 
   return (
     <div className="student-section">
@@ -240,15 +248,18 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
       {loading || !item ? (
         <ProblemSkeleton label={translateStudent(locale, "loading")} />
       ) : (
-        <div className="student-problem-card student-has-sticky-bar">
+        <form className="student-problem-card student-has-sticky-bar"
+          onSubmit={(event) => { event.preventDefault(); void handleSubmit(); }}>
           <StudentProblemView
             item={item}
             value={answer}
             enabled={!submitting && grading?.correct !== true}
             locale={locale}
-            onChange={(nextVal) => {
-              setAnswer(nextVal);
-              if (grading && grading.correct === false) setGrading(null);
+            onChange={changeAnswer}
+            onAnswerSelected={(nextValue) => {
+              if (grading && nextValue === answer) return;
+              changeAnswer(nextValue);
+              void handleSubmit(nextValue);
             }}
             assetBaseUrl={api.apiBaseUrl}
           />
@@ -265,11 +276,10 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
 
           <div className="student-action-row student-sticky-action-bar">
             <button
-              type="button"
+              type="submit"
               className="student-btn primary"
               data-testid="practice-submit-btn"
               disabled={!canSubmit}
-              onClick={() => void handleSubmit()}
             >
               {submitting ? translateStudent(locale, "waiting") : translateStudent(locale, "send")}
             </button>
@@ -277,7 +287,7 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
               <button
                 type="button"
                 className="student-btn"
-                disabled={absolutePos <= 1}
+                disabled={submitting || absolutePos <= 1}
                 onClick={() => void goStep(-1)}
               >
                 {translateStudent(locale, "previous")}
@@ -285,14 +295,14 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
               <button
                 type="button"
                 className="student-btn"
-                disabled={absolutePos >= totalCount}
+                disabled={submitting || absolutePos >= totalCount}
                 onClick={() => void goStep(1)}
               >
                 {translateStudent(locale, "next")}
               </button>
             </div>
           </div>
-        </div>
+        </form>
       )}
     </div>
   );

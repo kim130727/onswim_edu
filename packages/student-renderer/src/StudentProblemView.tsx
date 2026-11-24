@@ -11,6 +11,7 @@ export interface StudentProblemViewProps {
   enabled: boolean;
   locale: StudentLocale;
   onChange: (nextValue: unknown) => void;
+  onAnswerSelected?: (nextValue: unknown) => void;
   assetBaseUrl?: string;
   hidePanelInputs?: boolean;
 }
@@ -27,6 +28,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
   enabled,
   locale,
   onChange,
+  onAnswerSelected,
   assetBaseUrl,
   hidePanelInputs = false,
 }) => {
@@ -69,7 +71,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
       }
       onChange(next.size === 0 ? null : Array.from(next));
     } else {
-      onChange(choiceValue);
+      (onAnswerSelected ?? onChange)(choiceValue);
     }
   };
 
@@ -83,7 +85,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
         <div
           className="modu-student-prompt"
           style={{
-            fontSize: "clamp(1.125rem, 2.4vw, 1.45rem)",
+            fontSize: "var(--mm-problem-font-size)",
             lineHeight: 1.5,
             fontWeight: 700,
             color: "var(--mm-color-text-primary)",
@@ -103,9 +105,10 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
           fields={item.fields}
           locale={locale}
           inputsEnabled={enabled}
-          onFieldsChanged={(nextValues) =>
-            onChange(nextValues.length === 1 ? nextValues[0] : nextValues)
-          }
+          onFieldsChanged={(nextValues, selected) => {
+            const update = selected ? onAnswerSelected ?? onChange : onChange;
+            update(nextValues.length === 1 ? nextValues[0] : nextValues);
+          }}
           canvasChoices={item.canvasSelect ? item.canvasChoices : []}
           selectedChoices={selectedChoices}
           onChoiceTap={item.canvasSelect ? handleCanvasChoiceTap : undefined}
@@ -120,6 +123,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
           enabled={enabled}
           locale={locale}
           onChange={onChange}
+          onAnswerSelected={onAnswerSelected}
         />
       )}
 

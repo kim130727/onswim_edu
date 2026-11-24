@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   buildGradingResult,
   isAnswerComplete,
@@ -29,6 +29,7 @@ export function ReactStudentPreview({
   const [answer, setAnswer] = useState<unknown>(null);
   const [submitting, setSubmitting] = useState(false);
   const [grading, setGrading] = useState<GradingResultModel | null>(null);
+  const submissionInProgress = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -64,19 +65,26 @@ export function ReactStudentPreview({
   const isLocked = submitting || grading?.correct === true;
   const canSubmit = Boolean(item && !isLocked && isAnswerComplete(answer, item.fields));
 
-  const handleSubmit = async () => {
-    if (!item || !problem || submitting || !canSubmit) return;
+  const handleSubmit = async (value = answer) => {
+    if (!item || !problem || isLocked || submissionInProgress.current || !isAnswerComplete(value, item.fields)) return;
+    submissionInProgress.current = true;
     setSubmitting(true);
     setGrading(null);
     try {
-      const normalized = normalizeSubmissionAnswer(answer, item.fields.length);
+      const normalized = normalizeSubmissionAnswer(value, item.fields.length);
       const result = await checkStudentPreview(problemId, normalized, String(problem.revision ?? ""));
       setGrading(buildGradingResult(locale, result.correct));
     } catch (reason) {
       setGrading(buildGradingResult(locale, null, String(reason)));
     } finally {
+      submissionInProgress.current = false;
       setSubmitting(false);
     }
+  };
+
+  const changeAnswer = (value: unknown) => {
+    setAnswer(value);
+    if (grading) setGrading(null);
   };
 
   return (
@@ -105,7 +113,7 @@ export function ReactStudentPreview({
               </button>
             ))}
           </div>
-          <button type="button" onClick={() => setAttempt((value) => value + 1)}>
+          <button type="button" disabled={submitting} onClick={() => setAttempt((value) => value + 1)}>
             새로고침
           </button>
           <button type="button" onClick={onClose}>
@@ -121,9 +129,10 @@ export function ReactStudentPreview({
           </button>
         </div>
       ) : (
-        <section
+        <form
           className={`student-preview-surface viewport-${viewport}`}
           aria-label="학생 앱 문제풀이 화면"
+          onSubmit={(event) => { event.preventDefault(); void handleSubmit(); }}
         >
           {loadingProblem || !item ? (
             <div className="student-preview-loading" role="status">
@@ -144,11 +153,10 @@ export function ReactStudentPreview({
                       </div>
                     )}
                     <button
-                      type="button"
+                      type="submit"
                       className="student-preview-submit-btn"
                       data-testid="preview-submit-btn"
                       disabled={!canSubmit}
-                      onClick={() => void handleSubmit()}
                     >
                       {submitting ? translateStudent(locale, "waiting") : translateStudent(locale, "send")}
                     </button>
@@ -177,16 +185,18 @@ export function ReactStudentPreview({
                     value={answer}
                     enabled={!isLocked}
                     locale={locale}
-                    onChange={(nextVal) => {
-                      setAnswer(nextVal);
-                      if (grading) setGrading(null);
+                    onChange={changeAnswer}
+                    onAnswerSelected={(nextValue) => {
+                      if (grading && nextValue === answer) return;
+                      changeAnswer(nextValue);
+                      void handleSubmit(nextValue);
                     }}
                   />
                 </div>
               </div>
             </>
           )}
-        </section>
+        </form>
       )}
     </section>
   );

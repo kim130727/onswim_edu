@@ -55,6 +55,13 @@ export function MathKeypad({
 
   return (
     <div className="modu-math-keypad" role="group" aria-label={`${label} · ${t("keypad")}`}
+      onMouseDown={(event) => {
+        // Pointer taps on typing keys leave the input focused for keyboard entry and Enter.
+        if (!singleSymbol && event.button === 0 && document.activeElement instanceof HTMLInputElement &&
+          event.target instanceof Element && event.target.closest("button:not(.modu-keypad-close)")) {
+          event.preventDefault();
+        }
+      }}
       onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}>
       <button type="button" className="modu-keypad-action modu-keypad-close" onClick={onClose}>{t("keypadClose")}</button>
       {singleSymbol ? (
