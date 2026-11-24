@@ -130,55 +130,61 @@ export function ReactStudentPreview({
               저장된 문제를 불러오는 중…
             </div>
           ) : (
-            <div
-              className="student-preview-body"
-              data-testid="react-student-preview-body"
-              data-mm-surface="student"
-            >
-              <StudentProblemView
-                item={item}
-                value={answer}
-                enabled={!isLocked}
-                locale={locale}
-                onChange={(nextVal) => {
-                  setAnswer(nextVal);
-                  if (grading) setGrading(null);
-                }}
-              />
-
-              {grading && (
-                <div
-                  className={`student-preview-feedback ${grading.status}`}
-                  data-testid="preview-grading-feedback"
-                  role="status"
-                >
-                  {grading.message}
+            <>
+              <div className="student-preview-toolbar" data-mm-surface="student">
+                <div className="student-preview-toolbar-inner">
+                  <div className="student-preview-submit-row">
+                    {grading && (
+                      <div
+                        className={`student-preview-feedback ${grading.status}`}
+                        data-testid="preview-grading-feedback"
+                        role="status"
+                      >
+                        {grading.message}
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="student-preview-submit-btn"
+                      data-testid="preview-submit-btn"
+                      disabled={!canSubmit}
+                      onClick={() => void handleSubmit()}
+                    >
+                      {submitting ? translateStudent(locale, "waiting") : translateStudent(locale, "send")}
+                    </button>
+                    <button
+                      type="button"
+                      className="student-preview-reset-btn"
+                      disabled={submitting}
+                      onClick={() => {
+                        setAnswer(null);
+                        setGrading(null);
+                      }}
+                    >
+                      초기화
+                    </button>
+                  </div>
                 </div>
-              )}
-
-              <div className="student-preview-submit-row">
-                <button
-                  type="button"
-                  className="student-preview-submit-btn"
-                  data-testid="preview-submit-btn"
-                  disabled={!canSubmit}
-                  onClick={() => void handleSubmit()}
-                >
-                  {submitting ? translateStudent(locale, "waiting") : translateStudent(locale, "send")}
-                </button>
-                <button
-                  type="button"
-                  className="student-preview-reset-btn"
-                  disabled={submitting}
-                  onClick={() => {
-                    setAnswer(null);
-                    setGrading(null);
-                  }}
-                >
-                  초기화
-                </button>
               </div>
-            </div>
+              <div className="student-preview-scroll">
+                <div
+                  className="student-preview-body"
+                  data-testid="react-student-preview-body"
+                  data-mm-surface="student"
+                >
+                  <StudentProblemView
+                    item={item}
+                    value={answer}
+                    enabled={!isLocked}
+                    locale={locale}
+                    onChange={(nextVal) => {
+                      setAnswer(nextVal);
+                      if (grading) setGrading(null);
+                    }}
+                  />
+                </div>
+              </div>
+            </>
           )}
         </section>
       )}

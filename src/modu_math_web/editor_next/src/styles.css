@@ -692,11 +692,13 @@ input {
 
 .student-preview-surface {
   position: relative;
+  display: flex;
+  flex-direction: column;
   flex: 1;
   min-height: 0;
   width: calc(100% - 24px);
   margin: 10px auto 12px;
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid #cbd5e1;
   border-radius: 14px;
   background: #f8faff;
@@ -707,10 +709,28 @@ input {
 .student-preview-surface.viewport-mobile { width: min(430px, calc(100% - 24px)); }
 
 .student-preview-loading {
+  flex: 1;
   display: grid;
   place-items: center;
-  min-height: 320px;
   color: #475569;
+}
+
+.student-preview-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.student-preview-toolbar {
+  flex: none;
+  background: var(--mm-color-bg-surface);
+  border-bottom: 1px solid var(--mm-color-border-subtle);
+}
+
+.student-preview-toolbar-inner {
+  max-width: 960px;
+  margin-inline: auto;
+  padding: var(--mm-p-space-2) clamp(12px, 3vw, 24px);
 }
 
 .student-preview-body {
@@ -723,8 +743,12 @@ input {
 }
 
 .student-preview-feedback {
-  margin-top: 16px;
-  padding: 12px 16px;
+  box-sizing: border-box;
+  min-width: 0;
+  max-height: 48px;
+  padding: var(--mm-p-space-1) var(--mm-p-space-2);
+  overflow: auto;
+  overflow-wrap: anywhere;
   border-radius: 12px;
   font-weight: 700;
 }
@@ -743,8 +767,21 @@ input {
 .student-preview-submit-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 18px;
+  justify-content: flex-end;
+  gap: var(--mm-p-space-2);
+}
+
+.student-preview-submit-row > button {
+  flex-shrink: 0;
+}
+
+.viewport-mobile .student-preview-submit-row {
+  justify-content: center;
+}
+
+.viewport-mobile .student-preview-submit-row > button {
+  min-width: 0;
+  padding-inline: var(--mm-p-space-3);
 }
 
 .student-preview-submit-btn {

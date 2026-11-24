@@ -49,6 +49,16 @@ async function waitForKeypadPlacement(page, layoutSelector, subjectSelector, bel
   }, { layoutSelector, subjectSelector, below });
 }
 
+async function checkInlineFeedback(preview, expectedText) {
+  const feedback = preview.getByTestId('preview-grading-feedback');
+  await feedback.waitFor();
+  assert.equal(await feedback.innerText(), expectedText);
+  const result = await feedback.boundingBox();
+  const submit = await preview.getByTestId('preview-submit-btn').boundingBox();
+  assert.ok(result.x + result.width <= submit.x, 'Grading feedback is left of Submit');
+  assert.ok(Math.abs(result.y + result.height / 2 - submit.y - submit.height / 2) <= 1, 'Grading feedback shares the button row');
+}
+
 try {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.setDefaultTimeout(30000);
@@ -73,7 +83,7 @@ try {
   await page.screenshot({ path: resolve(output, 'multiplication-preview.png'), fullPage: true });
   await choice.click();
   await preview.getByTestId('preview-submit-btn').click();
-  await preview.getByText('맞았어요!', { exact: true }).waitFor();
+  await checkInlineFeedback(preview, '맞았어요!');
 
   await page.goto(`${editor}/editor-konva/?problem=${encodeURIComponent(longOptions)}`);
   await page.getByTitle(longOptions, { exact: true }).waitFor();
@@ -92,13 +102,45 @@ try {
   await preview.getByRole('button', { name: '모바일', exact: true }).click();
   await page.waitForFunction(() => {
     const surface = document.querySelector('.student-preview-surface.viewport-mobile');
-    return surface && surface.clientWidth <= 430 && surface.scrollWidth === surface.clientWidth;
+    const scroll = surface?.querySelector('.student-preview-scroll');
+    return scroll && surface.clientWidth <= 430 && scroll.scrollWidth === scroll.clientWidth;
   });
   await waitForKeypadPlacement(page, canvas, frame, true);
   await checkTextFits(options, expectedOptions);
   await preview.locator('.modu-math-keypad').getByRole('button', { name: '3', exact: true }).click();
   assert.equal(await firstSlot.inputValue(), '3');
   assert.equal(await preview.locator('[data-slot-id]').count(), 2);
+
+  await page.setViewportSize({ width: 1440, height: 520 });
+  await firstSlot.fill('334');
+  await preview.getByTestId('renderer-input-slot-1').fill('415');
+  const submit = preview.getByTestId('preview-submit-btn');
+  const reset = preview.getByRole('button', { name: '초기화', exact: true });
+  const scroll = preview.locator('.student-preview-scroll');
+  const submitTop = (await submit.boundingBox()).y;
+  const resetTop = (await reset.boundingBox()).y;
+  assert.ok(await scroll.evaluate((node) => {
+    node.scrollTop = node.scrollHeight;
+    return node.scrollTop > 0;
+  }), 'The problem can scroll with the keypad open');
+  assert.equal((await submit.boundingBox()).y, submitTop);
+  assert.equal((await reset.boundingBox()).y, resetTop);
+  assert.ok(submitTop < (await scroll.boundingBox()).y);
+  await submit.click();
+  await checkInlineFeedback(preview, '맞았어요!');
+  assert.equal((await submit.boundingBox()).y, submitTop);
+  await reset.click();
+  await page.waitForFunction(() => {
+    const preview = document.querySelector('.react-student-preview');
+    return preview?.querySelector('[data-testid="renderer-input-slot-0"]')?.value === ''
+      && preview.querySelector('[data-testid="renderer-input-slot-1"]')?.value === ''
+      && !preview.querySelector('[data-testid="preview-grading-feedback"]');
+  });
+  await firstSlot.fill('334');
+  await preview.getByTestId('renderer-input-slot-1').fill('334');
+  await submit.click();
+  await checkInlineFeedback(preview, '다시 생각해 볼까요?');
+  assert.equal((await submit.boundingBox()).y, submitTop);
 
   await page.setViewportSize({ width: 280, height: 640 });
   await page.goto(`${editor}/student/?studentPreview=1`);
