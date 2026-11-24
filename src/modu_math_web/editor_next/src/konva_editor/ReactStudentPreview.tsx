@@ -62,7 +62,7 @@ export function ReactStudentPreview({
 
   const locale: StudentLocale = item?.language === "uk" ? "uk" : "ko";
   const isLocked = submitting || grading?.correct === true;
-  const canSubmit = Boolean(item && !isLocked && isAnswerComplete(answer, item.fields.length));
+  const canSubmit = Boolean(item && !isLocked && isAnswerComplete(answer, item.fields));
 
   const handleSubmit = async () => {
     if (!item || !problem || submitting || !canSubmit) return;

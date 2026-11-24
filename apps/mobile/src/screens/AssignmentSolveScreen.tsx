@@ -168,7 +168,7 @@ export const AssignmentSolveScreen: React.FC<AssignmentSolveScreenProps> = ({
     if (!assignment || !currentItem || !normalizedItem || busy) return;
     const itemId = currentItem.id;
     const rawAnswer = answers[itemId];
-    if (!isAnswerComplete(rawAnswer, normalizedItem.fields.length)) return;
+    if (!isAnswerComplete(rawAnswer, normalizedItem.fields)) return;
 
     setBusy(true);
     setError("");
@@ -380,7 +380,7 @@ export const AssignmentSolveScreen: React.FC<AssignmentSolveScreenProps> = ({
       currentItem &&
       normalizedItem &&
       (isItemPending || canEditItem) &&
-      isAnswerComplete(answers[currentItem.id], normalizedItem.fields.length),
+      isAnswerComplete(answers[currentItem.id], normalizedItem.fields),
   );
   const itemFeedback = currentItem ? feedback[currentItem.id] : undefined;
   const itemHints = currentItem ? hints[currentItem.id] ?? [] : [];

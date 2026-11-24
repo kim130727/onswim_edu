@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MathKeypad } from "./MathKeypad";
 import { translateStudent } from "./strings";
 import type { NormalizedStudentItem, StudentLocale } from "./types";
 
@@ -10,253 +11,104 @@ export interface AnswerInputPanelProps {
   onChange: (nextValue: unknown) => void;
 }
 
-const KEYPAD_DIGITS = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", ".", "/"];
+export function AnswerInputPanel(props: AnswerInputPanelProps) {
+  return <AnswerFields key={`${props.item.id}:${props.item.revision}`} {...props} />;
+}
 
-export const AnswerInputPanel: React.FC<AnswerInputPanelProps> = ({
-  item,
-  value,
-  enabled,
-  locale,
-  onChange,
-}) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [keypadOpen, setKeypadOpen] = useState(false);
+function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPanelProps) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const values = item.fields.length > 1 && Array.isArray(value) ? value : [value ?? ""];
 
-  const values: unknown[] =
-    item.fields.length > 1
-      ? Array.isArray(value)
-        ? [...value]
-        : new Array(item.fields.length).fill("")
-      : [value ?? ""];
-
-  const updateField = (index: number, nextVal: unknown) => {
-    const next = [...values];
-    while (next.length < item.fields.length) next.push("");
-    next[index] = nextVal;
-    onChange(item.fields.length === 1 ? nextVal : next);
-  };
-
-  const handleKeypadAppend = (keyText: string) => {
-    const field = item.fields[activeIndex];
-    if (!field || !enabled) return;
-    const current = String(values[activeIndex] ?? "");
-    const next = current + keyText;
-    if (field.maxLength !== null && (next.length > field.maxLength || !/^[0-9]+$/.test(next))) {
-      return;
-    }
-    updateField(activeIndex, next);
-  };
-
-  const handleKeypadBackspace = () => {
-    if (!enabled) return;
-    const current = String(values[activeIndex] ?? "");
-    if (current.length > 0) {
-      updateField(activeIndex, current.slice(0, -1));
-    }
-  };
-
-  const handleKeypadClear = () => {
-    if (!enabled) return;
-    updateField(activeIndex, "");
+  const updateField = (index: number, nextVal: string) => {
+    onChange(item.fields.length === 1
+      ? nextVal
+      : item.fields.map((_, i) => i === index ? nextVal : values[i] ?? ""));
   };
 
   return (
-    <div className="modu-answer-panel" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      {item.fields.map((field, idx) => {
-        const label = translateStudent(locale, "answer", { number: idx + 1 });
+    <div className="modu-answer-panel">
+      {item.fields.map((field, index) => {
+        const label = translateStudent(locale, "answer", { number: index + 1 });
+        const current = String(values[index] ?? "");
+        const open = enabled && activeIndex === index;
+        const kind = field.maxLength !== null ? "digit" : field.type;
+        const symbol = kind === "comparison_operator" || kind === "operator";
+        const math = ["digit", "integer", "number", "decimal", "fraction", "expression"].includes(kind);
 
-        if (field.choices.length > 0) {
-          const isMulti = field.type === "multi_choice";
-          return (
-            <div key={`${field.id}-${idx}`} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <div style={{ fontSize: 17, fontWeight: 700, color: "#1E1B4B" }}>{label}</div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-                {field.choices.map((choice, cIdx) => {
-                  const selected = isMulti
-                    ? Array.isArray(value) && value.includes(choice.value)
-                    : String(values[idx] ?? "") === choice.value;
-
+        return (
+          <div key={`${field.id}-${index}`} className="modu-answer-field">
+            <label htmlFor={field.choices.length ? undefined : `modu-panel-input-${item.id}-${index}`}>{label}</label>
+            {field.choices.length > 0 ? (
+              <div className="modu-panel-choices">
+                {field.choices.map((choice, choiceIndex) => {
+                  const multi = field.type === "multi_choice";
+                  const selected = multi ? Array.isArray(value) && value.includes(choice.value) : current === choice.value;
                   return (
-                    <button
-                      key={`${choice.value}-${cIdx}`}
-                      type="button"
-                      role="button"
-                      aria-pressed={selected}
-                      data-testid={`panel-choice-${idx}-${cIdx}`}
-                      disabled={!enabled}
+                    <button key={`${choice.value}-${choiceIndex}`} type="button"
+                      className="modu-panel-choice" aria-pressed={selected}
+                      data-testid={`panel-choice-${index}-${choiceIndex}`} disabled={!enabled}
                       onClick={() => {
-                        if (!enabled) return;
-                        if (isMulti) {
-                          const prev = Array.isArray(value) ? [...value] : [];
-                          const next = prev.includes(choice.value)
-                            ? prev.filter((v) => v !== choice.value)
-                            : [...prev, choice.value];
-                          onChange(next);
+                        if (multi) {
+                          const previous = Array.isArray(value) ? value : [];
+                          onChange(selected ? previous.filter((entry) => entry !== choice.value) : [...previous, choice.value]);
                         } else {
-                          updateField(idx, choice.value);
+                          updateField(index, choice.value);
                         }
-                      }}
-                      style={{
-                        minWidth: 64,
-                        minHeight: "var(--mm-touch-min, 48px)",
-                        padding: "10px 20px",
-                        borderRadius: "var(--mm-p-radius-pill, 9999px)",
-                        border: `1.5px solid ${selected ? "var(--mm-choice-border-selected)" : "var(--mm-choice-border)"}`,
-                        background: selected ? "var(--mm-choice-bg-selected)" : "var(--mm-choice-bg)",
-                        color: selected ? "var(--mm-choice-text-selected)" : "var(--mm-choice-text)",
-                        fontSize: "clamp(1rem, 2vw, 1.125rem)",
-                        fontWeight: 600,
-                        cursor: enabled ? "pointer" : "default",
-                        opacity: !enabled && !selected ? 0.6 : 1,
-                        transition: "all var(--mm-motion-fast, 120ms) var(--mm-p-ease, ease)",
-                      }}
-                    >
+                      }}>
                       {choice.label}
                     </button>
                   );
                 })}
               </div>
-            </div>
-          );
-        }
-
-        const currentText = String(values[idx] ?? "");
-        return (
-          <div key={`${field.id}-${idx}`} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label
-              htmlFor={`modu-panel-input-${item.id}-${idx}`}
-              style={{ fontSize: 15, fontWeight: 700, color: "#1E1B4B" }}
-            >
-              {label}
-            </label>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <input
-                id={`modu-panel-input-${item.id}-${idx}`}
-                data-testid={`assignment-answer-${idx}`}
-                type="text"
-                inputMode={field.maxLength !== null || field.type === "number" ? "decimal" : "text"}
-                disabled={!enabled}
-                value={currentText}
-                placeholder={translateStudent(locale, "write")}
-                onFocus={() => setActiveIndex(idx)}
-                onChange={(e) => {
-                  let next = e.target.value;
-                  if (field.maxLength !== null) {
-                    next = next.replace(/[^0-9]/g, "").slice(0, field.maxLength);
-                  }
-                  updateField(idx, next);
-                }}
-                style={{
-                  flex: 1,
-                  minHeight: "var(--mm-touch-min, 48px)",
-                  fontSize: "clamp(1.25rem, 2.5vw, 1.4rem)",
-                  fontWeight: 600,
-                  padding: "10px 14px",
-                  borderRadius: "var(--mm-input-radius, 10px)",
-                  border: "1.5px solid var(--mm-input-border)",
-                  color: "var(--mm-color-text-primary)",
-                  background: enabled ? "var(--mm-input-bg)" : "var(--mm-color-disabled-bg)",
-                }}
-              />
-              {item.unit && (
-                <span style={{ fontSize: 18, fontWeight: 600, color: "var(--mm-color-text-secondary)" }}>{item.unit}</span>
-              )}
-              <button
-                type="button"
-                title={translateStudent(locale, "keypad")}
-                aria-label={translateStudent(locale, "keypad")}
-                aria-pressed={keypadOpen}
-                disabled={!enabled}
-                onClick={() => {
-                  setActiveIndex(idx);
-                  setKeypadOpen((prev) => !prev);
-                }}
-                style={{
-                  minWidth: "var(--mm-touch-min, 48px)",
-                  minHeight: "var(--mm-touch-min, 48px)",
-                  borderRadius: "var(--mm-btn-radius, 10px)",
-                  border: "1.5px solid var(--mm-color-border-strong)",
-                  background: keypadOpen ? "var(--mm-color-primary-soft)" : "var(--mm-color-bg-surface)",
-                  color: "var(--mm-color-primary)",
-                  fontSize: 18,
-                  cursor: enabled ? "pointer" : "default",
-                }}
-              >
-                ⌨
-              </button>
-            </div>
+            ) : (
+              <>
+                <div className="modu-answer-input-row">
+                  {symbol ? (
+                    <button type="button" className="modu-answer-input"
+                      id={`modu-panel-input-${item.id}-${index}`}
+                      disabled={!enabled} aria-expanded={open}
+                      onClick={() => setActiveIndex(open ? null : index)}>
+                      {current || translateStudent(locale, "write")}
+                    </button>
+                  ) : (
+                    <input
+                      id={`modu-panel-input-${item.id}-${index}`}
+                      className="modu-answer-input"
+                      data-testid={`assignment-answer-${index}`}
+                      type="text"
+                      inputMode={math ? "none" : "text"}
+                      disabled={!enabled}
+                      value={current}
+                      placeholder={translateStudent(locale, "write")}
+                      onFocus={() => setActiveIndex(math ? index : null)}
+                      onClick={() => { if (math) setActiveIndex(index); }}
+                      onKeyDown={(event) => { if (event.key === "Escape") setActiveIndex(null); }}
+                      onChange={(event) => {
+                        const next = event.target.value;
+                        updateField(index, field.maxLength === null ? next : next.replace(/[^0-9]/g, "").slice(0, field.maxLength));
+                      }}
+                    />
+                  )}
+                  {item.unit && <span>{item.unit}</span>}
+                  {!math && !symbol && (
+                    <button type="button" className="modu-keypad-action"
+                      aria-label={translateStudent(locale, "keypad")} aria-expanded={open} disabled={!enabled}
+                      onClick={() => setActiveIndex(open ? null : index)}>⌨</button>
+                  )}
+                </div>
+                {open && (
+                  <MathKeypad locale={locale} label={label} kind={kind} value={current}
+                    maxLength={field.maxLength} onClose={() => setActiveIndex(null)}
+                    onChange={(next) => {
+                      updateField(index, next);
+                      if (symbol) setActiveIndex(null);
+                    }} />
+                )}
+              </>
+            )}
           </div>
         );
       })}
-
-      {keypadOpen && enabled && (
-        <div
-          className="modu-math-keypad"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: 8,
-            padding: 12,
-            borderRadius: 14,
-            border: "1px solid #E1E5F2",
-            background: "#F8FAFF",
-            maxWidth: 320,
-          }}
-        >
-          {KEYPAD_DIGITS.map((k) => (
-            <button
-              key={k}
-              type="button"
-              onClick={() => handleKeypadAppend(k)}
-              style={{
-                height: 44,
-                borderRadius: 10,
-                border: "1px solid #CBD5E1",
-                background: "#FFFFFF",
-                fontSize: 20,
-                fontWeight: 700,
-                color: "#1E1B4B",
-                cursor: "pointer",
-              }}
-            >
-              {k}
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={handleKeypadClear}
-            style={{
-              height: 44,
-              borderRadius: 10,
-              border: "1px solid #CBD5E1",
-              background: "#FEF2F2",
-              fontSize: 14,
-              fontWeight: 700,
-              color: "#DC2626",
-              cursor: "pointer",
-            }}
-          >
-            {translateStudent(locale, "keypadClear")}
-          </button>
-          <button
-            type="button"
-            onClick={handleKeypadBackspace}
-            style={{
-              gridColumn: "span 2",
-              height: 44,
-              borderRadius: 10,
-              border: "1px solid #CBD5E1",
-              background: "#EEF2FF",
-              fontSize: 14,
-              fontWeight: 700,
-              color: "#4F46E5",
-              cursor: "pointer",
-            }}
-          >
-            ⌫ {translateStudent(locale, "keypadBackspace")}
-          </button>
-        </div>
-      )}
     </div>
   );
-};
+}

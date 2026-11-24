@@ -4,7 +4,7 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 
-from modu_math_web.learning.models import Attempt, Problem, ProblemPublication
+from modu_math_web.learning.models import Attempt, Problem, ProblemPublication, answer_matches
 from modu_math_web.learning.services.assignments import student_problem
 
 pytestmark = pytest.mark.django_db
@@ -84,6 +84,20 @@ def test_student_contract_preserves_roles_styles_and_safe_answer_bindings(
     assert payload["renderer_data"]["elements"][0]["interaction"]["max_length"] == 64
     assert "SECRET" not in json.dumps(payload)
     assert payload["revision"] == render_problem.updated_at.isoformat()
+
+
+def test_math_keypad_formats_preserve_canvas_bindings_and_grade_notation(render_problem):
+    render_problem.answer["answer_key"][0]["value"] = "7 / 11"
+    render_problem.answer["answer_key"][1]["value"] = "3 * (5 - 2)"
+    payload = student_problem(render_problem)
+
+    assert payload["presentation"]["mode"] == "canvas_slots"
+    assert [field["type"] for field in payload["input_schema"]["fields"]] == ["fraction", "expression"]
+    assert "7 / 11" not in json.dumps(payload)
+    assert answer_matches(render_problem.answer, ["7/11", "3×(5−2)"])
+    assert not answer_matches(render_problem.answer, ["14/22", "3×(5−2)"])
+    assert answer_matches({"value": "1 2/3"}, "1 2 / 3")
+    assert answer_matches({"value": ">="}, "≥")
 
 
 def test_partial_canvas_bindings_fall_back_to_reachable_panel_fields(render_problem):

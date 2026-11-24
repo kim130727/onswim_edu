@@ -97,8 +97,11 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
 
       {item.showCanvas && hasRendererElements && (
         <RendererCanvas
+          key={`${item.id}:${item.revision}`}
           renderer={preparedRenderer}
           fieldValues={fieldValues}
+          fields={item.fields}
+          locale={locale}
           inputsEnabled={enabled}
           onFieldsChanged={(nextValues) =>
             onChange(nextValues.length === 1 ? nextValues[0] : nextValues)

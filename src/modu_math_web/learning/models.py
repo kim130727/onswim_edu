@@ -8,6 +8,8 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 
+from .math_answers import same_math_notation
+
 
 def _normalized(value: Any) -> Any:
     if isinstance(value, str):
@@ -142,7 +144,10 @@ def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
             return len(submitted) == len(set(map(str, submitted))) and sorted(
                 map(str, _normalized(submitted))
             ) == sorted(map(str, _normalized(expected)))
-        return _normalized(submitted) == _normalized(expected)
+        return len(submitted) == len(expected) and all(
+            _normalized(actual) == _normalized(target) or same_math_notation(target, actual)
+            for target, actual in zip(expected, submitted)
+        )
     for item in answer_key:
         if isinstance(item, dict):
             candidates.append(item.get("value", item.get("id")))
@@ -150,7 +155,10 @@ def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
             candidates.append(item)
 
     normalized_submitted = _normalized(submitted)
-    if any(normalized_submitted == _normalized(candidate) for candidate in candidates):
+    if any(
+        normalized_submitted == _normalized(candidate) or same_math_notation(candidate, submitted)
+        for candidate in candidates
+    ):
         return True
     if isinstance(submitted, list) and isinstance(answer.get("value"), str):
         comma_separated = answer["value"].split(",")

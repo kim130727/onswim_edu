@@ -798,6 +798,7 @@ body,
 }
 
 .student-preview-standalone {
+  width: 100%;
   padding: var(--mm-p-space-4);
   max-width: 960px;
   margin: 0 auto;

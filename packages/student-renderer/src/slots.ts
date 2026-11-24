@@ -1,5 +1,6 @@
 import { asRecord, readInt, readNumber } from "./presentation";
 import type {
+  AssignmentField,
   GradingResultModel,
   InputSlot,
   NormalizedStudentItem,
@@ -431,98 +432,22 @@ export function computeSlotFontSize(
   return Math.max(1, Math.min(preferred, Math.max(1, fitLimit))) * scale;
 }
 
-function isUnicodeWhitespace(code: number): boolean {
-  return (
-    code === 0x20 ||
-    code === 0xa0 ||
-    code === 0x1680 ||
-    (code >= 0x2000 && code <= 0x200a) ||
-    code === 0x2028 ||
-    code === 0x2029 ||
-    code === 0x202f ||
-    code === 0x205f ||
-    code === 0x3000
-  );
-}
-
-function isZeroWidthOrCombining(code: number): boolean {
-  return (
-    code === 0x200b ||
-    code === 0x200c ||
-    code === 0x200d ||
-    (code >= 0x0300 && code <= 0x036f) ||
-    (code >= 0x1ab0 && code <= 0x1aff) ||
-    (code >= 0x1dc0 && code <= 0x1dff) ||
-    (code >= 0x20d0 && code <= 0x20ff) ||
-    (code >= 0xfe20 && code <= 0xfe2f)
-  );
-}
-
-function isEastAsianWide(code: number): boolean {
-  return (
-    (code >= 0x1100 && code <= 0x11ff) ||
-    (code >= 0x2e80 && code <= 0xa4cf) ||
-    (code >= 0xac00 && code <= 0xd7af) ||
-    (code >= 0xf900 && code <= 0xfaff) ||
-    (code >= 0xfe10 && code <= 0xfe6f) ||
-    (code >= 0xff01 && code <= 0xff60) ||
-    (code >= 0xffe0 && code <= 0xffe6)
-  );
-}
-
-function editorTextWidth(text: string, fontSize: number): number {
-  let units = 0;
-  for (const ch of text) {
-    const code = ch.codePointAt(0) ?? 0;
-    if (code === 0x09) units += 1.4;
-    else if (isUnicodeWhitespace(code)) units += 0.35;
-    else if (isZeroWidthOrCombining(code)) continue;
-    else if (code >= 0x1780 && code <= 0x17ff) units += 1.05;
-    else if (isEastAsianWide(code)) units += 0.9;
-    else if ("ilI.,:;!'|()".includes(ch)) units += 0.32;
-    else if (code >= 0x30 && code <= 0x39) units += 0.58;
-    else if ("MWmw@".includes(ch)) units += 0.95;
-    else units += 0.65;
-  }
-  return units * fontSize;
-}
-
-export function wrapRendererTextLikeEditor(
-  text: string,
-  maxWidth: number,
-  fontSize: number,
-): string {
-  if (!text || maxWidth <= 0 || fontSize <= 0) return text;
-  const lines: string[] = [];
-  for (const paragraph of text.split("\n")) {
-    let current = "";
-    const tokens = paragraph.match(/[^\s]+\s*|\s+/g) ?? [];
-    for (const token of tokens) {
-      if (current && editorTextWidth(current + token, fontSize) > maxWidth) {
-        lines.push(current.trimEnd());
-        current = "";
-      }
-      for (const ch of token) {
-        if (current && editorTextWidth(current + ch, fontSize) > maxWidth) {
-          lines.push(current.trimEnd());
-          current = "";
-        }
-        current += ch;
-      }
-    }
-    lines.push(current.trimEnd());
-  }
-  return lines.join("\n");
-}
-
-export function isAnswerComplete(answer: unknown, fieldsCount: number): boolean {
+export function isAnswerComplete(answer: unknown, fields: number | AssignmentField[]): boolean {
+  const fieldsCount = typeof fields === "number" ? fields : fields.length;
   if (fieldsCount === 1 && Array.isArray(answer)) {
     return answer.length > 0 && answer.every((v) => v !== null && v !== undefined && String(v).trim() !== "");
   }
   const values = fieldsCount > 1 && Array.isArray(answer) ? answer : [answer];
   return (
     values.length === fieldsCount &&
-    values.every((v) => v !== null && v !== undefined && (typeof v !== "string" || v.trim().length > 0))
+    values.every((value, index) => {
+      if (value === null || value === undefined) return false;
+      const text = String(value).normalize("NFKC").trim();
+      if (!text) return false;
+      if (typeof fields === "number" || fields[index].type !== "fraction") return true;
+      const fraction = /^[\x2d−]?(?:\d+\s+)?\d+\s*[/⁄]\s*(\d+)$/.exec(text);
+      return fraction !== null && /[1-9]/.test(fraction[1]);
+    })
   );
 }
 

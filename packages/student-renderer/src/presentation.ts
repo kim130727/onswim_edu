@@ -35,7 +35,7 @@ export function normalizeProblemContent(
   fallbackId: number | string = 0,
 ): NormalizedStudentItem {
   const content = asRecord(raw) as StudentProblemContent;
-  const presentation = asRecord(content.presentation) as PresentationSpec;
+  let presentation = asRecord(content.presentation) as PresentationSpec;
   const inputSchema = asRecord(content.input_schema);
   const rawFields = Array.isArray(inputSchema.fields) ? inputSchema.fields : [];
 
@@ -76,7 +76,51 @@ export function normalizeProblemContent(
     };
   });
 
-  const rendererData = (asRecord(content.renderer_data) as RendererData);
+  let rendererData = asRecord(content.renderer_data) as RendererData;
+  // Older operator exercises were authored as choice questions with a
+  // selectable circle. Keep their choice IDs for drafts and grading.
+  const options = fields[0].choices;
+  const optionLabels = options.map(({ label }) => label.trim());
+  const isSymbolSet = optionLabels.length >= 2 &&
+    optionLabels.every((label) => /^[<>=≤≥≠+−×÷*/-]$/.test(label)) &&
+    new Set(optionLabels).size === optionLabels.length;
+  if (
+    fields.length === 1 && fields[0].type === "choice" && isSymbolSet &&
+    ["choice", "panel_input", ""].includes(presentation.mode ?? "") &&
+    presentation.show_canvas !== false
+  ) {
+    const blanks = rendererData.elements?.filter((element) => {
+      const interaction = asRecord(element.interaction);
+      return element.id && element.type === "circle" &&
+        (readNumber(asRecord(element.attributes).r) ?? 0) > 0 &&
+        ["input", "select", "choice"].includes(String(interaction.type)) &&
+        (interaction.role === "answer" || interaction.include_in_submission === true);
+    });
+    if (blanks?.length === 1) {
+      const id = String(blanks[0].id);
+      presentation = { ...presentation, mode: "canvas_slots", canvas_bindings: { [id]: 0 } };
+      rendererData = {
+        ...rendererData,
+        elements: rendererData.elements?.map((element) => element.id === id ? {
+          ...element,
+          interaction: {
+            ...element.interaction, type: "input", role: "answer",
+            value_type: optionLabels.every((label) => /^[<>=≤≥≠]$/.test(label)) ? "comparison_operator" : "operator",
+            max_length: 1,
+          },
+        } : element),
+      };
+    }
+  }
+  if (presentation.mode === "canvas_slots") {
+    for (const element of rendererData.elements ?? []) {
+      const index = presentation.canvas_bindings?.[String(element.id ?? "")];
+      const field = index === undefined ? undefined : fields[index];
+      if (field?.choices.length === 0 && asRecord(element.interaction).value_type === "fraction") {
+        field.type = "fraction";
+      }
+    }
+  }
   const layoutData = asRecord(content.layout_data);
   const semanticData = asRecord(content.semantic_data);
 
@@ -508,6 +552,11 @@ export function prepareCanvasRenderer(item: NormalizedStudentItem): RendererData
       field < item.fields.length &&
       item.fields[field].maxLength !== null;
 
+    const fieldType = item.fields[field]?.type;
+    if (fieldType === "operator" || fieldType === "comparison_operator") {
+      interaction.value_type = fieldType;
+      interaction.max_length = 1;
+    }
     const valueType = String(interaction.value_type ?? "");
     if (
       typeof field === "number" &&
@@ -613,7 +662,7 @@ export function computeCanvasMetrics(
       ? viewBox.background
       : "#FFFFFF";
 
-  const clampedAvail = Math.max(240, Math.min(960, availableWidth));
+  const clampedAvail = Math.max(1, Math.min(960, availableWidth));
   const preferredWidth = Math.min(clampedAvail, Math.max(320, logicalWidth * 1.5));
   let canvasWidth = preferredWidth;
   let canvasHeight = canvasWidth * (logicalHeight / logicalWidth);

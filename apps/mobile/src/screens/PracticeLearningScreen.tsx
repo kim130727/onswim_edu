@@ -118,7 +118,7 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
 
   const handleSubmit = async () => {
     if (!item || submitting) return;
-    if (!isAnswerComplete(answer, item.fields.length)) return;
+    if (!isAnswerComplete(answer, item.fields)) return;
     setSubmitting(true);
     setError("");
     try {
@@ -188,7 +188,7 @@ export const PracticeLearningScreen: React.FC<PracticeLearningScreenProps> = ({
   };
 
   const absolutePos = (page - 1) * 50 + index + 1;
-  const canSubmit = Boolean(item && !submitting && grading?.correct !== true && isAnswerComplete(answer, item.fields.length));
+  const canSubmit = Boolean(item && !submitting && grading?.correct !== true && isAnswerComplete(answer, item.fields));
 
   return (
     <div className="student-section">

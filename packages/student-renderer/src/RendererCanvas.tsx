@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { MathKeypad } from "./MathKeypad";
+import { translateStudent } from "./strings";
 import {
   asRecord,
   computeCanvasMetrics,
@@ -14,9 +16,8 @@ import {
   looksLikeInputTextBox,
   rendererVisibleElements,
   splitFieldValuesToSlots,
-  wrapRendererTextLikeEditor,
 } from "./slots";
-import type { CanvasChoiceSpec, InputSlot, RendererData, RendererElement } from "./types";
+import type { AssignmentField, CanvasChoiceSpec, InputSlot, RendererData, RendererElement, StudentLocale } from "./types";
 
 const FONT_STACK =
   '"Noto Sans KR", "Noto Sans", "Pretendard", "Segoe UI Symbol", "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
@@ -90,10 +91,90 @@ function parseSvgTransformToCss(raw: string, scale: number): string | undefined 
   return ops.length > 0 ? ops.join(" ") : undefined;
 }
 
+function CanvasTextBox({ element, scale }: { element: RendererElement; scale: number }) {
+  const textRef = useRef<HTMLSpanElement>(null);
+  const [fit, setFit] = useState(1);
+  const attributes = asRecord(element.attributes);
+  const fontSize = readNumber(attributes["font-size"]) ?? 18;
+  const fontFamily = sanitizeFontFamily(attributes["font-family"]);
+  const fontWeight = String(attributes["font-weight"] ?? 400);
+  const lineHeight = readNumber(attributes["data-line-height"]) ?? readNumber(attributes["line-height"]) ?? 1.35;
+  const width = readNumber(attributes.width) ?? readNumber(attributes.max_width) ?? 860;
+  const height = readNumber(attributes.height) ?? fontSize * lineHeight;
+  const text = normalizeTextContent(element.text);
+  const wrap = !text.includes("\n") && height >= fontSize * lineHeight * 1.7;
+  const hAlign = attributes["data-text-align"] === "center" ? "center"
+    : attributes["data-text-align"] === "right" ? "right" : "left";
+  const vAlign = attributes["data-vertical-align"] === "middle" ? "center"
+    : attributes["data-vertical-align"] === "bottom" ? "bottom" : "top";
+
+  useLayoutEffect(() => {
+    const span = textRef.current;
+    if (!span) return;
+    // Measure the unscaled layout so touch-screen zoom and authored transforms
+    // never affect the font fitting or move a neighboring answer slot.
+    const fitText = () => {
+      const style = getComputedStyle(span);
+      const measuredWidth = Math.max(span.scrollWidth, parseFloat(style.width) || 0);
+      const measuredHeight = Math.max(span.scrollHeight, parseFloat(style.height) || 0);
+      setFit(Math.min(1, width / (measuredWidth || width), height / (measuredHeight || height)));
+    };
+    fitText();
+    // A fallback font can be replaced after layout. Watch the text itself.
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(fitText);
+    observer.observe(span);
+    return () => observer.disconnect();
+  }, [fontFamily, fontSize, fontWeight, height, lineHeight, text, width, wrap]);
+
+  const transform = parseSvgTransformToCss(String(attributes.transform ?? ""), scale);
+  return (
+    <div
+      data-canvas-text-box={element.id}
+      style={{
+        position: "absolute",
+        left: (readNumber(attributes.x) ?? 0) * scale,
+        top: (readNumber(attributes.y) ?? 0) * scale,
+        width,
+        height,
+        display: "flex",
+        alignItems: vAlign === "center" ? "center" : vAlign === "bottom" ? "flex-end" : "flex-start",
+        justifyContent: hAlign === "center" ? "center" : hAlign === "right" ? "flex-end" : "flex-start",
+        pointerEvents: "none",
+        transform: `${transform ? transform + " " : ""}scale(${scale})`,
+        transformOrigin: "top left",
+      }}
+    >
+      <span
+        ref={textRef}
+        style={{
+          flexShrink: 0,
+          width: "max-content",
+          maxWidth: wrap ? width : undefined,
+          color: String(attributes.fill ?? "#000000"),
+          fontSize,
+          fontWeight,
+          fontFamily,
+          lineHeight,
+          textAlign: hAlign,
+          whiteSpace: wrap ? "break-spaces" : "pre",
+          overflowWrap: wrap ? "anywhere" : undefined,
+          transform: fit < 1 ? `scale(${fit})` : undefined,
+          transformOrigin: `${hAlign} ${vAlign}`,
+        }}
+      >
+        {text}
+      </span>
+    </div>
+  );
+}
+
 export interface RendererCanvasProps {
   renderer: RendererData;
   fieldValues: string[] | null;
   inputsEnabled: boolean;
+  fields?: AssignmentField[];
+  locale?: StudentLocale;
   onFieldsChanged?: (values: string[]) => void;
   canvasChoices?: CanvasChoiceSpec[];
   selectedChoices?: Set<string>;
@@ -105,6 +186,8 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   renderer,
   fieldValues,
   inputsEnabled,
+  fields = [],
+  locale = "ko",
   onFieldsChanged,
   canvasChoices = [],
   selectedChoices = new Set(),
@@ -114,7 +197,8 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(640);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
-  const [activeOperatorSlotIndex, setActiveOperatorSlotIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const operatorRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -151,32 +235,36 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   }, [slots, bindings, fieldValues]);
 
   const [slotTexts, setSlotTexts] = useState<string[]>(externalSlotTexts);
+  const lastEmitted = useRef<string[] | null>(null);
 
   useEffect(() => {
+    if (lastEmitted.current && fieldValues?.every((value, index) => value === lastEmitted.current?.[index])) {
+      return;
+    }
+    lastEmitted.current = null;
     setSlotTexts(externalSlotTexts);
-  }, [externalSlotTexts.join("\u0000"), slots.map((s) => s.signature).join("|")]);
+  }, [externalSlotTexts, fieldValues]);
 
   useEffect(() => {
-    setActiveOperatorSlotIndex(null);
+    setActiveIndex(null);
   }, [renderer]);
 
   const emitSlotTexts = (nextTexts: string[]) => {
     setSlotTexts(nextTexts);
     if (fieldValues !== null && onFieldsChanged) {
       const nextFields = collectFieldValuesFromSlots(slots, bindings, nextTexts, fieldValues.length);
+      lastEmitted.current = nextFields;
       onFieldsChanged(nextFields);
     }
   };
 
-  const handleSlotInput = (index: number, rawNext: string) => {
+  const handleSlotInput = (index: number, rawNext: string, advance = true) => {
     const slot = slots[index];
     if (!slot || !inputsEnabled) return;
 
     let filtered = rawNext;
     if (slot.digitsOnly) {
       filtered = filtered.replace(/[^0-9]/g, "");
-    } else if (slot.operatorOnly) {
-      filtered = filtered.replace(/[^<>=]/g, "");
     }
 
     const nextTexts = [...slotTexts];
@@ -204,7 +292,7 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     nextTexts[index] = clamped;
     emitSlotTexts(nextTexts);
 
-    if (slot.autoAdvance && clamped.length >= slot.maxLength && index + 1 < slots.length) {
+    if (advance && slot.autoAdvance && clamped.length >= slot.maxLength && index + 1 < slots.length) {
       inputRefs.current[index + 1]?.focus();
     }
   };
@@ -212,6 +300,7 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   const handleSlotKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     const slot = slots[index];
     if (!slot) return;
+    if (e.key === "Escape") setActiveIndex(null);
     if (e.key === "Backspace" && !slotTexts[index] && index > 0 && slot.maxLength === 1) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -308,29 +397,22 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     });
   }, [canvasChoices, renderer.elements, metrics.scale, selectedChoices]);
 
-  const operatorIndexes = useMemo(
-    () => slots.map((s, i) => (s.operatorOnly ? i : -1)).filter((i) => i >= 0),
-    [slots],
-  );
-  const resolvedActiveOpIndex = useMemo(() => {
-    if (operatorIndexes.length === 0) return -1;
-    if (activeOperatorSlotIndex !== null && operatorIndexes.includes(activeOperatorSlotIndex)) {
-      return activeOperatorSlotIndex;
+  const fieldForSlot = (slot: InputSlot) => fields[bindings?.[slot.id] ?? -1];
+  const kindForSlot = (slot: InputSlot): string => {
+    const field = fieldForSlot(slot);
+    const kind = String(slot.inputStyle._value_type ?? "");
+    if (slot.operatorOnly) {
+      return kind === "comparison_operator" || field?.type === "comparison_operator"
+        ? "comparison_operator" : "operator";
     }
-    const firstEmpty = operatorIndexes.find((i) => !(slotTexts[i] ?? ""));
-    return firstEmpty ?? operatorIndexes[0];
-  }, [operatorIndexes, activeOperatorSlotIndex, slotTexts]);
-
-  const setOperatorValue = (op: string) => {
-    if (!inputsEnabled || resolvedActiveOpIndex < 0) return;
-    const nextTexts = [...slotTexts];
-    while (nextTexts.length < slots.length) nextTexts.push("");
-    nextTexts[resolvedActiveOpIndex] = op;
-    emitSlotTexts(nextTexts);
-
-    const pos = operatorIndexes.indexOf(resolvedActiveOpIndex);
-    const nextEmpty = operatorIndexes.slice(pos + 1).find((i) => !nextTexts[i]);
-    setActiveOperatorSlotIndex(nextEmpty ?? resolvedActiveOpIndex);
+    if (slot.digitsOnly || field?.maxLength != null) return "digit";
+    if (field && field.type !== "text") return field.type;
+    return ["integer", "decimal", "number", "fraction", "expression"].includes(kind) ? kind : "text";
+  };
+  const activeSlot = activeIndex === null ? undefined : slots[activeIndex];
+  const closeKeypad = () => {
+    setActiveIndex(null);
+    if (activeIndex !== null && activeSlot?.operatorOnly) operatorRefs.current[activeIndex]?.focus();
   };
 
   return (
@@ -519,67 +601,16 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
             })}
           </svg>
 
-          {/* Non-input text_box overlay layer */}
-          {textBoxElements.map((el, idx) => {
-            const a = asRecord(el.attributes);
-            const fontSize = readNumber(a["font-size"]) ?? 18;
-            const lineHeight =
-              readNumber(a["data-line-height"]) ?? readNumber(a["line-height"]) ?? 1.35;
-            const x = readNumber(a.x) ?? 0;
-            const y = readNumber(a.y) ?? 0;
-            const width = readNumber(a.width) ?? readNumber(a.max_width) ?? 860;
-            const height = readNumber(a.height) ?? fontSize * lineHeight;
-            const text = normalizeTextContent(el.text);
-            const canWrap = height >= fontSize * lineHeight * 1.7;
-            const wrapped =
-              text.includes("\n") || !canWrap
-                ? text
-                : wrapRendererTextLikeEditor(text, width, fontSize);
-            const hAlign = String(a["data-text-align"] ?? "left");
-            const vAlign = String(a["data-vertical-align"] ?? "top");
-            const cssTransform = parseSvgTransformToCss(String(a.transform ?? ""), metrics.scale);
-
-            return (
-              <div
-                key={`tb-${el.id ?? idx}`}
-                style={{
-                  position: "absolute",
-                  left: x * metrics.scale,
-                  top: y * metrics.scale,
-                  width: width * metrics.scale,
-                  height: height * metrics.scale,
-                  overflow: "hidden",
-                  display: "flex",
-                  alignItems:
-                    vAlign === "middle" ? "center" : vAlign === "bottom" ? "flex-end" : "flex-start",
-                  justifyContent:
-                    hAlign === "center" ? "center" : hAlign === "right" ? "flex-end" : "flex-start",
-                  pointerEvents: "none",
-                  transform: cssTransform,
-                  transformOrigin: "top left",
-                }}
-              >
-                <span
-                  style={{
-                    color: String(a.fill ?? "#000000"),
-                    fontSize: fontSize * metrics.scale,
-                    fontWeight: a["font-weight"] ? String(a["font-weight"]) : 400,
-                    lineHeight,
-                    fontFamily: sanitizeFontFamily(a["font-family"]),
-                    textAlign: hAlign === "center" ? "center" : hAlign === "right" ? "right" : "left",
-                    whiteSpace: "pre",
-                  }}
-                >
-                  {wrapped}
-                </span>
-              </div>
-            );
-          })}
+          {textBoxElements.map((element, index) => (
+            <CanvasTextBox key={element.id ?? index} element={element} scale={metrics.scale} />
+          ))}
 
           {/* Interactive Canvas Input Slots */}
           {slots.map((slot, index) => {
             const val = slotTexts[index] ?? "";
-            const fontSize = computeSlotFontSize(slot, metrics.scale, [...val].length);
+            const label = translateStudent(locale, "answer", { number: index + 1 });
+            const shownValue = fieldForSlot(slot)?.choices.find((choice) => choice.value === val)?.label ?? val;
+            const fontSize = computeSlotFontSize(slot, metrics.scale, [...shownValue].length);
             const inset = boundedInputPadding(slot) * metrics.scale;
             const left = slot.rect.left * metrics.scale + inset;
             const top = slot.rect.top * metrics.scale + inset;
@@ -588,30 +619,31 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
             const cssTransform = parseSvgTransformToCss(slot.transform, metrics.scale);
 
             if (slot.operatorOnly) {
-              const selected = resolvedActiveOpIndex === index;
+              const selected = activeIndex === index && inputsEnabled;
               return (
                 <button
                   key={`op-slot-${slot.id || index}`}
                   type="button"
+                  ref={(element) => { operatorRefs.current[index] = element; }}
+                  className="modu-canvas-symbol"
                   data-testid={`operator-slot-${index}`}
                   data-slot-id={slot.id}
                   disabled={!inputsEnabled}
-                  onClick={() => setActiveOperatorSlotIndex(index)}
+                  aria-label={shownValue ? `${label} ${shownValue}` : label}
+                  aria-expanded={selected}
+                  onClick={() => setActiveIndex(selected ? null : index)}
                   style={{
                     position: "absolute",
                     left,
                     top,
                     width,
                     height,
-                    borderRadius: "9999px",
-                    border: selected ? "2px solid #4F46E5" : "1px solid transparent",
-                    background: selected ? "rgba(79,70,229,0.08)" : "transparent",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize,
                     fontWeight: 800,
-                    color: "#1E1B4B",
+                    color: "var(--mm-color-text-primary)",
                     fontFamily: FONT_STACK,
                     padding: 0,
                     cursor: inputsEnabled ? "pointer" : "default",
@@ -619,7 +651,7 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
                     transformOrigin: "top left",
                   }}
                 >
-                  {val || slot.placeholder || ""}
+                  {shownValue || slot.placeholder || ""}
                 </button>
               );
             }
@@ -638,21 +670,25 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
                   inputRefs.current[index] = el;
                 }}
                 type="text"
-                inputMode={slot.digitsOnly ? "numeric" : "text"}
+                className="modu-canvas-input"
+                inputMode={kindForSlot(slot) === "text" ? "text" : "none"}
                 autoComplete="off"
                 spellCheck={false}
                 data-testid={`renderer-input-slot-${index}`}
                 data-slot-id={slot.id}
-                aria-label={`답 입력 ${index + 1}`}
+                aria-label={label}
+                data-keypad-open={activeIndex === index && inputsEnabled}
                 disabled={!inputsEnabled}
                 value={val}
                 placeholder={slot.placeholder ?? ""}
                 onFocus={(e) => {
+                  setActiveIndex(kindForSlot(slot) === "text" ? null : index);
                   if (slot.maxLength === 1 && e.currentTarget.value.length > 0) {
                     e.currentTarget.select();
                   }
                 }}
                 onClick={(e) => {
+                  if (kindForSlot(slot) !== "text") setActiveIndex(index);
                   if (slot.maxLength === 1 && e.currentTarget.value.length > 0) {
                     e.currentTarget.select();
                   }
@@ -666,7 +702,6 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
                   width,
                   height,
                   border: "none",
-                  outline: "none",
                   background: "transparent",
                   padding: 0,
                   margin: 0,
@@ -739,47 +774,27 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
         </div>
       </div>
 
-      {/* Comparison Operator Bar */}
-      {hasOperatorSlots && (
-        <div
-          className="modu-operator-bar"
-          role="group"
-          aria-label="비교 기호 선택"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 8,
-            marginTop: 10,
+      {inputsEnabled && activeIndex !== null && activeSlot && (
+        <MathKeypad
+          key={activeSlot.id}
+          locale={locale}
+          label={translateStudent(locale, "answer", { number: activeIndex + 1 })}
+          kind={kindForSlot(activeSlot)}
+          value={slotTexts[activeIndex] ?? ""}
+          choices={fieldForSlot(activeSlot)?.choices}
+          maxLength={Math.min(activeSlot.maxLength, fieldForSlot(activeSlot)?.maxLength ?? Infinity)}
+          onClose={closeKeypad}
+          onChange={(next) => {
+            if (activeSlot.operatorOnly) {
+              const nextTexts = [...slotTexts];
+              nextTexts[activeIndex] = next;
+              emitSlotTexts(nextTexts);
+              closeKeypad();
+            } else {
+              handleSlotInput(activeIndex, next, next.length > (slotTexts[activeIndex] ?? "").length || activeSlot.maxLength === 1);
+            }
           }}
-        >
-          {[">", "=", "<"].map((op) => {
-            const active = resolvedActiveOpIndex >= 0 && slotTexts[resolvedActiveOpIndex] === op;
-            return (
-              <button
-                key={op}
-                type="button"
-                data-testid={`operator-choice-${op}`}
-                disabled={!inputsEnabled}
-                onClick={() => setOperatorValue(op)}
-                style={{
-                  minWidth: "var(--mm-touch-min, 48px)",
-                  minHeight: "var(--mm-touch-min, 48px)",
-                  borderRadius: "var(--mm-btn-radius, 10px)",
-                  fontSize: 22,
-                  fontWeight: 700,
-                  cursor: inputsEnabled ? "pointer" : "default",
-                  border: active
-                    ? "2px solid var(--mm-color-primary)"
-                    : "1.5px solid var(--mm-color-border-strong)",
-                  background: active ? "var(--mm-color-primary)" : "var(--mm-color-bg-surface)",
-                  color: active ? "var(--mm-color-text-on-primary)" : "var(--mm-color-text-primary)",
-                }}
-              >
-                {op}
-              </button>
-            );
-          })}
-        </div>
+        />
       )}
     </div>
   );

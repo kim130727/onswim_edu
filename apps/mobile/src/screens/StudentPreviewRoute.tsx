@@ -51,7 +51,7 @@ export const StudentPreviewRoute: React.FC<{ locale: StudentLocale }> = ({ local
     return <div className="student-empty">{translateStudent(locale, "loading")}</div>;
   }
 
-  const canSubmit = !submitting && isAnswerComplete(answer, item.fields.length);
+  const canSubmit = !submitting && isAnswerComplete(answer, item.fields);
 
   return (
     <div className="student-preview-standalone">

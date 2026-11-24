@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import {
@@ -15,6 +15,73 @@ import {
 } from "@modu/student-renderer";
 
 describe("shared student-renderer", () => {
+  it("opens a comparison circle on demand and keeps the authored choice ID", () => {
+    const item = normalizeProblemContent({
+      presentation: { mode: "choice" },
+      input_schema: { fields: [{
+        type: "choice",
+        choices: [ { label: ">", value: "greater" }, { label: "=", value: "equal" }, { label: "<", value: "less" } ],
+      }] },
+      renderer_data: { elements: [{
+        id: "circle",
+        type: "circle",
+        attributes: { cx: 65, cy: 40, r: 25 },
+        interaction: { type: "select", role: "choice", include_in_submission: true },
+      }] },
+    });
+    const onChange = vi.fn();
+    const view = (value: string) => <StudentProblemView item={item} value={value} enabled locale="ko" onChange={onChange} />;
+    const { rerender } = render(view(""));
+    const circle = screen.getByRole("button", { name: "답 1" });
+    expect(screen.queryByRole("button", { name: "=" })).not.toBeInTheDocument();
+    fireEvent.click(circle);
+    expect(circle).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(screen.getByRole("button", { name: "=" }));
+    expect(onChange).toHaveBeenLastCalledWith("equal");
+    expect(circle).toHaveTextContent("=");
+    expect(circle).toHaveAttribute("aria-expanded", "false");
+    rerender(view("less"));
+    expect(circle).toHaveTextContent("<");
+  });
+
+  it("edits fraction parts and validates the answer before submission", () => {
+    const item = normalizeProblemContent({
+      input_schema: { fields: [{ id: "answer", type: "fraction" }] },
+    });
+    function Problem() {
+      const [value, setValue] = useState<unknown>("");
+      return <>
+        <StudentProblemView item={item} value={value} enabled locale="ko" onChange={setValue} />
+        <button disabled={!isAnswerComplete(value, item.fields)}>제출</button>
+      </>;
+    }
+    render(<Problem />);
+    const input = screen.getByRole("textbox", { name: "답 1" });
+    const submit = screen.getByRole("button", { name: "제출" });
+    fireEvent.click(input);
+    fireEvent.click(screen.getByRole("button", { name: "분수" }));
+    fireEvent.click(screen.getByRole("button", { name: "3" }));
+    fireEvent.click(screen.getByRole("button", { name: "분모" }));
+    fireEvent.click(screen.getByRole("button", { name: "0" }));
+    expect(input).toHaveValue("3/0");
+    expect(submit).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "⌫ 삭제" }));
+    fireEvent.click(screen.getByRole("button", { name: "4" }));
+    expect(input).toHaveValue("3/4");
+    expect(submit).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: "닫기" }));
+    expect(screen.queryByRole("group", { name: "답 1 · 수학 키패드" })).not.toBeInTheDocument();
+    fireEvent.click(input);
+    fireEvent.click(screen.getByRole("button", { name: "지우기" }));
+    fireEvent.click(screen.getByRole("button", { name: "1" }));
+    fireEvent.click(screen.getByRole("button", { name: "대분수" }));
+    fireEvent.click(screen.getByRole("button", { name: "2" }));
+    fireEvent.click(screen.getByRole("button", { name: "분모" }));
+    fireEvent.click(screen.getByRole("button", { name: "3" }));
+    expect(input).toHaveValue("1 2/3");
+    expect(submit).toBeEnabled();
+  });
+
   it("supports whole-answer capacity fallback without truncating pasted values", () => {
     const raw = {
       id: 10,

@@ -10,6 +10,8 @@ from xml.etree import ElementTree
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
+from ..math_answers import math_input_type
+
 
 def answer_field_values(answer):
     keys = answer.get("answer_key")
@@ -20,19 +22,22 @@ def answer_field_values(answer):
     return values
 
 
-def with_integer_input_limits(schema, answer):
-    """Expose the input length for whole numbers, without including the value."""
+def with_math_input_formats(schema, answer):
+    """Expose math input formats and integer lengths without including answers."""
     values = answer_field_values(answer)
     fields = schema["fields"]
     if len(values) != len(fields):
         return schema
-    return {**schema, "fields": [
-        {**field, "type": "number", "max_length": len(str(value).strip())}
-        if field["type"] in {"number", "text"}
-        and re.fullmatch(r"[0-9]+", str(value).strip())
-        else field
-        for field, value in zip(fields, values)
-    ]}
+    formatted = []
+    for field, value in zip(fields, values):
+        if field["type"] in {"number", "text"}:
+            kind = math_input_type(value)
+            if re.fullmatch(r"[0-9]+", str(value).strip()):
+                field = {**field, "type": "number", "max_length": len(str(value).strip())}
+            elif kind != "text":
+                field = {**field, "type": kind}
+        formatted.append(field)
+    return {**schema, "fields": formatted}
 
 
 def input_schema(problem):
@@ -74,15 +79,11 @@ def input_schema(problem):
         fields.append(
             {
                 "id": f"field-{index + 1}",
-                "type": (
-                    "choice"
-                    if options
-                    else "number" if isinstance(expected, (int, float)) else "text"
-                ),
+                "type": "choice" if options else "text",
                 "choices": options,
             }
         )
-    return with_integer_input_limits({
+    return with_math_input_formats({
         "fields": fields,
         "multiple": len(fields) > 1,
         "unit": str(answer.get("unit") or ""),

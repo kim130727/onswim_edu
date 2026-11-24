@@ -41,7 +41,7 @@ def normalize_answer_capacity(elements, presentation, answer, schema):
             if expected is None:
                 continue
             kind = fields[field]["type"]
-            interaction["value_type"] = "number" if kind == "number" else "text"
+            interaction["value_type"] = kind
             interaction["keyboard"] = "decimal" if kind == "number" else "text"
         element["interaction"] = interaction
 
@@ -161,7 +161,7 @@ def presentation_contract(problem, schema):
     if mode == "canvas_slots" and (
         review.get("show_canvas") is False
         or set(bindings.values()) != set(range(len(fields)))
-        or any(field["type"] not in {"number", "text"} for field in fields)
+        or any(field["type"] in {"choice", "multi_choice"} for field in fields)
     ):
         mode = "panel_input"
     return {

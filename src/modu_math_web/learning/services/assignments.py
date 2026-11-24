@@ -16,7 +16,7 @@ from ..models import (
     Attempt,
     StudentProfile,
 )
-from .assignment_content import freeze_images, input_schema, with_integer_input_limits
+from .assignment_content import freeze_images, input_schema, with_math_input_formats
 from .canvas_presentation import project_canvas
 from .student_presentation import (
     normalize_answer_capacity,
@@ -228,7 +228,7 @@ def _student_item_content(item):
     content = item.public_content
     schema = content.get("input_schema")
     if schema:
-        schema = with_integer_input_limits(schema, item.answer)
+        schema = with_math_input_formats(schema, item.answer)
     else:
         schema = input_schema(
             SimpleNamespace(
