@@ -56,10 +56,7 @@ export function MathKeypad({
   return (
     <div className="modu-math-keypad" role="group" aria-label={`${label} · ${t("keypad")}`}
       onKeyDown={(event) => { if (event.key === "Escape") onClose(); }}>
-      <div className="modu-keypad-header">
-        <span>{label}</span>
-        <button type="button" className="modu-keypad-action" onClick={onClose}>{t("keypadClose")}</button>
-      </div>
+      <button type="button" className="modu-keypad-action modu-keypad-close" onClick={onClose}>{t("keypadClose")}</button>
       {singleSymbol ? (
         <div className="modu-keypad-symbols">
           {options.map((option) => (

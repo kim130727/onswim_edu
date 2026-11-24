@@ -415,8 +415,8 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     if (activeIndex !== null && activeSlot?.operatorOnly) operatorRefs.current[activeIndex]?.focus();
   };
 
-  return (
-    <div ref={containerRef} className="modu-student-canvas-root" style={{ width: "100%" }}>
+  const canvas = (
+    <div ref={containerRef} className="modu-keypad-subject">
       <div
         className="modu-student-canvas-frame"
         style={{
@@ -774,6 +774,12 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
         </div>
       </div>
 
+    </div>
+  );
+
+  return (
+    <div className="modu-student-canvas-root modu-keypad-layout">
+      {canvas}
       {inputsEnabled && activeIndex !== null && activeSlot && (
         <MathKeypad
           key={activeSlot.id}

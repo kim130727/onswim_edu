@@ -157,7 +157,6 @@
 
 .modu-answer-input-row,
 .modu-panel-choices,
-.modu-keypad-header,
 .modu-keypad-actions,
 .modu-keypad-symbols {
   display: flex;
@@ -205,10 +204,36 @@
   background: var(--mm-choice-bg);
 }
 
+.modu-keypad-layout {
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--mm-p-space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+.modu-keypad-layout > .modu-keypad-subject {
+  flex: 1 0 100%;
+  min-width: 0;
+}
+
+@container (min-width: 54rem) {
+  .modu-keypad-layout > .modu-keypad-subject {
+    flex: 1 1 0;
+  }
+
+  .modu-keypad-layout > .modu-math-keypad {
+    width: 18rem;
+    flex-shrink: 0;
+  }
+}
+
 .modu-math-keypad {
   box-sizing: border-box;
   width: min(100%, 24rem);
-  margin-top: var(--mm-p-space-2);
   padding: var(--mm-p-space-3);
   display: grid;
   gap: var(--mm-p-space-2);
@@ -217,10 +242,8 @@
   background: var(--mm-color-bg-subtle);
 }
 
-.modu-keypad-header {
-  justify-content: space-between;
-  color: var(--mm-color-text-secondary);
-  font-weight: 700;
+.modu-keypad-close {
+  justify-self: end;
 }
 
 .modu-keypad-keys {

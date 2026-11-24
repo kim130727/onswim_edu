@@ -18,6 +18,7 @@ export function AnswerInputPanel(props: AnswerInputPanelProps) {
 function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPanelProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const values = item.fields.length > 1 && Array.isArray(value) ? value : [value ?? ""];
+  const activeField = enabled && activeIndex !== null ? item.fields[activeIndex] : undefined;
 
   const updateField = (index: number, nextVal: string) => {
     onChange(item.fields.length === 1
@@ -25,8 +26,8 @@ function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPan
       : item.fields.map((_, i) => i === index ? nextVal : values[i] ?? ""));
   };
 
-  return (
-    <div className="modu-answer-panel">
+  const fields = (
+    <div className="modu-answer-panel modu-keypad-subject">
       {item.fields.map((field, index) => {
         const label = translateStudent(locale, "answer", { number: index + 1 });
         const current = String(values[index] ?? "");
@@ -96,19 +97,34 @@ function AnswerFields({ item, value, enabled, locale, onChange }: AnswerInputPan
                       onClick={() => setActiveIndex(open ? null : index)}>⌨</button>
                   )}
                 </div>
-                {open && (
-                  <MathKeypad locale={locale} label={label} kind={kind} value={current}
-                    maxLength={field.maxLength} onClose={() => setActiveIndex(null)}
-                    onChange={(next) => {
-                      updateField(index, next);
-                      if (symbol) setActiveIndex(null);
-                    }} />
-                )}
               </>
             )}
           </div>
         );
       })}
+    </div>
+  );
+
+  return (
+    <div className="modu-keypad-layout">
+      {fields}
+      {activeIndex !== null && activeField && !activeField.choices.length && (
+        <MathKeypad
+          key={activeIndex}
+          locale={locale}
+          label={translateStudent(locale, "answer", { number: activeIndex + 1 })}
+          kind={activeField.maxLength !== null ? "digit" : activeField.type}
+          value={String(values[activeIndex] ?? "")}
+          maxLength={activeField.maxLength}
+          onClose={() => setActiveIndex(null)}
+          onChange={(next) => {
+            updateField(activeIndex, next);
+            if (activeField.type === "comparison_operator" || activeField.type === "operator") {
+              setActiveIndex(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

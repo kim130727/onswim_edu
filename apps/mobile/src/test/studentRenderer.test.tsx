@@ -36,6 +36,7 @@ describe("shared student-renderer", () => {
     expect(screen.queryByRole("button", { name: "=" })).not.toBeInTheDocument();
     fireEvent.click(circle);
     expect(circle).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("group", { name: "답 1 · 수학 키패드" })).not.toHaveTextContent("답 1");
     fireEvent.click(screen.getByRole("button", { name: "=" }));
     expect(onChange).toHaveBeenLastCalledWith("equal");
     expect(circle).toHaveTextContent("=");

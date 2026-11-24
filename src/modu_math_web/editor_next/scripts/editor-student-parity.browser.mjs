@@ -33,8 +33,24 @@ async function checkTextFits(locator, expectedText) {
   assert.ok(fits, `Text exceeds its canvas box: ${text}`);
 }
 
+async function waitForKeypadPlacement(page, layoutSelector, subjectSelector, below = false) {
+  await page.waitForFunction(({ layoutSelector, subjectSelector, below }) => {
+    const layout = document.querySelector(layoutSelector);
+    const subject = layout?.querySelector(subjectSelector)?.getBoundingClientRect();
+    const keypad = layout?.querySelector('.modu-math-keypad')?.getBoundingClientRect();
+    if (!subject || !keypad) return false;
+    const { left, right } = layout.getBoundingClientRect();
+    if (subject.left < left - 1 || keypad.right > right + 1) return false;
+    if (below) {
+      return keypad.top >= subject.bottom
+        && Math.abs(keypad.left + keypad.width / 2 - (left + right) / 2) <= 1;
+    }
+    return keypad.left >= subject.right && Math.abs(keypad.top - subject.top) <= 1;
+  }, { layoutSelector, subjectSelector, below });
+}
+
 try {
-  const page = await browser.newPage({ viewport: { width: 1100, height: 1000 } });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
   page.setDefaultTimeout(30000);
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
@@ -65,12 +81,23 @@ try {
   const options = preview.locator('[data-canvas-text-box="slot.options.text"]');
   const expectedOptions = '<보기>    325,   532,   334,   985,   415';
   await checkTextFits(options, expectedOptions);
+  const canvas = '.react-student-preview .modu-student-canvas-root';
+  const frame = '.modu-student-canvas-frame';
+  const firstSlot = preview.getByTestId('renderer-input-slot-0');
+  await firstSlot.click();
+  await waitForKeypadPlacement(page, canvas, frame);
+  await checkTextFits(options, expectedOptions);
+  await preview.getByRole('button', { name: '태블릿', exact: true }).click();
+  await waitForKeypadPlacement(page, canvas, frame, true);
   await preview.getByRole('button', { name: '모바일', exact: true }).click();
   await page.waitForFunction(() => {
     const surface = document.querySelector('.student-preview-surface.viewport-mobile');
     return surface && surface.clientWidth <= 430 && surface.scrollWidth === surface.clientWidth;
   });
+  await waitForKeypadPlacement(page, canvas, frame, true);
   await checkTextFits(options, expectedOptions);
+  await preview.locator('.modu-math-keypad').getByRole('button', { name: '3', exact: true }).click();
+  assert.equal(await firstSlot.inputValue(), '3');
   assert.equal(await preview.locator('[data-slot-id]').count(), 2);
 
   await page.setViewportSize({ width: 280, height: 640 });
@@ -102,8 +129,22 @@ try {
   await checkTextFits(fittingText, '123');
   assert.equal(await fittingText.locator('span').evaluate((span) => getComputedStyle(span).transform), 'none');
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 280);
+
+  await page.setViewportSize({ width: 1100, height: 800 });
+  await page.evaluate(() => {
+    window.postMessage({ type: 'modu-math:student-content', content: {
+      id: 'keypad-placement-regression',
+      input_schema: { fields: [{ type: 'fraction' }] },
+    } }, window.location.origin);
+  });
+  await page.getByTestId('assignment-answer-0').click();
+  const answer = '.student-preview-standalone .modu-keypad-layout';
+  await waitForKeypadPlacement(page, answer, '.modu-answer-panel');
+  await page.setViewportSize({ width: 390, height: 750 });
+  await waitForKeypadPlacement(page, answer, '.modu-answer-panel', true);
+  assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
   assert.deepEqual(errors, []);
-  console.log(`Student parity, choice grading, and responsive canvas text fitting passed. Screenshot: ${output}`);
+  console.log(`Student parity, choice grading, and responsive canvas and keypad layouts passed. Screenshot: ${output}`);
 } finally {
   await browser.close();
 }
