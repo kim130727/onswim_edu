@@ -81,6 +81,23 @@ def _answer_choice_id(key, choices):
     return None
 
 
+def _answer_value_matches(expected, submitted):
+    return _normalized(expected) == _normalized(submitted) or same_math_notation(expected, submitted)
+
+
+def _answers_match_in_any_order(expected, submitted):
+    """Consume each matched submission so repeated values keep their counts."""
+    remaining = submitted.copy()
+    for target in expected:
+        for index, actual in enumerate(remaining):
+            if _answer_value_matches(target, actual):
+                remaining.pop(index)
+                break
+        else:
+            return False
+    return not remaining
+
+
 def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
     """Compare a client answer with the existing answer contract without rewriting it."""
     candidates: list[Any] = []
@@ -144,10 +161,11 @@ def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
             return len(submitted) == len(set(map(str, submitted))) and sorted(
                 map(str, _normalized(submitted))
             ) == sorted(map(str, _normalized(expected)))
-        return len(submitted) == len(expected) and all(
-            _normalized(actual) == _normalized(target) or same_math_notation(target, actual)
-            for target, actual in zip(expected, submitted)
-        )
+        if len(submitted) != len(expected):
+            return False
+        if review.get("mode") == "canvas_slots" and review.get("accept_any_order") is True:
+            return _answers_match_in_any_order(expected, submitted)
+        return all(_answer_value_matches(target, actual) for target, actual in zip(expected, submitted))
     for item in answer_key:
         if isinstance(item, dict):
             candidates.append(item.get("value", item.get("id")))

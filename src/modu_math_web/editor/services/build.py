@@ -411,7 +411,7 @@ def compile_problem_artifacts(problem_paths, *, include_svg: bool = True) -> dic
         from .answer_review import apply_answer_review, review_with_slot_answer_keys
 
         effective_review = review_with_slot_answer_keys(
-            module.EDITOR_ANSWER_REVIEW, problem
+            module.EDITOR_ANSWER_REVIEW, problem, deleted_slot_ids=deleted_answer_slots
         )
         semantic, solvable = apply_answer_review(
             semantic, solvable, effective_review

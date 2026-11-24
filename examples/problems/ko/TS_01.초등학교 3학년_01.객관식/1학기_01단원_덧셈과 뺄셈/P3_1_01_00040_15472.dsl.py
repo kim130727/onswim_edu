@@ -328,3 +328,11 @@ SOLVABLE = {
 
 
 SEMANTIC_ANSWER = SOLVABLE["answer"]
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_slots',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '334', 'ref': 'konva_1785217709470_rect_5693830'},
+             {'value': '415', 'ref': 'konva_1785217709470_paste_5710048_0'}],
+ 'choices': [],
+ 'accept_any_order': True}

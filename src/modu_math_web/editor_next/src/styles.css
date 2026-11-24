@@ -2008,7 +2008,7 @@ input {
 .answer-review-panel button:disabled { opacity: .45; cursor: default; }
 .answer-review-panel button[aria-pressed=false] { background: #e2e8f0; color: #334155; }
 .review-help { font-size: 12px; color: #475569; margin: 4px 0; line-height: 1.5; }
-.answer-review-panel .review-canvas-visibility-option {
+.answer-review-panel .review-checkbox-option {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -2021,8 +2021,8 @@ input {
   font-weight: 700;
   cursor: pointer;
 }
-.review-canvas-visibility-option input { margin: 0; }
-.review-canvas-visibility-option:has(input:disabled) { cursor: default; opacity: .65; }
+.review-checkbox-option input { margin: 0; }
+.review-checkbox-option:has(input:disabled) { cursor: default; opacity: .65; }
 .review-answer-row { display: flex; align-items: center; gap: 6px; }
 .answer-review-panel .review-answer-input-with-unit {
   display: flex;

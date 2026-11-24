@@ -274,6 +274,56 @@ def test_explicit_new_blank_reference_is_not_replaced_by_legacy_blank():
     assert hydrated['answers'][1] == {"value": "9", "ref": "slot.old"}
 
 
+def test_saved_canvas_answer_order_is_used_by_the_student_preview(tmp_path):
+    client = _setup_django(tmp_path)
+    from django.conf import settings
+
+    root = Path(__file__).resolve().parents[2] / "examples" / "problems"
+    source = next(root.rglob("P3_1_01_00040_15472.dsl.py"))
+    relative = source.relative_to(root)
+    target = settings.PROBLEMS_ROOT / relative
+    target.parent.mkdir(parents=True)
+    for kind in ("dsl.py", "editor_overrides.json"):
+        name = source.name.removesuffix("dsl.py") + kind
+        shutil.copyfile(source.with_name(name), target.with_name(name))
+    url = "/api/editor/problems/" + quote(relative.as_posix())
+    answers = [
+        {"value": "334", "ref": "konva_1785217709470_rect_5693830"},
+        {"value": "415", "ref": "konva_1785217709470_paste_5710048_0"},
+    ]
+    for accept_any_order in (False, True):
+        settings_to_save = review("canvas_slots") | {
+            "answers": answers, "choices": [], "accept_any_order": accept_any_order,
+        }
+        response = client.post(url + "/answer-review/", {"review": settings_to_save},
+                               content_type="application/json")
+        assert response.status_code == 200, response.content
+        built = client.post(url + "/build/")
+        assert built.status_code == 200, built.content
+        detail = client.get(url + "/").json()
+        for artifact in ("semantic", "solvable"):
+            answer = detail[artifact]["answer"]
+            assert len(answer["answer_key"]) == 2
+            assert answer["presentation"]["review"].get("accept_any_order", False) is accept_any_order
+        preview_url = url + "/student-preview/"
+        preview = client.get(preview_url).json()
+        assert preview["presentation"]["mode"] == "canvas_slots"
+        assert sorted(preview["presentation"]["canvas_bindings"].values()) == [0, 1]
+        for pair, correct in (
+            (["334", "415"], True), (["415", "334"], accept_any_order), (["334", "334"], False),
+        ):
+            response = client.post(preview_url, {"revision": preview["revision"], "answer": pair},
+                                   content_type="application/json")
+            assert response.status_code == 200, response.content
+            assert response.json()["correct"] is correct
+
+
+@pytest.mark.parametrize("patch", [{"accept_any_order": "true"}, {"answers": [{"value": "1"}]}, {"mode": "choice"}])
+def test_answer_order_option_requires_two_canvas_answers_and_a_boolean(patch):
+    with pytest.raises(ValueError, match="순서"):
+        normalize_review(review("canvas_slots") | {"accept_any_order": True} | patch)
+
+
 @pytest.mark.parametrize('patch', [
     {'mode': 'wrong'}, {'status': 'wrong'}, {'choices': []},
     {'mode': 'ox', 'answers': [{'value': 'maybe'}]},

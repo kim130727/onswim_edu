@@ -53,7 +53,11 @@ export function AnswerReviewPanel({
     setShowInputEdit(false);
   }, [settings]);
 
-  const update = (patch: Partial<AnswerReviewSettings>) => onChange({ ...settings, ...patch });
+  const update = (patch: Partial<AnswerReviewSettings>) => {
+    const next = { ...settings, ...patch };
+    if (next.mode !== "canvas_slots" || next.answers.length < 2) delete next.accept_any_order;
+    onChange(next);
+  };
 
   const choiceMode = settings.mode === "choice" || settings.mode === "canvas_select";
   const canvasSelectMode = settings.mode === "canvas_select";
@@ -74,11 +78,17 @@ export function AnswerReviewPanel({
         settings.answers.every((answer) => (oxMode ? /^[OX]$/.test(answer.value) : answer.value.trim().length > 0));
 
   const check = () => {
+    const expectedValues = settings.answers.map((answer) => normalizedAnswer(answer.value));
+    const submittedValues = settings.answers.map((_, index) => normalizedAnswer(responses[index] ?? ""));
+    if (settings.mode === "canvas_slots" && settings.accept_any_order) {
+      expectedValues.sort();
+      submittedValues.sort();
+    }
     const correct = groupMode
       ? groups.every((group, index) => responses[index] === String(group.correct_index))
       : choiceMode
         ? expected.length === selected.length && expected.every((id) => selected.includes(id))
-        : settings.answers.every((answer, index) => normalizedAnswer(responses[index] ?? "") === normalizedAnswer(answer.value));
+        : expectedValues.every((answer, index) => submittedValues[index] === answer);
     setResult(correct ? "✓ 정답입니다! (채점 일치)" : "✕ 정답과 다릅니다. 입력 내용과 등록된 정답을 확인하세요.");
   };
 
@@ -463,11 +473,21 @@ export function AnswerReviewPanel({
               >
                 ＋ 정답 추가
               </button>
+              {settings.mode === "canvas_slots" && settings.answers.length >= 2 && (
+                <label className="review-checkbox-option">
+                  <input
+                    type="checkbox"
+                    checked={settings.accept_any_order === true}
+                    onChange={(event) => update({ accept_any_order: event.target.checked })}
+                  />
+                  입력 순서가 달라도 정답으로 인정
+                </label>
+              )}
             </>
           )}
 
           <details className="review-display-settings"><summary>문제 그림 표시 설정</summary>
-          <label className="review-canvas-visibility-option">
+          <label className="review-checkbox-option">
             <input
               type="checkbox"
               checked={settings.mode === "canvas_slots" || settings.mode === "canvas_select" || settings.show_canvas !== false}

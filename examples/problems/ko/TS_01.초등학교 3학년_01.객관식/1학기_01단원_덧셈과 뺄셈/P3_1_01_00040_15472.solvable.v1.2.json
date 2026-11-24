@@ -148,40 +148,45 @@
   "answer": {
     "type": "multi_numeric",
     "value": [
-      334,
-      415
+      "334",
+      "415"
     ],
     "unit": "",
-    "values": [
-      334,
-      415
-    ],
     "derived_from": "step.select_pair",
-    "blanks": [
-      {
-        "id": "konva_1785217709470_rect_5693830",
-        "slot_id": "konva_1785217709470_rect_5693830",
-        "expected": 334,
-        "unit": ""
-      },
-      {
-        "id": "konva_1785217709470_paste_5710048_0",
-        "slot_id": "konva_1785217709470_paste_5710048_0",
-        "expected": 415,
-        "unit": ""
-      }
-    ],
+    "blanks": [],
     "answer_key": [
       {
-        "slot_id": "konva_1785217709470_rect_5693830",
-        "value": 334,
-        "unit": ""
+        "value": "334",
+        "slot_id": "konva_1785217709470_rect_5693830"
       },
       {
-        "slot_id": "konva_1785217709470_paste_5710048_0",
-        "value": 415,
-        "unit": ""
+        "value": "415",
+        "slot_id": "konva_1785217709470_paste_5710048_0"
       }
-    ]
+    ],
+    "presentation": {
+      "mode": "canvas_slots",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_slots",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "334",
+            "ref": "konva_1785217709470_rect_5693830"
+          },
+          {
+            "value": "415",
+            "ref": "konva_1785217709470_paste_5710048_0"
+          }
+        ],
+        "choices": [],
+        "accept_any_order": true
+      }
+    },
+    "choices": []
   }
 }

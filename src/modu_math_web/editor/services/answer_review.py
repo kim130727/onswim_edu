@@ -134,6 +134,13 @@ def normalize_review(value):
     if mode == "ox" and any(a["value"] not in {"O", "X"} for a in answers):
         raise ValueError("OX 정답은 O 또는 X로 지정하세요.")
     result = {"mode": mode, "show_canvas": show_canvas, "status": status, "note": note, "answers": answers, "choices": cleaned}
+    accept_any_order = value.get("accept_any_order", False)
+    if type(accept_any_order) is not bool:
+        raise ValueError("정답 입력 순서 설정이 올바르지 않습니다.")
+    if accept_any_order:
+        if mode != "canvas_slots" or len(answers) < 2:
+            raise ValueError("입력 순서 허용은 정답 빈칸이 두 개 이상일 때 설정할 수 있습니다.")
+        result["accept_any_order"] = True
     if mode == "grouped_choice":
         from .choice_groups import normalize_choice_groups
         result["groups"] = normalize_choice_groups(value.get("groups"))
@@ -153,7 +160,7 @@ def save_answer_review(problem_id, value):
     return review
 
 
-def review_with_slot_answer_keys(value, problem):
+def review_with_slot_answer_keys(value, problem, *, deleted_slot_ids=()):
     """Overlay explicit BlankSlot/ChoiceSlot keys for review hydration.
 
     Review saves write these keys at the same time, so this mainly handles a
@@ -166,6 +173,7 @@ def review_with_slot_answer_keys(value, problem):
             slot.id: slot.answer_key
             for slot in slots
             if isinstance(slot, BlankSlot)
+            and slot.id not in deleted_slot_ids
             and isinstance(slot.answer_key, str)
             and slot.answer_key.strip()
         }

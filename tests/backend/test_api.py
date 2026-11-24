@@ -37,6 +37,19 @@ class AnswerMatchingTests(TestCase):
             )
         )
 
+    def test_unordered_canvas_answers_count_repeats_and_keep_normalization(self):
+        answer = {
+            "answer_key": [{"value": "1 / 2"}, {"value": "7"}, {"value": "7"}],
+            "presentation": {"review": {"mode": "canvas_slots", "accept_any_order": True}},
+        }
+        self.assertTrue(answer_matches(answer, ["7", "1/2", "７"]))
+        self.assertFalse(answer_matches(answer, ["7", "1/2", "1/2"]))
+        self.assertFalse(answer_matches(answer, ["7", "1/2"]))
+        self.assertFalse(answer_matches(answer, ["7", "1/2", "7", "7"]))
+        answer["presentation"]["review"]["accept_any_order"] = False
+        self.assertFalse(answer_matches(answer, ["7", "1/2", "7"]))
+        self.assertTrue(answer_matches(answer, ["1/2", "7", "7"]))
+
     def test_choice_identity_survives_duplicate_display_text(self):
         choices = [
             {"id": "slot.choice.copy4", "text": "Same", "label": "1"},

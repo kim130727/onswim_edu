@@ -195,6 +195,7 @@ export function normalizedAnswer(value: string): string {
 export interface AnswerReviewSettings {
   mode: AnswerPresentationMode | "ox" | "grouped_choice";
   show_canvas: boolean;
+  accept_any_order?: boolean;
   status: "pending" | "needs_changes" | "verified";
   note: string;
   answers: { value: string; ref?: string; unit?: string }[];

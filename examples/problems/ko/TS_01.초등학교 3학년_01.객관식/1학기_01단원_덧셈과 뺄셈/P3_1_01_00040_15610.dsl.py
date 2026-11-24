@@ -289,3 +289,23 @@ SOLVABLE = {
 
 
 SEMANTIC_ANSWER = SOLVABLE["answer"]
+EDITOR_ANSWER_REVIEW = {'mode': 'choice',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '>', 'ref': 'answer.value'}],
+ 'choices': [{'id': 'choice.review.38bc5d3e-1503-412b-b347-5d276bdde2c0',
+              'text': '>',
+              'correct': True,
+              'label': '1',
+              'sourceRefs': []},
+             {'id': 'choice.review.c92a9ebd-1a9d-4279-ad97-3cbe63933cd2',
+              'text': '=',
+              'correct': False,
+              'label': '2',
+              'sourceRefs': []},
+             {'id': 'choice.review.eb108219-ea91-4f49-980b-7972bd0c8f59',
+              'text': '<',
+              'correct': False,
+              'label': '3',
+              'sourceRefs': []}]}
