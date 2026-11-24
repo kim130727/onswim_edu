@@ -1,12 +1,12 @@
-# Onswim Edu (온쉼에듀)
+# 온쉼에듀 (Onswim Edu)
 
-초등 수학 문제의 저작, 컴파일, 렌더링, 웹 검수 및 모바일 풀이까지 전 과정을 아우르는 오픈소스 멀티모달 수학 학습 플랫폼입니다.
+초등·중등 수학 문제의 저작, 컴파일, 렌더링, 웹 검수 및 모바일 풀이까지 전 과정을 아우르는 멀티모달 수학 학습 플랫폼입니다.
 
 ---
 
 ## 📌 프로젝트 개요 및 현재 진행 현황 (Current Status)
 
-`modu_math`는 종이 교재 및 이미지(PNG) 형태의 수학 문제를 고도화된 정형 데이터(DSL & JSON 계약)로 변환하고, 이를 Konva 웹 에디터(`/editor-konva/`)와 React + TypeScript + Vite + Capacitor 기반 학생 앱(`/student/` 및 모바일 앱)을 통해 전달하는 모노레포 프로젝트입니다.
+**온쉼에듀(Onswim Edu)**는 종이 교재 및 이미지(PNG) 형태의 수학 문제를 정형 데이터(DSL & JSON 계약)로 변환하고, 이를 Konva 웹 에디터(`/editor-konva/`)와 React + TypeScript + Vite + Capacitor 기반 학생 앱(`/student/` 및 모바일 앱)을 통해 전달하는 모노레포 프로젝트입니다.
 
 ### 핵심 구성요소 및 진행 현황
 
@@ -14,16 +14,16 @@
 | :--- | :--- | :--- | :--- |
 | **Core DSL & Compiler** | `src/modu_math/` | Python 3.12, libcst, jsonschema | **완료/안정화**<br>• Canonical 파이프라인 구축 (`PNG` → `DSL` → `semantic/solvable/layout/renderer JSON`, 선택적 `SVG`)<br>• 빈칸/선택지/연산 세로셈(Columnar)/사다리타기/OX 판정/선택지 그룹 등 다양한 수학 UI 지원<br>• Vision LLM 보조 저작 도구 (`tools/generate_vision_draft.py` 등)<br>• 배치 및 실시간 감시 빌더 (`mb.bat`, `mw.bat`, `mb_all.bat`) |
 | **Web Backend & Learning API** | `src/modu_math_web/` | Django 4.2+, DRF, PostgreSQL, SQLite | **완료/안정화**<br>• 문제 카탈로그 API (`/api/v1/problems/`) 및 다국어 필터링<br>• 학생 풀이 세션, 제출 채점 및 학습 로그 기록 (`/api/v1/attempts/`)<br>• 단원/개념별 숙련도(Mastery) 집계 및 통계<br>• 문제 자동 태깅, 진단 및 추천 서비스 (`ProblemTagging`, Diagnostic & Recommendation)<br>• 에디터 API (`/api/editor/`) 유지, 레거시 `/editor/` UI 제거(404) |
-| **Shared Student Renderer** | `packages/student-renderer/` | React 19, TypeScript | **완료**<br>• 학생 웹(`/student/`), Capacitor 앱, Konva `앱처럼 풀어보기`가 공유하는 단일 문제 렌더링·입력·채점 표시 계층 |
-| **Web Editor (Konva)** | `src/modu_math_web/editor_next/` | React 19, Konva, TypeScript, Vite | **완료**<br>• 캔버스 기반 시각적 문제 레이아웃 편집기 (`/editor-konva/`)<br>• 정답 검수 패널 (`AnswerReviewPanel`) 및 다국어 배치 동기화<br>• `ReactStudentPreview` 기반 `앱처럼 풀어보기` (실제 학습 기록 미생성) |
-| **Student App (Web & Capacitor)** | `apps/mobile/` | React 19, TypeScript, Vite, Capacitor 7 | **완료**<br>• 학생 웹(`/student/`), 로컬 개발(`http://localhost:3000`), Capacitor Android/iOS가 동일한 소스와 `dist/` 빌드 산출물 공유<br>• 공개 문제 학습, 과제, 토큰 인증/세션 유지, 다국어(`ko`/`uk`), 세로셈 받아올림 및 객관식/주관식 입력 지원 |
-| **CI/CD & DevOps** | `scripts/modu_monorepo.ps1`, `Dockerfile`, `compose.yaml` | Docker Compose, Node 20, Python 3.12 | **구축 완료**<br>• Flutter SDK 없이 전체 운영 빌드 완료<br>• Docker Compose (PostgreSQL 16 + Django Gunicorn + Nginx) 환경 |
+| **Shared Student Renderer** | `packages/student-renderer/` | React 19, TypeScript | **완료**<br>• 학생 웹(`/student/`), Capacitor 앱, Konva `앱처럼 풀어보기`가 공유하는 단일 문제 렌더링·입력·채점 표시 계층 및 3단계 디자인 토큰 (`tokens.css`) |
+| **Web Editor (Konva)** | `src/modu_math_web/editor_next/` | React 19, Konva, TypeScript, Vite | **완료**<br>• 캔버스 기반 시각적 문제 레이아웃 편집기 (`/editor-konva/`)<br>• 드래그 가능한 문제 탐색 패널, 아코디언 속성 패널, 요소 잠금 배지, 라이트/다크 모드 지원<br>• 정답 검수 패널 (`AnswerReviewPanel`) 및 다국어 배치 동기화<br>• `ReactStudentPreview` 기반 `앱처럼 풀어보기` (실제 학습 기록 미생성) |
+| **Student App (Web & Capacitor)** | `apps/mobile/` | React 19, TypeScript, Vite, Capacitor 7 | **완료**<br>• 학생 웹(`/student/`), 로컬 개발(`http://localhost:3000`), Capacitor Android/iOS가 동일한 소스와 `dist/` 빌드 산출물 공유<br>• 공개 문제 학습, 과제, 토큰 인증/세션 유지, 다국어(`ko`/`uk`), 세로셈 받아올림 및 객관식/주관식 입력, 로딩 스켈레톤·상단 스텝 진행 바·모바일 하단 고정 액션 바 지원 |
+| **CI/CD & DevOps** | `scripts/modu_monorepo.ps1`, `Dockerfile`, `compose.yaml` | Docker Compose, Node 20, Python 3.12 | **구축 완료**<br>• Node 20 + Python 3.12 기반 단일 운영 빌드<br>• Docker Compose (PostgreSQL 16 + Django Gunicorn + Nginx) 환경 |
 
 ---
 
 ## 🔄 Core Pipeline & Contracts
 
-모든 수학 문제는 사람이 직접 편집 가능한 `problem.dsl.py`를 단일 진실 공급원(SSOT)으로 삼습니다. Flutter 앱의 기준 시각 계약은 `renderer.json`이며, SVG 미리보기는 필요할 때만 생성하는 파생 산출물입니다.
+수학 문제는 사람이 직접 편집 가능한 `problem.dsl.py`를 단일 진실 공급원(SSOT)으로 삼습니다. 학생 앱과 Konva 미리보기의 기준 시각 계약은 `renderer.json`이며, SVG 미리보기는 필요할 때만 생성하는 파생 산출물입니다.
 
 ```text
 PNG / Vision Draft
@@ -56,15 +56,17 @@ PNG -> vision_draft.md + vision_structured.json -> refined_draft.md -> Python DS
 ## 📁 디렉토리 구조 (Directory Structure)
 
 ```text
-modu_math/
+onswim_edu/
 ├── apps/
-│   └── mobile/                  # Flutter 앱과 ko/uk UI 번역·빌드 결과물
+│   └── mobile/                  # React + Vite + Capacitor 학생 앱 (웹·Android·iOS 공용)
+├── packages/
+│   └── student-renderer/        # 학생 웹·Capacitor·Konva 미리보기 공용 렌더러 & 3단계 디자인 토큰
 ├── src/
-│   ├── modu_math/               # 핵심 컴파일러, 파이프라인, 어댑터, 렌더러
+│   ├── modu_math/               # 핵심 컴파일러, 파이프라인, 어댑터, 렌더러 (하위 호환 패키지명 유지)
 │   ├── modu_math_web/           # Django 백엔드
 │   │   ├── learning/            # 학습 REST API, 채점, 숙련도, 진단/추천
-│   │   ├── editor/              # 레거시 에디터 API 및 상태 관리
-│   │   └── editor_next/         # React 19 + Konva 차세대 웹 에디터
+│   │   ├── editor/              # 에디터 API (/api/editor/) 및 서비스
+│   │   └── editor_next/         # React 19 + Konva 웹 에디터 & 교사 화면
 │   └── modu_semantic/           # 하위 호환성 래퍼
 ├── examples/
 │   └── problems/
@@ -78,18 +80,13 @@ modu_math/
 ├── scripts/                     # 모노레포 관리, 빌드 및 동기화 스크립트
 ├── tools/                       # Vision 드래프트 생성, DSL 변환 보조 도구
 ├── docs/                        # 아키텍처, 진단 체계, 아바타, 백엔드 가이드
-├── compose.yaml                 # PostgreSQL + Django Docker Compose 구성
+├── compose.yaml                 # PostgreSQL + Django + Nginx Docker Compose 구성
 ├── Dockerfile                   # Django 백엔드 컨테이너 빌드 파일
 ├── pyproject.toml               # Python 의존성 및 프로젝트 메타데이터
 └── README.md                    # 본 문서
 ```
 
-문제 번역은 `locales/uk/<문제>.json`, 언어별 화면 배치는
-`overrides/{ko,uk}/<문제>.layout.json`에서 관리합니다. 번역 파일에는 문장만
-들어가므로 번역자가 배치나 내부 빌드 데이터를 다룰 필요가 없습니다. 모바일 앱의
-메뉴·버튼 번역은 `apps/mobile/assets/i18n/{ko,uk}.json`, 빌드된 문제 데이터는
-`apps/mobile/generated/examples/problems/{ko,uk}/`에 위치합니다. 자세한 작업
-흐름은 `docs/single_source_localization.md`를 참고하세요.
+문제 번역은 `locales/uk/<문제>.json`, 언어별 화면 배치는 `overrides/{ko,uk}/<문제>.layout.json`에서 관리합니다. 학생 앱 UI 번역 문자열은 `packages/student-renderer/src/strings.ts`에서 단일 관리합니다. 자세한 작업 흐름은 `docs/single_source_localization.md`를 참고하세요.
 
 ---
 
@@ -124,7 +121,7 @@ mb examples\problems\0001\problem.dsl.py
 # 파일 변경 감시(Watch) 자동 빌드
 mw 0001
 
-# 폴더 내 모든 문제 일괄 빌드
+# 폴더 내 문제 일괄 빌드
 mb_all examples\problems
 ```
 
@@ -137,7 +134,7 @@ uv run python manage.py sync_problems   # JSON 문제를 DB로 동기화
 uv run python manage.py runserver 127.0.0.1:8000
 ```
 
-#### Docker Compose 환경 (Docker Desktop & PostgreSQL):
+#### Docker Compose 환경 (Docker Desktop & PostgreSQL 16):
 
 1. **Docker Desktop 실행**: 시작 메뉴에서 Docker Desktop을 실행하거나 PowerShell에서 `docker desktop start`를 입력한 뒤 `Engine running` 상태가 될 때까지 대기합니다.
 2. **컨테이너 빌드 및 실행**:
@@ -150,10 +147,10 @@ uv run python manage.py runserver 127.0.0.1:8000
    docker compose exec web python manage.py sync_problems
    ```
 4. **브라우저 접속**:
-   - **React 학생 앱 (Nginx)**: [http://localhost:3000/](http://localhost:3000/)
-   - **Django 학생 화면**: [http://localhost:8000/student/](http://localhost:8000/student/)
-   - **교사 화면**: [http://localhost:8000/teacher/](http://localhost:8000/teacher/)
-   - **웹 에디터 (Konva)**: [http://localhost:8000/editor-konva/](http://localhost:8000/editor-konva/) (기존 레거시 `/editor/`는 제거되어 404 반환)
+   - **온쉼에듀 학생 앱 (Nginx)**: [http://localhost:3000/](http://localhost:3000/)
+   - **온쉼에듀 학생 화면 (Django)**: [http://localhost:8000/student/](http://localhost:8000/student/)
+   - **교사 학습관리 화면**: [http://localhost:8000/teacher/](http://localhost:8000/teacher/)
+   - **Konva 웹 에디터**: [http://localhost:8000/editor-konva/](http://localhost:8000/editor-konva/) (기존 레거시 `/editor/`는 제거되어 404 반환)
    - **학습 REST API**: [http://localhost:8000/api/v1/](http://localhost:8000/api/v1/)
 
 > **Tip (엔진 오류 시 재시작)**:
@@ -169,7 +166,7 @@ npm run typecheck  # TypeScript 타입 검사
 npm run build      # 정적 번들 빌드 -> static/editor_next/konva_assets/
 ```
 
-### 6. React 학생 앱 및 Capacitor 실행
+### 6. 온쉼에듀 React 학생 앱 및 Capacitor 실행
 
 ```bash
 cd apps/mobile
@@ -206,10 +203,12 @@ powershell -ExecutionPolicy Bypass -File scripts\modu_monorepo.ps1 -Task check
 
 ## 📚 추가 참고 문서 (Documentation)
 
-- [백엔드 구조 및 데이터 모델 가이드](file:///c:/projects/modu_math/docs/backend.md)
-- [문제 진단 분류 및 추천 체계](file:///c:/projects/modu_math/docs/taxonomy_and_diagnostics.md)
-- [수채화 아바타 사양서](file:///c:/projects/modu_math/docs/WATERCOLOR_AVATARS.md)
-- [Web Editor Konva 안내](file:///c:/projects/modu_math/src/modu_math_web/editor_next/README.md)
+- [백엔드 구조 및 데이터 모델 가이드](docs/backend.md)
+- [문제 진단 분류 및 추천 체계](docs/taxonomy_and_diagnostics.md)
+- [수채화 아바타 사양서](docs/WATERCOLOR_AVATARS.md)
+- [Web Editor Konva 안내](src/modu_math_web/editor_next/README.md)
+- [학습 플랫폼 구조 문서](docs/learning_platform_architecture.md)
+
 ## 학생 과제 웹 실행
 
 저장소 루트에서 학생 전용 번들을 빌드한 후 Django를 실행합니다.
@@ -220,6 +219,4 @@ python manage.py migrate
 python manage.py runserver
 ```
 
-교사는 `/teacher/`, 학생은 `/student/`에서 로그인합니다. 학생 번들은 정답이 포함된 저작용 generated 자산과 `.env`를 제외합니다. 운영 배포에서는 기존 편집기·오프라인 자산의 접근 정책도 별도로 설정해야 합니다.
-
-Flutter 개발 실행은 `apps/mobile`에서 `flutter run --target lib/main.dart --dart-define=BACKEND_API_BASE_URL=http://127.0.0.1:8000`을 사용합니다. 기기에서는 접근 가능한 서버 주소로 바꿉니다. 실제 브라우저 통합 검증은 `src/modu_math_web/editor_next`에서 `npm run test:student-browser`입니다. 상세 구현과 남은 검증은 [학습 플랫폼 구조 문서](docs/learning_platform_architecture.md)에 기록합니다.
+교사는 `/teacher/`, 학생은 `/student/`에서 로그인합니다. 학생 번들은 정답이 포함된 저작용 아티팩트와 `.env`를 포함하지 않도록 빌드 시 자동 검증합니다.
