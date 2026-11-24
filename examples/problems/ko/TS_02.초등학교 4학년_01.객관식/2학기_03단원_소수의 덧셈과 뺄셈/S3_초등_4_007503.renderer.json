@@ -33,7 +33,7 @@
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "28. 1, 0.1, 0.01, 0.001 사이의 관계를 보고 알맞은 것을 선택하세요."
+      "text": "1, 0.1, 0.01, 0.001 사이의 관계를 보고 알맞은 것을 선택하세요."
     },
     {
       "id": "slot.choice.option_0.rect",
@@ -500,8 +500,8 @@
       "id": "slot.diagram.opt_text_0.text",
       "type": "text",
       "attributes": {
-        "x": 160.0,
-        "y": 305.0,
+        "x": 122.55,
+        "y": 321.94,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -516,8 +516,8 @@
       "id": "slot.diagram.opt_text_1.text",
       "type": "text",
       "attributes": {
-        "x": 350.0,
-        "y": 305.0,
+        "x": 312.55,
+        "y": 321.05,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -532,8 +532,8 @@
       "id": "slot.diagram.opt_text_2.text",
       "type": "text",
       "attributes": {
-        "x": 540.0,
-        "y": 305.0,
+        "x": 502.55,
+        "y": 321.05,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -548,8 +548,8 @@
       "id": "slot.diagram.opt_text_3.text",
       "type": "text",
       "attributes": {
-        "x": 730.0,
-        "y": 305.0,
+        "x": 694.33,
+        "y": 320.16,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0

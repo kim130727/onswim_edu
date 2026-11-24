@@ -67,7 +67,7 @@
       "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "28. 1, 0.1, 0.01, 0.001 사이의 관계를 보고 알맞은 것을 선택하세요.",
+        "text": "1, 0.1, 0.01, 0.001 사이의 관계를 보고 알맞은 것을 선택하세요.",
         "style_role": "body",
         "x": 32.0,
         "y": 24.0,
@@ -497,8 +497,8 @@
       "content": {
         "text": "① 왼쪽, 한",
         "style_role": "body",
-        "x": 160.0,
-        "y": 305.0,
+        "x": 122.55,
+        "y": 321.94,
         "font_size": 18,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -512,8 +512,8 @@
       "content": {
         "text": "② 왼쪽, 두",
         "style_role": "body",
-        "x": 350.0,
-        "y": 305.0,
+        "x": 312.55,
+        "y": 321.05,
         "font_size": 18,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -527,8 +527,8 @@
       "content": {
         "text": "③ 오른쪽, 한",
         "style_role": "body",
-        "x": 540.0,
-        "y": 305.0,
+        "x": 502.55,
+        "y": 321.05,
         "font_size": 18,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -542,8 +542,8 @@
       "content": {
         "text": "④ 오른쪽, 두",
         "style_role": "body",
-        "x": 730.0,
-        "y": 305.0,
+        "x": 694.33,
+        "y": 320.16,
         "font_size": 18,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",

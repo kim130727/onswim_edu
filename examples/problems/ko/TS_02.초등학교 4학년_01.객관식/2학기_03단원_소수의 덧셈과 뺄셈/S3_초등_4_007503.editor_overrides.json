@@ -1,0 +1,24 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "1, 0.1, 0.01, 0.001 사이의 관계를 보고 알맞은 것을 선택하세요."
+    },
+    "slot.diagram.opt_text_0": {
+      "x": 122.55,
+      "y": 321.94
+    },
+    "slot.diagram.opt_text_1": {
+      "x": 312.55,
+      "y": 321.05
+    },
+    "slot.diagram.opt_text_2": {
+      "x": 502.55,
+      "y": 321.05
+    },
+    "slot.diagram.opt_text_3": {
+      "x": 694.33,
+      "y": 320.16
+    }
+  },
+  "version": 1
+}
