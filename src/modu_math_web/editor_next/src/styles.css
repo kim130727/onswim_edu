@@ -2709,12 +2709,27 @@ input {
   border-color: var(--mm-color-primary-border);
 }
 
-/* Accordion Inspector Groups */
+/* Accordion Inspector Groups (flex-column stack prevents Chromium grid+<details> clipping) */
+[data-mm-surface="editor"] .konva-field-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+[data-mm-surface="editor"] .konva-field-grid > * {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
 [data-mm-surface="editor"] .konva-accordion-group {
+  display: block;
   border: 1px solid var(--mm-color-border-subtle);
   border-radius: var(--mm-p-radius-sm);
   background: var(--mm-color-bg-surface);
-  overflow: hidden;
+  overflow: visible;
 }
 
 [data-mm-surface="editor"] .konva-accordion-group > summary {
@@ -2722,17 +2737,19 @@ input {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 9px 12px;
   font-size: 12px;
   font-weight: 700;
   color: var(--mm-color-text-primary);
   background: var(--mm-color-bg-subtle);
+  border-radius: var(--mm-p-radius-sm);
   border-bottom: 1px solid transparent;
   cursor: pointer;
   user-select: none;
 }
 
 [data-mm-surface="editor"] .konva-accordion-group[open] > summary {
+  border-radius: var(--mm-p-radius-sm) var(--mm-p-radius-sm) 0 0;
   border-bottom-color: var(--mm-color-border-subtle);
 }
 
@@ -2748,7 +2765,18 @@ input {
 }
 
 [data-mm-surface="editor"] .konva-accordion-group > .konva-property-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
   padding: 10px 12px;
+}
+
+[data-mm-surface="editor"] .konva-property-detail-grid .konva-field input,
+[data-mm-surface="editor"] .konva-property-detail-grid .konva-field select,
+[data-mm-surface="editor"] .konva-property-detail-grid .konva-field textarea {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* Locked Status Bar & Visual Badge */

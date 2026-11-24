@@ -8,8 +8,9 @@
       "semantic_role_source": "explicit"
     },
     "slot.diagram.example_box": {
-      "x": 136.515,
-      "width": 133.48
+      "x": 147.476,
+      "width": 111.39,
+      "height": 97.19
     },
     "slot.diagram.choice_frame": {
       "x": 290.99,
@@ -21,8 +22,8 @@
       "x": 171.09
     },
     "slot.diagram.example_expr": {
-      "x": 166.52,
-      "y": 157.03
+      "x": 161.5,
+      "y": 149.72
     },
     "slot.choice.option_0": {
       "x": 309.18,

@@ -39,10 +39,10 @@
       "id": "slot.diagram.example_box.rect",
       "type": "rect",
       "attributes": {
-        "x": 136.515,
+        "x": 147.476,
         "y": 76.0,
-        "width": 133.48,
-        "height": 115.0,
+        "width": 111.39,
+        "height": 97.19,
         "fill": "#ffffff",
         "stroke": "#6b7280",
         "stroke-width": 1.5
@@ -89,8 +89,8 @@
       "id": "slot.diagram.example_expr.text",
       "type": "text",
       "attributes": {
-        "x": 166.52,
-        "y": 157.03,
+        "x": 161.5,
+        "y": 149.72,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 24.0

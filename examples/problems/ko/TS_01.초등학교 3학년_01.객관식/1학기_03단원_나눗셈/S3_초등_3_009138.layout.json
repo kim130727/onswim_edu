@@ -66,10 +66,10 @@
       "kind": "rect",
       "prompt": "",
       "content": {
-        "x": 136.515,
+        "x": 147.476,
         "y": 76.0,
-        "width": 133.48,
-        "height": 115.0,
+        "width": 111.39,
+        "height": 97.19,
         "stroke": "#6b7280",
         "stroke_width": 1.5,
         "fill": "#ffffff"
@@ -97,8 +97,8 @@
       "content": {
         "text": "45 ÷ 5",
         "style_role": "body",
-        "x": 166.52,
-        "y": 157.03,
+        "x": 161.5,
+        "y": 149.72,
         "font_size": 24,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
