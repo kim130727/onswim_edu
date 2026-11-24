@@ -3010,3 +3010,58 @@ input {
   color: var(--mm-color-danger-text);
   border: 1px solid var(--mm-color-danger-border);
 }
+
+
+/* Inspector Micro-Polish: Checkbox row, Select height match, Fit buttons & Korean keep-all */
+[data-mm-surface="editor"] .konva-property-panel {
+  word-break: keep-all;
+}
+
+[data-mm-surface="editor"] .konva-checkbox-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mm-color-border-subtle);
+  background: var(--mm-color-bg-subtle);
+  cursor: pointer;
+}
+
+[data-mm-surface="editor"] .konva-checkbox-field span {
+  font-weight: 600;
+  color: var(--mm-color-text-primary);
+}
+
+[data-mm-surface="editor"] .konva-checkbox-field input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--mm-color-primary);
+  cursor: pointer;
+}
+
+[data-mm-surface="editor"] .konva-property-detail-grid .konva-field input:not([type="checkbox"]),
+[data-mm-surface="editor"] .konva-property-detail-grid .konva-field select {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--mm-color-border-strong);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+[data-mm-surface="editor"] .konva-fit-buttons .konva-fit-both-btn {
+  grid-column: 1 / -1;
+}
+
+[data-mm-surface="editor"] .konva-placement-buttons button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
