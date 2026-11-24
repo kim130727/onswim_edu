@@ -1,0 +1,345 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 600,
+    "height": 250
+  },
+  "deleted_slots": [
+    "answer.stage1.carry",
+    "answer.stage1.ones",
+    "answer.stage2.carry_hundreds",
+    "answer.stage2.carry_tens",
+    "answer.stage2.tens",
+    "answer.stage2.ones",
+    "answer.stage3.carry_hundreds",
+    "answer.stage3.carry_tens",
+    "answer.stage3.hundreds",
+    "answer.stage3.tens",
+    "answer.stage3.ones",
+    "slot.stage1.carry",
+    "slot.stage1.answer_ones",
+    "slot.stage2.carry_hundreds",
+    "slot.stage2.carry_tens",
+    "slot.stage2.answer_tens",
+    "slot.stage2.answer_ones",
+    "slot.stage3.carry_hundreds",
+    "slot.stage3.carry_tens",
+    "slot.stage3.answer_hundreds",
+    "slot.stage3.answer_tens",
+    "slot.stage3.answer_ones"
+  ],
+  "slots": {
+    "slot.stage1.line": {
+      "x1": 37,
+      "y1": 200.959,
+      "x2": 150,
+      "y2": 200.959,
+      "stroke": "#111111",
+      "stroke_width": 2
+    },
+    "slot.stage2.line": {
+      "x1": 205,
+      "y1": 200.959,
+      "x2": 318,
+      "y2": 200.959,
+      "stroke": "#111111",
+      "stroke_width": 2
+    },
+    "slot.stage3.line": {
+      "x1": 374,
+      "y1": 200.959,
+      "x2": 487,
+      "y2": 200.959,
+      "stroke": "#111111",
+      "stroke_width": 2
+    },
+    "slot.instruction": {
+      "text": "□ 안에 알맞은 수를 써넣으시오.",
+      "x": 24,
+      "y": 18.994,
+      "font_size": 23,
+      "fill": "#202124",
+      "width": 497.091,
+      "height": 66.0,
+      "align": "left",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.stage1.top": {
+      "text": "5 5 4",
+      "x": 144.805,
+      "y": 131.524,
+      "font_size": 29,
+      "fill": "#111111",
+      "anchor": "end",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage1.plus": {
+      "text": "+",
+      "x": 60,
+      "y": 181.959,
+      "font_size": 28,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage1.bottom": {
+      "text": "2 6 9",
+      "x": 143.37,
+      "y": 176.221,
+      "font_size": 29,
+      "fill": "#111111",
+      "anchor": "end",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.arrow_1": {
+      "text": "⇒",
+      "x": 192,
+      "y": 178.959,
+      "font_size": 31,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage2.top": {
+      "text": "5 5 4",
+      "x": 319.078,
+      "y": 133.943,
+      "font_size": 29,
+      "fill": "#111111",
+      "anchor": "end",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage2.plus": {
+      "text": "+",
+      "x": 228,
+      "y": 181.959,
+      "font_size": 28,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage2.bottom": {
+      "text": "2 6 9",
+      "x": 316.393,
+      "y": 178.373,
+      "font_size": 29,
+      "fill": "#111111",
+      "anchor": "end",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.arrow_2": {
+      "text": "⇒",
+      "x": 360,
+      "y": 178.959,
+      "font_size": 31,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage3.top": {
+      "text": "5 5 4",
+      "x": 478.031,
+      "y": 133.717,
+      "font_size": 29,
+      "fill": "#111111",
+      "anchor": "end",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage3.plus": {
+      "text": "+",
+      "x": 397,
+      "y": 181.959,
+      "font_size": 28,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.stage3.bottom": {
+      "text": "2 6 9",
+      "x": 476.063,
+      "y": 178.373,
+      "font_size": 29,
+      "fill": "#111111",
+      "anchor": "end",
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "konva_1785217709470_paste_267045_0": {
+      "x": 460.622,
+      "y": 208.625,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 10,
+        "group_id": "final_answer",
+        "answer_key_index": 10,
+        "answer_ref": "answer_key[10]",
+        "auto_advance": true,
+        "keyboard": "number"
+      }
+    },
+    "konva_1786191666134_paste_302497_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 8,
+        "group_id": "final_answer",
+        "answer_key_index": 8,
+        "answer_ref": "answer_key[8]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 414.786
+    },
+    "konva_1786191666134_paste_302969_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 9,
+        "group_id": "final_answer",
+        "answer_key_index": 9,
+        "answer_ref": "answer_key[9]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 437.802
+    },
+    "konva_1786191666134_paste_324114_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 7,
+        "group_id": "final_answer",
+        "answer_key_index": 6,
+        "answer_ref": "answer_key[6]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 435.442
+    },
+    "konva_1786191666134_paste_324114_1": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 6,
+        "group_id": "final_answer",
+        "answer_key_index": 7,
+        "answer_ref": "answer_key[7]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 412.622
+    },
+    "konva_1786191666134_paste_332458_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 3,
+        "group_id": "final_answer",
+        "answer_key_index": 2,
+        "answer_ref": "answer_key[2]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 277.884
+    },
+    "konva_1786191666134_paste_332458_1": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 2,
+        "group_id": "final_answer",
+        "answer_key_index": 3,
+        "answer_ref": "answer_key[3]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 255.065
+    },
+    "konva_1786191666134_paste_348706_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "answer_key_index": 0,
+        "answer_ref": "answer_key[0]",
+        "auto_advance": true,
+        "keyboard": "number"
+      }
+    },
+    "konva_1786191666134_paste_366802_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 5,
+        "group_id": "final_answer",
+        "answer_key_index": 5,
+        "answer_ref": "answer_key[5]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 302.573
+    },
+    "konva_1786191666134_paste_366802_1": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 4,
+        "group_id": "final_answer",
+        "answer_key_index": 4,
+        "answer_ref": "answer_key[4]",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "x": 279.753
+    },
+    "konva_1786191666134_paste_373586_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 1,
+        "group_id": "final_answer",
+        "answer_key_index": 1,
+        "answer_ref": "answer_key[1]",
+        "auto_advance": true,
+        "keyboard": "number"
+      }
+    }
+  }
+}

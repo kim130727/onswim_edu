@@ -1,0 +1,38 @@
+{
+  "canvas": {
+    "width": 400,
+    "height": 300
+  },
+  "version": 1,
+  "slots": {
+    "slot.instruction": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.first_addend": {
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "x": 147.9,
+      "width": 59,
+      "height": 33
+    },
+    "slot.plus_sign": {
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "x": 107
+    },
+    "slot.second_addend": {
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "x": 149.156,
+      "y": 136.503,
+      "width": 59,
+      "height": 33
+    },
+    "slot.answer_box": {
+      "x": 134.503,
+      "width": 82.38
+    },
+    "slot.calc_line": {
+      "y1": 177,
+      "x2": 237.2,
+      "y2": 176.62
+    }
+  }
+}

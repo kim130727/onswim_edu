@@ -1,0 +1,27 @@
+from __future__ import annotations
+
+from django.conf import settings
+from django.shortcuts import redirect
+from django.urls import include, path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from modu_math_web.editor_next import views as editor_next_views
+
+
+def root_redirect(request):
+    if not settings.DEBUG:
+        return redirect("/student/")
+    return redirect("/editor-konva/")
+
+
+urlpatterns = [
+    path("", root_redirect),
+    path("editor-konva/", editor_next_views.editor_konva),
+    path("teacher/", editor_next_views.teacher_workspace, name="teacher-workspace"),
+    path("student/", editor_next_views.student_workspace, name="student-workspace"),
+    path("api/editor/", include("modu_math_web.editor.urls")),
+    path("api/v1/", include("modu_math_web.learning.urls")),
+]
+
+if settings.DEBUG:
+    urlpatterns += staticfiles_urlpatterns()

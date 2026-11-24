@@ -1,0 +1,153 @@
+{
+  "schema": "modu.layout.v1",
+  "problem_id": "S3_초등_3_009137",
+  "title": "나눗셈의 몫이 7인 식 선택하기",
+  "canvas": {
+    "width": 886,
+    "height": 180,
+    "coordinate_mode": "logical",
+    "background": "#FFFFFF"
+  },
+  "regions": [
+    {
+      "id": "region.stem",
+      "role": "stem",
+      "flow": "absolute",
+      "slot_ids": [
+        "slot.stem.question"
+      ]
+    },
+    {
+      "id": "region.diagram",
+      "role": "diagram",
+      "flow": "absolute",
+      "slot_ids": [
+        "slot.diagram.frame",
+        "konva_1795397215423_paste_894505_0"
+      ]
+    },
+    {
+      "id": "region.choices",
+      "role": "choices",
+      "flow": "absolute",
+      "slot_ids": [
+        "slot.choice.option_0",
+        "slot.choice.option_1"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "slot.stem.question",
+      "kind": "text_box",
+      "prompt": "",
+      "content": {
+        "text": "나눗셈의 몫이 7인 것을 선택하세요.",
+        "style_role": "body",
+        "x": 32.0,
+        "y": 22.0,
+        "width": 358,
+        "height": 36,
+        "align": "left",
+        "valign": "top",
+        "font_size": 24,
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "line_height": 1.5,
+        "fill": "#202124",
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
+      }
+    },
+    {
+      "id": "slot.diagram.frame",
+      "kind": "rect",
+      "prompt": "",
+      "content": {
+        "x": 229.818,
+        "y": 81.424,
+        "width": 170.67,
+        "height": 47.04,
+        "stroke": "#f59e0b",
+        "stroke_width": 1.8,
+        "fill": "#ffffff"
+      }
+    },
+    {
+      "id": "slot.choice.option_0",
+      "kind": "text",
+      "prompt": "",
+      "content": {
+        "text": "㉠ 42 ÷ 6 = 7",
+        "style_role": "body",
+        "x": 236.13,
+        "y": 114.1,
+        "font_size": 24,
+        "align": "center",
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "fill": "#111827",
+        "interaction": {
+          "type": "choice",
+          "role": "answer",
+          "choice_index": 0,
+          "value": "㉠",
+          "group_id": "slot.choice.group",
+          "include_in_submission": true
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
+      }
+    },
+    {
+      "id": "slot.choice.option_1",
+      "kind": "text",
+      "prompt": "",
+      "content": {
+        "text": "㉡ 35 ÷ 7 = 5",
+        "style_role": "body",
+        "x": 418.52,
+        "y": 114.69,
+        "font_size": 24,
+        "align": "center",
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "fill": "#111827",
+        "interaction": {
+          "type": "choice",
+          "role": "answer",
+          "choice_index": 1,
+          "value": "㉡",
+          "group_id": "slot.choice.group",
+          "include_in_submission": true
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
+      }
+    },
+    {
+      "id": "konva_1795397215423_paste_894505_0",
+      "kind": "rect",
+      "prompt": "",
+      "content": {
+        "x": 409.95,
+        "y": 81.58,
+        "width": 170.67,
+        "height": 47.04,
+        "fill": "#ffffff",
+        "stroke": "#f59e0b",
+        "stroke_width": 1.8
+      }
+    }
+  ],
+  "groups": [],
+  "constraints": [],
+  "diagrams": [],
+  "reading_order": [
+    "region.stem",
+    "slot.stem.question",
+    "region.diagram",
+    "slot.diagram.frame",
+    "region.choices",
+    "slot.choice.option_0",
+    "slot.choice.option_1",
+    "konva_1795397215423_paste_894505_0"
+  ]
+}

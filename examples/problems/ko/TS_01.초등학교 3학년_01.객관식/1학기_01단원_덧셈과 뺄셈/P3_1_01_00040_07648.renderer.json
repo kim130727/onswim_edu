@@ -1,0 +1,110 @@
+{
+  "problem_id": "P3_1_01_00040_07648",
+  "view_box": {
+    "width": 900.0,
+    "height": 230.0,
+    "background": "#FFFFFF"
+  },
+  "elements": [
+    {
+      "id": "konva_1785217709470_rect_5615662.rect",
+      "type": "rect",
+      "attributes": {
+        "x": 605.09,
+        "y": 146.0,
+        "width": 121.03,
+        "height": 51.89,
+        "fill": "#ffffff",
+        "stroke": "#111827",
+        "stroke-width": 1.2
+      },
+      "source_ref": "konva_1785217709470_rect_5615662",
+      "refs": {
+        "layout_slot_id": "konva_1785217709470_rect_5615662"
+      },
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "integer",
+        "max_length": 64,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "auto_advance": false,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222",
+        "width": 121.03,
+        "height": 51.89
+      }
+    },
+    {
+      "id": "slot.question.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 30.136,
+        "y": 27.851,
+        "fill": "#202124",
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 30.0,
+        "width": 804.0,
+        "height": 98.0,
+        "max_width": 804.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 30.136,
+        "data-box-y": 27.851,
+        "data-box-width": 804.0,
+        "data-box-height": 98.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.5,
+        "data-semantic-role": "question",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.question",
+      "refs": {
+        "layout_slot_id": "slot.question"
+      },
+      "text": "서로 다른 두 수가 있습니다. 두 수 중 큰 수는 작은 수의 2배입니다. 두 수의 합이 735라면 큰 수는 얼마입니까?"
+    },
+    {
+      "id": "konva_1795396069367_text_889478.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 561.99,
+        "y": 92.37,
+        "fill": "#111827",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 30.0,
+        "width": 201.0,
+        "height": 38.0,
+        "max_width": 201.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 561.99,
+        "data-box-y": 92.37,
+        "data-box-width": 201.0,
+        "data-box-height": 38.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.25,
+        "data-semantic-role": "canvas",
+        "data-semantic-role-source": "inferred"
+      },
+      "source_ref": "konva_1795396069367_text_889478",
+      "refs": {
+        "layout_slot_id": "konva_1795396069367_text_889478"
+      },
+      "text": "답을 적어주세요"
+    }
+  ],
+  "contract_version": "modu_math.renderer.v2"
+}

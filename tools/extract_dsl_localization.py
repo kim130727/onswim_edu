@@ -1,0 +1,329 @@
+from __future__ import annotations
+
+import argparse
+import hashlib
+import importlib.util
+import json
+import re
+import sys
+from dataclasses import fields, is_dataclass
+from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
+if str(SRC) not in sys.path:
+    sys.path.insert(0, str(SRC))
+
+from modu_math.dsl.symbol_roles import is_protected_symbol_role, is_symbol_marker_text
+
+
+TRANSLATABLE_FIELDS = {
+    "title",
+    "text",
+    "prompt",
+    "placeholder",
+    "subject",
+    "topic",
+    "label",
+    "unit",
+    "summary",
+    "statement",
+    "explanation",
+    "method",
+    "plan",
+    "conditions",
+    "choices",
+    "goal",
+    "question",
+    "instruction",
+    "name",
+    "content",
+}
+
+SKIP_FIELDS = {
+    "id",
+    "type",
+    "ref",
+    "schema",
+    "problem_id",
+    "problem_type",
+    "font_family",
+    "answer",
+    "answer_key",
+    "answer_index",
+    "expected",
+    "actual",
+    "value",
+    "values",
+    "blanks",
+    "expr",
+    "relation_expr",
+    "symbolic",
+    "result",
+    "uses",
+    "from_id",
+    "to_id",
+    "quantity",
+    "count",
+    "x",
+    "y",
+    "x1",
+    "y1",
+    "x2",
+    "y2",
+    "cx",
+    "cy",
+    "r",
+    "width",
+    "height",
+    "points",
+    "fill",
+    "stroke",
+    "text_color",
+}
+
+COLOR_RE = re.compile(r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$")
+NUMBER_RE = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:\s*[가-힣A-Za-z%]+)?$")
+MATH_RE = re.compile(r"^[\d\s+\-*/=<>≤≥().,\[\]{}:]+$")
+
+
+def load_dsl_module(path: Path) -> ModuleType:
+    from modu_math.dsl.variants import delta_path, load_module
+    if delta_path(path).exists():
+        return load_module(path)
+    source = path.read_text(encoding="utf-8")
+    digest = hashlib.sha256(source.encode("utf-8")).hexdigest()[:16]
+    spec = importlib.util.spec_from_file_location(f"_modu_dsl_{path.stem}_{digest}", path)
+    if spec is None:
+        raise ValueError(f"Cannot load DSL module: {path}")
+    module = importlib.util.module_from_spec(spec)
+    code = compile(source, str(path), "exec")
+    exec(code, module.__dict__)
+    return module
+
+
+def problem_id_from(module: ModuleType, dsl_path: Path) -> str:
+    template = getattr(module, "PROBLEM_TEMPLATE", None)
+    template_id = getattr(template, "id", None)
+    if isinstance(template_id, str) and template_id:
+        return template_id
+    module_id = getattr(module, "PROBLEM_ID", None)
+    if isinstance(module_id, str) and module_id:
+        return module_id
+    name = dsl_path.name
+    return name[: -len(".dsl.py")] if name.endswith(".dsl.py") else dsl_path.stem
+
+
+def object_id(value: Any) -> str | None:
+    if isinstance(value, dict):
+        raw = value.get("id")
+    else:
+        raw = getattr(value, "id", None)
+    return raw if isinstance(raw, str) and raw else None
+
+
+def iter_items(value: Any) -> list[tuple[str, Any]]:
+    if isinstance(value, dict):
+        return list(value.items())
+    if is_dataclass(value) and not isinstance(value, type):
+        return [(field.name, getattr(value, field.name)) for field in fields(value)]
+    return []
+
+
+def source_hash(source: str) -> str:
+    return hashlib.sha256(source.encode("utf-8")).hexdigest()
+
+
+def add_entry(entries: dict[str, dict[str, str]], key: str, source: str) -> None:
+    if not is_translatable_source(source):
+        return
+    entries[key] = {
+        "source": source,
+        "translation": "",
+    }
+
+
+def is_translatable_source(source: str) -> bool:
+    stripped = source.strip()
+    if not stripped:
+        return False
+    if is_symbol_marker_text(stripped):
+        return False
+    if COLOR_RE.fullmatch(stripped):
+        return False
+    if NUMBER_RE.fullmatch(stripped):
+        return False
+    if MATH_RE.fullmatch(stripped):
+        return False
+    return True
+
+
+def extract_value(
+    value: Any,
+    path: list[str],
+    entries: dict[str, dict[str, str]],
+    *,
+    field_name: str | None = None,
+) -> None:
+    if is_protected_locale_container(value):
+        return
+    if field_name in SKIP_FIELDS:
+        return
+
+    if isinstance(value, str):
+        if field_name in TRANSLATABLE_FIELDS:
+            add_entry(entries, ".".join(path), value)
+        return
+
+    if isinstance(value, (int, float, bool)) or value is None:
+        return
+
+    if isinstance(value, (list, tuple)):
+        for index, item in enumerate(value):
+            item_id = object_id(item)
+            item_part = item_id if item_id else str(index)
+            extract_value(item, [*path, item_part], entries, field_name=field_name)
+        return
+
+    for child_name, child in iter_items(value):
+        extract_value(child, [*path, child_name], entries, field_name=child_name)
+
+
+def is_protected_locale_container(value: Any) -> bool:
+    role: Any
+    if isinstance(value, dict):
+        role = value.get("semantic_role")
+    else:
+        role = getattr(value, "semantic_role", None)
+    return is_protected_symbol_role(role if isinstance(role, str) else None)
+
+
+def extract_localization(module: ModuleType) -> dict[str, dict[str, str]]:
+    entries: dict[str, dict[str, str]] = {}
+
+    template = getattr(module, "PROBLEM_TEMPLATE", None)
+    if template is not None:
+        extract_value(template, ["template"], entries)
+
+    semantic = getattr(module, "SEMANTIC_OVERRIDE", None)
+    if semantic is None:
+        semantic = getattr(module, "SEMANTIC", None)
+    if semantic is not None:
+        extract_value(semantic, ["semantic"], entries)
+
+    solvable = getattr(module, "SOLVABLE", None)
+    if solvable is not None:
+        extract_value(solvable, ["solvable"], entries)
+
+    return {key: entries[key] for key in sorted(entries)}
+
+
+def merge_entries(
+    extracted: dict[str, dict[str, str]],
+    existing: dict[str, Any],
+) -> dict[str, dict[str, str]]:
+    merged: dict[str, dict[str, str]] = {}
+
+    for key, entry in extracted.items():
+        previous = existing.get(key)
+        if isinstance(previous, dict):
+            translation = previous.get("translation", "")
+            previous_hash = previous.get("source_hash")
+            previous_source = previous.get("source")
+            source_changed = (
+                previous_hash != source_hash(entry["source"])
+                if isinstance(previous_hash, str) and previous_hash
+                else previous_source != entry["source"]
+            )
+            merged[key] = {
+                "source": entry["source"],
+                "translation": translation if isinstance(translation, str) and not source_changed else "",
+            }
+        else:
+            merged[key] = entry
+
+    return {key: merged[key] for key in sorted(merged)}
+
+
+def read_existing(path: Path, *, force: bool) -> dict[str, Any]:
+    if not path.exists():
+        return {}
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        if force:
+            return {}
+        raise
+    if not isinstance(loaded, dict):
+        if force:
+            return {}
+        raise ValueError(f"Existing locale JSON must be an object: {path}")
+    return loaded
+
+
+def write_locale(path: Path, entries: dict[str, dict[str, str]]) -> bool:
+    payload = json.dumps(entries, ensure_ascii=False, indent=2) + "\n"
+    if path.exists() and path.read_text(encoding="utf-8") == payload:
+        return False
+    from modu_math.dsl.problem_store import JsonSection
+    if not isinstance(path, JsonSection):
+        path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(payload, encoding="utf-8", newline="\n")
+    return True
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Extract translatable strings from one ModuMath DSL file.")
+    parser.add_argument("--dsl", required=True, help="Path to a single *.dsl.py file.")
+    parser.add_argument("--locale", required=True, help="Supported locale code: ko, uk, or uk-UA.")
+    parser.add_argument(
+        "--out",
+        help=(
+            "Optional standalone catalog path for legacy or ad-hoc DSL files. "
+            "Project problems write to locales/<locale>/<problem>.json by default."
+        ),
+    )
+    parser.add_argument("--force", action="store_true", help="Recreate malformed existing JSON instead of failing.")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    dsl_path = Path(args.dsl)
+    module = load_dsl_module(dsl_path)
+    from modu_math.dsl.problem_store import location, section, JsonSection, LANGUAGES
+
+    language = args.locale.split("-")[0]
+    if language not in LANGUAGES:
+        raise ValueError(f"Unsupported language: {language}; supported languages: {', '.join(sorted(LANGUAGES))}")
+
+    if args.out:
+        out_path = Path(args.out)
+    else:
+        info = location(dsl_path)
+        if info is None or info[1] != "ko" or language == "ko":
+            raise ValueError(
+                "Project catalogs require a Korean DSL source and a target language. "
+                "Pass --out for a standalone catalog."
+            )
+        canonical, _, root = info
+        virtual = root / language / canonical.relative_to(root / "ko")
+        out_path = section(virtual, "translation_catalog")
+        if out_path is None:
+            raise ValueError(f"Cannot resolve locale catalog for {dsl_path}")
+
+    extracted = extract_localization(module)
+    existing = read_existing(out_path, force=args.force)
+    merged = merge_entries(extracted, existing)
+    changed = write_locale(out_path, merged)
+
+    action = "wrote" if changed else "unchanged"
+    print(f"{action}: {out_path} ({len(extracted)} active, {len(merged) - len(extracted)} obsolete)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

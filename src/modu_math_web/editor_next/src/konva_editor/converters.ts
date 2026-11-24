@@ -1,0 +1,827 @@
+import type { EditorShape, EditorShapeDocument, InputInteraction, InputStyle } from "../types/editorShape";
+import type { ProblemCanvas, ProblemJson, ProblemObject } from "../types/problem";
+import { connectorToPathObject } from "./connectorGeometry";
+import { KONVA_PREVIEW_FONT_FAMILY, normalizePreviewFontFamily } from "./fonts";
+import { inferAdjustableShapePreset, pathDataForShape } from "./shapeGeometry";
+import { Text as KonvaText } from "konva/lib/shapes/Text";
+
+export interface FractionLatex {
+  whole?: string;
+  numerator: string;
+  denominator: string;
+}
+
+export function parseFractionLatex(latex: string): FractionLatex | null {
+  const match = latex.trim().match(/^([+-]?\d+)?\s*\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}$/);
+  if (!match) return null;
+  return {
+    whole: match[1] || undefined,
+    numerator: match[2],
+    denominator: match[3],
+  };
+}
+
+export function problemJsonToEditorDocument(problem: ProblemJson): EditorShapeDocument {
+  return {
+    id: problem.id,
+    title: problem.title,
+    canvas: problem.canvas,
+    shapes: problem.objects.flatMap((object) => problemObjectToEditorShape(object, problem.canvas)),
+  };
+}
+
+export function editorDocumentToProblemJson(document: EditorShapeDocument, base: ProblemJson): ProblemJson {
+  const editedObjects = document.shapes.flatMap(editorShapeToProblemObject);
+  const editedIds = new Set(editedObjects.map((object) => object.id));
+  const preservedObjects = base.objects.filter((object) => !editedIds.has(object.id) && !isSupportedProblemObject(object));
+
+  return {
+    ...base,
+    id: document.id,
+    title: document.title,
+    canvas: document.canvas,
+    objects: [...preservedObjects, ...editedObjects],
+  };
+}
+
+function problemObjectToEditorShape(object: ProblemObject, canvas: ProblemCanvas): EditorShape[] {
+  const answerProps = answerSlotProps(object.props);
+  const regionProps = sourceRegionProps(object.props);
+  const semanticProps = semanticRoleProps(object.props);
+  switch (object.type) {
+    case "math_text": {
+      const text = object.props.latex || object.props.text;
+      const fontSize = object.props.fontSize;
+      const isTextBox = object.props.sourceKind === "text_box";
+      const textAlign = object.props.textAlign ?? "left";
+      const verticalAlign = object.props.verticalAlign ?? "middle";
+      const lineHeight = object.props.lineHeight ?? 1.25;
+      const needsAlignmentBox = textAlign !== "left";
+      const sourceWidth = object.props.width ?? estimateTextWidth(text, fontSize);
+      const maxWidth = maxTextBoxWidthWithinCanvas(object.x, canvas.width);
+      // Plain text x was derived from its SVG anchor using sourceWidth. Changing
+      // that width moves the center/end anchor on every build and reload.
+      const width = isTextBox
+        ? normalizedTextBoxWidth(text, fontSize, sourceWidth, textAlign, maxWidth)
+        : needsAlignmentBox ? sourceWidth : undefined;
+      const fittedHeight = fittedTextHeight(text, fontSize, width ?? estimateTextWidth(text, fontSize), lineHeight);
+
+      const fraction = parseFractionLatex(text);
+      if (fraction || (typeof object.props.latex === "string" && object.props.latex.includes("\\frac"))) {
+        const latex = object.props.latex || text;
+        return [
+          applySvgTransform(
+            {
+              id: object.id,
+              type: "math",
+              x: object.x,
+              y: object.y,
+              latex,
+              fontSize,
+              fill: "none",
+              color: object.props.color ?? "#111827",
+              width: object.props.width ?? 60,
+              height: object.props.height ?? 60,
+              ...regionProps,
+              ...semanticProps,
+              ...answerProps,
+              visible: true,
+            },
+            stringProp(object.props.transform),
+          ),
+        ];
+      }
+
+      return [
+        applySvgTransform(
+          {
+          id: object.id,
+          type: "text",
+          x: object.x,
+          y: object.y,
+          text,
+          fontSize,
+          fontFamily: normalizePreviewFontFamily(stringProp(object.props.fontFamily)),
+          fill: object.props.color ?? "#111827",
+          width,
+          height: isTextBox ? normalizedTextBoxHeight(text, fontSize, width ?? estimateTextWidth(text, fontSize), object.props.height, lineHeight, stringProp(object.props.fontFamily), Boolean(answerProps.interaction)) : undefined,
+          align: textAlign,
+          valign: isTextBox ? verticalAlign : undefined,
+          lineHeight,
+          sourceKind: isTextBox ? "text_box" : (object.props.sourceKind ?? "text"),
+          ...regionProps,
+          ...semanticProps,
+          ...answerProps,
+          visible: true,
+          },
+          stringProp(object.props.transform),
+        ),
+      ];
+    }
+    case "basic_shape":
+      if (object.props.shape === "ellipse") {
+        return [
+          applySvgTransform(
+            {
+            id: object.id,
+            type: "circle",
+            x: object.x + object.props.width / 2,
+            y: object.y + object.props.height / 2,
+            radius: Math.min(object.props.width, object.props.height) / 2,
+            fill: object.props.fill ?? "transparent",
+            stroke: object.props.stroke ?? "#111827",
+            strokeWidth: object.props.strokeWidth ?? 1,
+            strokeDasharray: object.props.strokeDasharray,
+            ...regionProps,
+            ...answerProps,
+            visible: true,
+            },
+            stringProp(object.props.transform),
+          ),
+        ];
+      }
+      if (object.props.shape === "line") {
+        return [
+          applySvgTransform(
+            {
+            id: object.id,
+            type: "line",
+            x: object.x,
+            y: object.y,
+            points: [0, 0, object.props.width, object.props.height],
+            stroke: object.props.stroke ?? "#111827",
+            strokeWidth: object.props.strokeWidth ?? 1,
+            strokeDasharray: object.props.strokeDasharray,
+            ...regionProps,
+            ...answerProps,
+            visible: true,
+            },
+            stringProp(object.props.transform),
+          ),
+        ];
+      }
+      return [
+        applySvgTransform(
+          {
+          id: object.id,
+          type: "rect",
+          x: object.x,
+          y: object.y,
+          width: object.props.width,
+          height: object.props.height,
+          fill: object.props.fill ?? "transparent",
+          stroke: object.props.stroke ?? "#111827",
+          strokeWidth: object.props.strokeWidth ?? 1,
+          strokeDasharray: object.props.strokeDasharray,
+          shapePreset: stringProp(object.props.shapePreset) ?? inferAdjustableShapePreset({
+            id: object.id,
+            type: "path",
+            x: object.x,
+            y: object.y,
+            d: stringProp(object.props.d) ?? "",
+            width: object.props.width,
+            height: object.props.height,
+          }),
+          adjustment: pointProp(object.props.adjustment),
+          ...regionProps,
+          ...answerProps,
+          visible: true,
+          },
+          stringProp(object.props.transform),
+        ),
+      ];
+    case "image":
+      return [
+        applySvgTransform(
+          {
+          id: object.id,
+          type: "image",
+          x: object.x,
+          y: object.y,
+          src: object.props.src,
+          width: object.props.width,
+          height: object.props.height,
+          preserveAspectRatio: object.props.preserveAspectRatio ?? "xMidYMid meet",
+          ...regionProps,
+          ...answerProps,
+          visible: true,
+          },
+          stringProp(object.props.transform),
+        ),
+      ];
+    case "path":
+      if (object.props.connectorKind === "straight" || object.props.connectorKind === "elbow" || object.props.connectorKind === "curve") {
+        return [
+          {
+            id: object.id,
+            type: "connector",
+            kind: object.props.connectorKind,
+            x: numberProp(object.props.connectorX, object.x),
+            y: numberProp(object.props.connectorY, object.y),
+            start: pointProp(object.props.connectorStart) ?? { x: 0, y: 0 },
+            end: pointProp(object.props.connectorEnd) ?? { x: object.props.width, y: object.props.height },
+            control: pointProp(object.props.connectorControl),
+            arrowStart: booleanProp(object.props.connectorArrowStart),
+            arrowEnd: booleanProp(object.props.connectorArrowEnd),
+            stroke: object.props.stroke ?? "#111827",
+            strokeWidth: object.props.strokeWidth ?? 1,
+            strokeDasharray: object.props.strokeDasharray,
+            ...regionProps,
+            ...answerProps,
+            visible: true,
+          },
+        ];
+      }
+      return [
+        applySvgTransform(
+          {
+          id: object.id,
+          type: "path",
+          x: object.x,
+          y: object.y,
+          d: object.props.d,
+          width: object.props.width,
+          height: object.props.height,
+          fill: object.props.fill ?? "transparent",
+          stroke: object.props.stroke ?? "#111827",
+          strokeWidth: object.props.strokeWidth ?? 1,
+          strokeDasharray: object.props.strokeDasharray,
+          shapePreset: stringProp(object.props.shapePreset),
+          adjustment: pointProp(object.props.adjustment),
+          ...regionProps,
+          ...answerProps,
+          visible: true,
+          },
+          stringProp(object.props.transform),
+        ),
+      ];
+    default:
+      return [];
+  }
+}
+
+function stringProp(value: unknown): string | undefined {
+  return typeof value === "string" && value.trim() ? value : undefined;
+}
+
+function numberProp(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function booleanProp(value: unknown): boolean | undefined {
+  return typeof value === "boolean" ? value : undefined;
+}
+
+function pointProp(value: unknown): { x: number; y: number } | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  const point = value as Record<string, unknown>;
+  return typeof point.x === "number" && Number.isFinite(point.x) && typeof point.y === "number" && Number.isFinite(point.y)
+    ? { x: point.x, y: point.y }
+    : undefined;
+}
+
+function answerSlotProps(props: Record<string, unknown>): { interaction?: InputInteraction; input_style?: InputStyle } {
+  const interaction = recordProp(props.interaction);
+  const inputStyle = recordProp(props.input_style);
+  return {
+    ...(interaction ? { interaction: interaction as unknown as InputInteraction } : {}),
+    ...(inputStyle ? { input_style: inputStyle as unknown as InputStyle } : {}),
+  };
+}
+
+function sourceRegionProps(props: Record<string, unknown>): { sourceRegionId?: string } {
+  const sourceRegionId = stringProp(props.sourceRegionId);
+  return sourceRegionId ? { sourceRegionId } : {};
+}
+
+function semanticRoleProps(props: Record<string, unknown>): { semanticRole?: string; semanticRoleSource?: "explicit" | "inferred" } {
+  const semanticRole = stringProp(props.semantic_role);
+  const semanticRoleSource = props.semantic_role_source === "explicit" || props.semantic_role_source === "inferred"
+    ? props.semantic_role_source
+    : undefined;
+  return {
+    ...(semanticRole ? { semanticRole } : {}),
+    ...(semanticRoleSource ? { semanticRoleSource } : {}),
+  };
+}
+
+function answerShapeProps(shape: EditorShape): { interaction?: InputInteraction; input_style?: InputStyle } {
+  return {
+    ...(shape.interaction ? { interaction: shape.interaction } : {}),
+    ...(shape.input_style ? { input_style: shape.input_style } : {}),
+  };
+}
+
+function sourceRegionShapeProps(shape: EditorShape): { sourceRegionId?: string } {
+  return shape.sourceRegionId ? { sourceRegionId: shape.sourceRegionId } : {};
+}
+
+function semanticRoleShapeProps(shape: EditorShape): { semantic_role?: string; semantic_role_source?: "explicit" | "inferred" } {
+  return {
+    ...(typeof shape.semanticRole === "string" ? { semantic_role: shape.semanticRole } : {}),
+    ...(shape.semanticRoleSource ? { semantic_role_source: shape.semanticRoleSource } : {}),
+  };
+}
+
+function recordProp(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
+}
+
+function applySvgTransform<T extends EditorShape>(shape: T, transform: string | undefined): T {
+  const translate = parseSvgTranslate(transform);
+  if (translate) {
+    return {
+      ...shape,
+      x: shape.x + translate.dx,
+      y: shape.y + translate.dy,
+      sourceX: shape.x,
+      sourceY: shape.y,
+      sourceTransform: transform,
+    };
+  }
+
+  const rotate = parseSvgRotate(transform);
+  if (!rotate) return shape;
+  return {
+    ...shape,
+    x: rotate.cx,
+    y: rotate.cy,
+    rotation: (shape.rotation ?? 0) + rotate.angle,
+    offsetX: rotate.cx - shape.x,
+    offsetY: rotate.cy - shape.y,
+  };
+}
+
+function parseSvgTranslate(transform: string | undefined): { dx: number; dy: number } | null {
+  if (!transform) return null;
+  const number = "[-+]?(?:\\d*\\.\\d+|\\d+)(?:e[-+]?\\d+)?";
+  const match = transform.match(new RegExp(`^\\s*translate\\(\\s*(${number})(?:[\\s,]+(${number}))?\\s*\\)\\s*$`, "i"));
+  if (!match) return null;
+  const dx = Number(match[1]);
+  const dy = match[2] === undefined ? 0 : Number(match[2]);
+  return Number.isFinite(dx) && Number.isFinite(dy) ? { dx, dy } : null;
+}
+
+function parseSvgRotate(transform: string | undefined): { angle: number; cx: number; cy: number } | null {
+  if (!transform) return null;
+  const match = transform.match(/^\s*rotate\(\s*([-+]?(?:\d*\.\d+|\d+)(?:e[-+]?\d+)?)\s+([-+]?(?:\d*\.\d+|\d+)(?:e[-+]?\d+)?)\s+([-+]?(?:\d*\.\d+|\d+)(?:e[-+]?\d+)?)\s*\)\s*$/i);
+  if (!match) return null;
+  const angle = Number(match[1]);
+  const cx = Number(match[2]);
+  const cy = Number(match[3]);
+  return Number.isFinite(angle) && Number.isFinite(cx) && Number.isFinite(cy) ? { angle, cx, cy } : null;
+}
+
+function isSupportedProblemObject(object: ProblemObject): boolean {
+  return object.type === "math_text" || object.type === "basic_shape" || object.type === "image" || object.type === "path";
+}
+
+function editorShapeToProblemObject(shape: EditorShape): ProblemObject[] {
+  const answerProps = answerShapeProps(shape);
+  const regionProps = sourceRegionShapeProps(shape);
+  const semanticProps = semanticRoleShapeProps(shape);
+  switch (shape.type) {
+    case "math":
+      return [
+        {
+          id: shape.id,
+          type: "math_text",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            latex: shape.latex,
+            text: shape.latex,
+            fontSize: shape.fontSize ?? 28,
+            width: shape.width,
+            height: shape.height,
+            color: "#111827",
+            textAlign: "left",
+            lineHeight: 1.25,
+            sourceKind: "text_box",
+            ...regionProps,
+            ...semanticProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    case "text": {
+      const isTextBox = shape.sourceKind === "text_box";
+      const sourceKind = isTextBox ? "text_box" : (shape.sourceKind ?? "text");
+      const lineHeight = shape.lineHeight ?? 1.25;
+      const width =
+        isTextBox && typeof shape.width === "number"
+          ? normalizedTextBoxWidth(shape.text, shape.fontSize, shape.width, shape.align ?? "left")
+          : shape.width;
+      const height =
+        isTextBox && typeof width === "number"
+          ? normalizedTextBoxHeight(shape.text, shape.fontSize, width, shape.height, lineHeight, shape.fontFamily, Boolean(shape.interaction))
+          : shape.interaction ? shape.height : undefined;
+      return [
+        {
+          id: shape.id,
+          type: "math_text",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            latex: shape.text,
+            text: shape.text,
+            fontSize: shape.fontSize,
+            fontFamily: normalizePreviewFontFamily(shape.fontFamily),
+            width,
+            height,
+            color: shape.fill ?? "#111827",
+            textAlign: shape.align ?? "left",
+            verticalAlign: isTextBox ? (shape.valign ?? "middle") : undefined,
+            lineHeight,
+            sourceKind,
+            ...regionProps,
+            ...semanticProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    }
+    case "rect":
+      return [
+        {
+          id: shape.id,
+          type: "basic_shape",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            shape: "rectangle",
+            width: shape.width,
+            height: shape.height,
+            fill: shape.fill ?? "none",
+            stroke: shape.stroke ?? "#111827",
+            strokeWidth: shape.strokeWidth ?? 1,
+            strokeDasharray: shape.strokeDasharray,
+            ...regionProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    case "circle":
+      return [
+        {
+          id: shape.id,
+          type: "basic_shape",
+          x: shapeBaseX(shape) - shape.radius,
+          y: shapeBaseY(shape) - shape.radius,
+          props: {
+            shape: "ellipse",
+            width: shape.radius * 2,
+            height: shape.radius * 2,
+            fill: shape.fill ?? "none",
+            stroke: shape.stroke ?? "#111827",
+            strokeWidth: shape.strokeWidth ?? 1,
+            strokeDasharray: shape.strokeDasharray,
+            ...regionProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    case "line":
+      return [
+        {
+          id: shape.id,
+          type: "basic_shape",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            shape: "line",
+            width: shape.points[2] ?? 0,
+            height: shape.points[3] ?? 0,
+            stroke: shape.stroke ?? "#111827",
+            strokeWidth: shape.strokeWidth ?? 1,
+            strokeDasharray: shape.strokeDasharray,
+            ...regionProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    case "connector": {
+      const path = connectorToPathObject(shape);
+      return [
+        {
+          id: shape.id,
+          type: "path",
+          x: path.x,
+          y: path.y,
+          props: {
+            d: path.d,
+            width: path.width,
+            height: path.height,
+            fill: "none",
+            stroke: shape.stroke ?? "#111827",
+            strokeWidth: shape.strokeWidth ?? 1,
+            strokeDasharray: shape.strokeDasharray,
+            connectorKind: shape.kind,
+            connectorX: shape.x,
+            connectorY: shape.y,
+            connectorStart: shape.start,
+            connectorEnd: shape.end,
+            connectorControl: shape.control,
+            connectorArrowStart: Boolean(shape.arrowStart),
+            connectorArrowEnd: Boolean(shape.arrowEnd),
+            ...regionProps,
+            ...answerProps,
+          },
+        },
+      ];
+    }
+    case "path":
+      return [
+        {
+          id: shape.id,
+          type: "path",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            d: pathDataForShape(shape),
+            width: shape.width,
+            height: shape.height,
+            fill: shape.fill ?? "none",
+            stroke: shape.stroke ?? "#111827",
+            strokeWidth: shape.strokeWidth ?? 1,
+            strokeDasharray: shape.strokeDasharray,
+            shapePreset: shape.shapePreset,
+            adjustment: shape.adjustment,
+            ...regionProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    case "image":
+      return [
+        {
+          id: shape.id,
+          type: "image",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            src: shape.src,
+            width: shape.width,
+            height: shape.height,
+            preserveAspectRatio: shape.preserveAspectRatio,
+            ...regionProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
+    case "baseTenBlock":
+      return baseTenBlockToProblemObjects(shape);
+  }
+}
+
+function baseTenBlockToProblemObjects(shape: Extract<EditorShape, { type: "baseTenBlock" }>): ProblemObject[] {
+  const stroke = shape.stroke ?? "#7ea86f";
+  const strokeWidth = shape.strokeWidth ?? 0.8;
+  const fill = shape.fill ?? "#b9dd9f";
+  const topFill = shape.topFill ?? "#d2edbf";
+  const sideFill = shape.sideFill ?? "#9fcd86";
+  const grid = baseTenGridSpec(shape.kind);
+  const depth = normalizedBaseTenDepth(shape, grid);
+  const frontY = depth;
+  const objects: ProblemObject[] = [
+    pathObject(`${shape.id}_top`, shape.x, shape.y, shape.width + depth, depth, `M 0 ${frontY} L ${depth} 0 L ${shape.width + depth} 0 L ${shape.width} ${frontY} Z`, topFill, stroke, strokeWidth),
+    pathObject(
+      `${shape.id}_side`,
+      shape.x + shape.width,
+      shape.y,
+      depth,
+      shape.height + depth,
+      `M 0 ${frontY} L ${depth} 0 L ${depth} ${shape.height} L 0 ${shape.height + frontY} Z`,
+      sideFill,
+      stroke,
+      strokeWidth,
+    ),
+    {
+      id: `${shape.id}_front`,
+      type: "basic_shape",
+      x: shape.x,
+      y: shape.y + frontY,
+      props: {
+        shape: "rectangle",
+        width: shape.width,
+        height: shape.height,
+        fill,
+        stroke,
+        strokeWidth,
+      },
+    },
+  ];
+
+  if (grid.rows > 1 || grid.cols > 1 || grid.depthSegments > 1) {
+    const segments: string[] = [];
+    for (let i = 1; i < grid.cols; i += 1) {
+      const x = (shape.width / grid.cols) * i;
+      segments.push(segmentD(x, frontY, x, frontY + shape.height));
+      if (depth > 0) {
+        segments.push(segmentD(x, frontY, x + depth, 0));
+      }
+    }
+    for (let i = 1; i < grid.rows; i += 1) {
+      const y = frontY + (shape.height / grid.rows) * i;
+      segments.push(segmentD(0, y, shape.width, y));
+      if (depth > 0) {
+        segments.push(segmentD(shape.width, y, shape.width + depth, y - depth));
+      }
+    }
+    for (let i = 1; i < grid.depthSegments; i += 1) {
+      const d = (depth / grid.depthSegments) * i;
+      segments.push(segmentD(d, frontY - d, shape.width + d, frontY - d));
+      segments.push(segmentD(shape.width + d, frontY - d, shape.width + d, frontY - d + shape.height));
+    }
+    objects.push(pathObject(`${shape.id}_grid`, shape.x, shape.y, shape.width + depth, shape.height + depth, segments.join(" "), "none", stroke, 0.38));
+  }
+
+  return objects;
+}
+
+function baseTenGridSpec(kind: Extract<EditorShape, { type: "baseTenBlock" }>["kind"]): { rows: number; cols: number; depthSegments: number } {
+  switch (kind) {
+    case "thousand":
+      return { rows: 10, cols: 10, depthSegments: 10 };
+    case "hundred":
+      return { rows: 10, cols: 10, depthSegments: 1 };
+    case "ten":
+      return { rows: 10, cols: 1, depthSegments: 1 };
+    case "one":
+      return { rows: 1, cols: 1, depthSegments: 1 };
+  }
+}
+
+function normalizedBaseTenDepth(
+  shape: Extract<EditorShape, { type: "baseTenBlock" }>,
+  grid: { rows: number; cols: number; depthSegments: number },
+): number {
+  const cellWidth = shape.width / grid.cols;
+  const cellHeight = shape.height / grid.rows;
+  const unitDepth = Math.min(cellWidth, cellHeight) / Math.SQRT2;
+  return Math.max(0, unitDepth * grid.depthSegments);
+}
+
+function pathObject(
+  id: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  d: string,
+  fill: string,
+  stroke: string,
+  strokeWidth: number,
+): ProblemObject {
+  return {
+    id,
+    type: "path",
+    x,
+    y,
+    props: {
+      d,
+      width,
+      height,
+      fill,
+      stroke,
+      strokeWidth,
+    },
+  };
+}
+
+function segmentD(x1: number, y1: number, x2: number, y2: number): string {
+  return `M ${roundForTransform(x1)} ${roundForTransform(y1)} L ${roundForTransform(x2)} ${roundForTransform(y2)}`;
+}
+
+function shapeBaseX(shape: EditorShape): number {
+  const translated = translatedSourceBase(shape);
+  if (translated) return translated.x;
+  return shape.x - (shape.offsetX ?? 0);
+}
+
+function shapeBaseY(shape: EditorShape): number {
+  const translated = translatedSourceBase(shape);
+  if (translated) return translated.y;
+  return shape.y - (shape.offsetY ?? 0);
+}
+
+function translatedSourceBase(shape: EditorShape): { x: number; y: number } | null {
+  if (typeof shape.sourceX !== "number" || typeof shape.sourceY !== "number" || !Number.isFinite(shape.sourceX) || !Number.isFinite(shape.sourceY)) {
+    return null;
+  }
+  const translate = parseSvgTranslate(shape.sourceTransform);
+  if (!translate) return null;
+  return {
+    x: shape.sourceX + (shape.x - (shape.sourceX + translate.dx)),
+    y: shape.sourceY + (shape.y - (shape.sourceY + translate.dy)),
+  };
+}
+
+function transformProps(shape: EditorShape): { transform?: string } {
+  if (shape.sourceTransform) return { transform: shape.sourceTransform };
+  const rotation = shape.rotation ?? 0;
+  if (!rotation) return {};
+  return { transform: `rotate(${roundForTransform(rotation)} ${roundForTransform(shape.x)} ${roundForTransform(shape.y)})` };
+}
+
+function roundForTransform(value: number): number {
+  return Math.round(value * 1000) / 1000;
+}
+
+export function estimateTextWidth(text: string, fontSize: number): number {
+  const longestLineWidth = Math.max(...text.split(/\n/g).map((line) => estimateLineWidth(line, fontSize)), 0);
+  return Math.max(fontSize, Math.ceil(longestLineWidth + fontSize * 0.28));
+}
+
+export function fittedTextWidth(text: string, fontSize: number, fontFamily?: string): number {
+  const measured = measureTextBox(text, fontSize, undefined, 1.25, fontFamily);
+  if (measured) return Math.max(24, Math.ceil(measured.width + 1));
+  const longestLineWidth = Math.max(...text.split(/\n/g).map((line) => estimateLineWidth(line, fontSize)), 0);
+  return Math.max(12, Math.ceil(longestLineWidth + fontSize * 0.28));
+}
+
+export function normalizedTextBoxWidth(text: string, fontSize: number, width?: number, align = "left", maxWidth?: number): number {
+  const capped = (value: number) => Math.max(24, Math.min(value, maxWidth ?? value));
+  if (typeof width !== "number" || !Number.isFinite(width) || width <= 0) return capped(fittedTextWidth(text, fontSize));
+  return capped(width);
+}
+
+function maxTextBoxWidthWithinCanvas(x: number, canvasWidth: number): number {
+  const margin = 16;
+  return Math.max(24, canvasWidth - x - margin);
+}
+
+export function fittedTextHeight(text: string, fontSize: number, width: number, lineHeight = 1.25, fontFamily?: string): number {
+  const measured = measureTextBox(text, fontSize, width, lineHeight, fontFamily);
+  return Math.ceil(measured?.height ?? Math.max(1, estimateWrappedLineCount(text, fontSize, width)) * fontSize * lineHeight);
+}
+
+export function fitTextBoxToContent(
+  shape: Extract<EditorShape, { type: "text" }>,
+  dimension: "width" | "height" | "both",
+): Partial<Extract<EditorShape, { type: "text" }>> {
+  const fitWidth = dimension === "width" || dimension === "both";
+  const fitHeight = dimension === "height" || dimension === "both";
+  const measuredWidth = fittedTextWidth(shape.text, shape.fontSize, shape.fontFamily);
+  const width = fitWidth ? Math.min(shape.width ?? Infinity, measuredWidth) : (shape.width ?? measuredWidth);
+  const oldWidth = shape.width ?? width;
+  const measuredHeight = fittedTextHeight(shape.text, shape.fontSize, width, shape.lineHeight ?? 1.25, shape.fontFamily);
+  const height = fitHeight ? measuredHeight : shape.height;
+  const oldHeight = shape.height ?? measuredHeight;
+  const horizontalAnchor = shape.align === "center" ? 0.5 : shape.align === "right" ? 1 : 0;
+  const verticalAnchor = shape.valign === "middle" ? 0.5 : shape.valign === "bottom" ? 1 : 0;
+
+  return {
+    ...(fitWidth ? { x: shape.x + (oldWidth - width) * horizontalAnchor, width } : {}),
+    ...(fitHeight && height !== undefined ? { y: shape.y + (oldHeight - height) * verticalAnchor, height } : {}),
+    sourceKind: "text_box",
+  };
+}
+
+export function normalizedTextBoxHeight(text: string, fontSize: number, width: number, height?: number, lineHeight = 1.25, fontFamily?: string, _preserveHeight = false): number {
+  // Loading or editing copy must not rewrite an authored box's geometry.
+  if (typeof height === "number" && Number.isFinite(height) && height > 0) return height;
+  return fittedTextHeight(text, fontSize, width, lineHeight, fontFamily);
+}
+
+// Use the same font metrics and word wrapping as the visible Konva Text.
+// Do not cache: web fonts may finish loading between measurements.
+function measureTextBox(text: string, fontSize: number, width: number | undefined, lineHeight: number, fontFamily?: string): { width: number; height: number } | null {
+  if (typeof document === "undefined") return null;
+  const node = new KonvaText({ text: text || " ", fontSize, width, lineHeight, fontFamily: normalizePreviewFontFamily(fontFamily), padding: 0 });
+  const size = { width: node.width(), height: node.height() };
+  node.destroy();
+  return size;
+}
+
+export function estimateWrappedTextHeight(text: string, fontSize: number, width: number, lineHeight = 1.25): number {
+  return fittedTextHeight(text, fontSize, width, lineHeight);
+}
+
+function estimateWrappedLineCount(text: string, fontSize: number, width: number): number {
+  const usableWidth = Math.max(fontSize, width);
+  return text
+    .split(/\n/g)
+    .map((line) => Math.max(1, Math.ceil(estimateLineWidth(line, fontSize) / usableWidth)))
+    .reduce((total, lineCount) => total + lineCount, 0);
+}
+
+function estimateLineWidth(text: string, fontSize: number): number {
+  let width = 0;
+  for (const char of text) {
+    if (char === " ") width += fontSize * 0.34;
+    else if (/[\u1100-\u11ff\u3130-\u318f\uac00-\ud7af\u3400-\u9fff]/u.test(char)) width += fontSize;
+    else if (/[\u2000-\u23ff\u2460-\u24ff\u2500-\u27bf\u3000-\u33ff\u3260-\u327b\uff00-\uffef]/u.test(char)) width += fontSize;
+    else if (/[A-Z0-9]/u.test(char)) width += fontSize * 0.62;
+    else if (/[a-z]/u.test(char)) width += fontSize * 0.54;
+    else width += fontSize * 0.5;
+  }
+  return width;
+}

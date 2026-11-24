@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: modu_math
+      POSTGRES_USER: modu_math
+      POSTGRES_PASSWORD: modu_math
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modu_math -d modu_math"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build:
+      context: .
+      additional_contexts:
+        student_bundle: service:mobile
+    # Re-evaluate the local build on every `docker compose up`. Docker layer
+    # caching keeps unchanged starts fast while preventing stale editor assets.
+    pull_policy: build
+    environment:
+      MODU_MATH_WEB_SECRET_KEY: local-compose-secret-change-me
+      DJANGO_DEBUG: "true"
+      # Development only: also accepts Android emulators and LAN devices.
+      DJANGO_ALLOWED_HOSTS: "*"
+      DJANGO_CORS_ALLOWED_ORIGINS: http://localhost:3000,http://127.0.0.1:3000,capacitor://localhost,https://localhost,http://localhost
+      DATABASE_URL: postgresql://modu_math:modu_math@db:5432/modu_math
+      MODU_PROBLEMS_ROOT: /app/examples/problems
+      MODU_STUDENT_STATIC_ROOT: /app/student-static
+    command: >-
+      sh -c "python manage.py migrate &&
+      (python manage.py sync_problems &) &&
+      gunicorn modu_math_web.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./examples/problems:/app/examples/problems
+      - ./src:/app/src
+      - ./schema:/app/schema
+      - ./locales:/app/locales
+      - ./overrides:/app/overrides
+
+  mobile:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: docker/mobile.Dockerfile
+    pull_policy: build
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:

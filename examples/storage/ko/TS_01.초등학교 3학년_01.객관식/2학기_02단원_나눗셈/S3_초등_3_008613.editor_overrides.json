@@ -1,0 +1,38 @@
+{
+  "slots": {
+    "slot.q.text": {
+      "x": 29.053,
+      "y": 56.301,
+      "font_size": 30
+    },
+    "slot.choice.1.box": {
+      "x": 36.053,
+      "y": 86.301
+    },
+    "slot.choice.2.box": {
+      "x": 240.053,
+      "y": 86.301
+    },
+    "slot.choice.3.box": {
+      "x": 446.053,
+      "y": 86.301
+    },
+    "slot.choice.1.text": {
+      "x": 82.053,
+      "y": 136.301
+    },
+    "slot.choice.2.text": {
+      "x": 288.053,
+      "y": 136.301
+    },
+    "slot.choice.3.text": {
+      "x": 495.053,
+      "y": 136.301
+    }
+  },
+  "version": 1,
+  "canvas": {
+    "width": 700,
+    "height": 240
+  }
+}

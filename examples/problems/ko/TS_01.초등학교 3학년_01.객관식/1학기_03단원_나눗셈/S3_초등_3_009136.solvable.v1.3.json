@@ -1,0 +1,130 @@
+{
+  "schema": "modu.solvable.v1.3",
+  "problem_id": "S3_초등_3_009136",
+  "given": [
+    {
+      "ref": "expr.division",
+      "value": "18 ÷ 3"
+    },
+    {
+      "ref": "expr.ga",
+      "value": "3 × 4 = 12"
+    },
+    {
+      "ref": "expr.na",
+      "value": "3 × 5 = 15"
+    },
+    {
+      "ref": "expr.da",
+      "value": "3 × 6 = 18"
+    }
+  ],
+  "target": {
+    "ref": "slot.choice.option_2",
+    "type": "choice"
+  },
+  "method": "division_via_multiplication_table",
+  "steps": [
+    {
+      "id": "step.find_multiplication",
+      "expr": "3 * 6 = 18",
+      "value": "㉢",
+      "explanation": "나누는 수가 3이므로 3의 단 곱셈구구에서 곱이 18인 식 3 × 6 = 18(㉢)을 이용하면 18 ÷ 3 = 6임을 알 수 있습니다."
+    }
+  ],
+  "answer": {
+    "type": "choice",
+    "value": "㉢ 3 × 6 = 18",
+    "unit": "",
+    "answer_index": 2,
+    "blanks": [],
+    "choices": [
+      {
+        "id": "choice.canvas.konva_1795337996416_select_246331",
+        "label": "1",
+        "text": "㉠ 3 × 4 = 12",
+        "source_refs": [
+          "slot.diagram.item_ga"
+        ]
+      },
+      {
+        "id": "choice.canvas.konva_1795337996416_select_247842",
+        "label": "2",
+        "text": "㉡ 3 × 5 = 15",
+        "source_refs": [
+          "slot.diagram.item_na"
+        ]
+      },
+      {
+        "id": "choice.canvas.konva_1795337996416_select_249162",
+        "label": "3",
+        "text": "㉢ 3 × 6 = 18",
+        "source_refs": [
+          "slot.diagram.item_da"
+        ]
+      }
+    ],
+    "answer_key": [
+      {
+        "id": "choice.canvas.konva_1795337996416_select_249162",
+        "slot_id": "slot.diagram.item_da",
+        "value": "㉢ 3 × 6 = 18"
+      }
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "㉢",
+            "ref": "slot.choice.option_2"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795337996416_select_246331",
+            "text": "㉠ 3 × 4 = 12",
+            "correct": false,
+            "label": "1",
+            "sourceRefs": [
+              "slot.diagram.item_ga"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795337996416_select_247842",
+            "text": "㉡ 3 × 5 = 15",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.diagram.item_na"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795337996416_select_249162",
+            "text": "㉢ 3 × 6 = 18",
+            "correct": true,
+            "label": "3",
+            "sourceRefs": [
+              "slot.diagram.item_da"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "diagnostics": {
+    "skills": [
+      "division.multiplication_relation"
+    ],
+    "errors": {
+      "㉠": "multiplication.wrong_product",
+      "㉡": "multiplication.wrong_product"
+    }
+  }
+}

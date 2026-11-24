@@ -1,0 +1,264 @@
+import { useEffect, useMemo, useState } from "react";
+import { listProblems, type ProblemSummary } from "../api/editorApi";
+
+export const problemLanguages = ["ko", "uk"] as const;
+export type ProblemLanguage = (typeof problemLanguages)[number];
+
+interface ProblemListProps {
+  selectedProblemId: string;
+  language: ProblemLanguage;
+  onOpenProblem: (problemId: string) => void;
+  onPrefetchProblem?: (problemId: string) => void;
+  onLanguageChange: (language: ProblemLanguage) => void;
+}
+
+interface ProblemTreeNode {
+  name: string;
+  path: string;
+  folders: Map<string, ProblemTreeNode>;
+  problems: ProblemSummary[];
+}
+
+export function ProblemList({ selectedProblemId, language, onOpenProblem, onPrefetchProblem, onLanguageChange }: ProblemListProps) {
+  const [problems, setProblems] = useState<ProblemSummary[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    let canceled = false;
+    setLoading(true);
+    listProblems()
+      .then((response) => {
+        if (canceled) return;
+        setProblems(response.problems);
+        setError(null);
+      })
+      .catch((err: unknown) => {
+        if (canceled) return;
+        setError(String(err));
+      })
+      .finally(() => {
+        if (!canceled) setLoading(false);
+      });
+    return () => {
+      canceled = true;
+    };
+  }, []);
+
+  const languageProblems = useMemo(() => problems.filter((problem) => problem.language === language), [language, problems]);
+  const selectedProblem = useMemo(() => problems.find((problem) => problem.problem_id === selectedProblemId) ?? null, [problems, selectedProblemId]);
+  const filteredProblems = useMemo(() => {
+    const normalizedQuery = normalizeSearch(query);
+    if (!normalizedQuery) return languageProblems;
+    return languageProblems.filter((problem) => problemMatches(problem, normalizedQuery));
+  }, [languageProblems, query]);
+
+  const tree = useMemo(() => buildProblemTree(filteredProblems), [filteredProblems]);
+  const searching = query.trim().length > 0;
+
+  const toggleFolder = (path: string) => {
+    setCollapsed((current) => {
+      const next = new Set(current);
+      if (next.has(path)) next.delete(path);
+      else next.add(path);
+      return next;
+    });
+  };
+
+  const switchLanguage = (nextLanguage: ProblemLanguage) => {
+    if (nextLanguage === language) return;
+    const equivalentProblemId = selectedProblem?.equivalent_problem_ids?.[nextLanguage];
+    onLanguageChange(nextLanguage);
+    if (equivalentProblemId) onOpenProblem(equivalentProblemId);
+  };
+
+  return (
+    <aside className="problem-list-panel">
+      <div className="panel-title">문제 탐색</div>
+      <div className="problem-language-toggle" role="tablist" aria-label="Problem language">
+        {problemLanguages.map((option) => {
+          const equivalentProblemId = selectedProblem?.equivalent_problem_ids?.[option];
+          const isActive = option === language;
+          const disabled = !isActive && selectedProblem?.language != null && !equivalentProblemId;
+          return (
+            <button
+              key={option}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              className={isActive ? "active" : ""}
+              disabled={disabled}
+              title={disabled ? "이 언어에 같은 문제가 없습니다." : languageLabel(option)}
+              onClick={() => switchLanguage(option)}
+            >
+              {languageLabel(option)}
+            </button>
+          );
+        })}
+      </div>
+      <div className="problem-search-wrap">
+        <input
+          className="problem-search-input"
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="파일명 또는 폴더 검색"
+          aria-label="파일명 또는 폴더 검색"
+        />
+        <div className="problem-count">
+          {filteredProblems.length} / {languageProblems.length}개
+        </div>
+      </div>
+      {loading ? <div className="problem-list-status">문제를 불러오는 중…</div> : null}
+      {error ? <div className="problem-list-error">{error}</div> : null}
+      <div className="problem-scroll tree-scroll" aria-label="Problem tree">
+        {filteredProblems.length ? (
+          <ProblemTree
+            node={tree}
+            selectedProblemId={selectedProblemId}
+            collapsed={collapsed}
+            searching={searching}
+            onToggleFolder={toggleFolder}
+            onOpenProblem={onOpenProblem}
+            onPrefetchProblem={onPrefetchProblem}
+          />
+        ) : (
+          <div className="problem-empty">검색 결과가 없습니다.</div>
+        )}
+      </div>
+    </aside>
+  );
+}
+
+function ProblemTree({
+  node,
+  selectedProblemId,
+  collapsed,
+  searching,
+  onToggleFolder,
+  onOpenProblem,
+  onPrefetchProblem,
+}: {
+  node: ProblemTreeNode;
+  selectedProblemId: string;
+  collapsed: Set<string>;
+  searching: boolean;
+  onToggleFolder: (path: string) => void;
+  onOpenProblem: (problemId: string) => void;
+  onPrefetchProblem?: (problemId: string) => void;
+}) {
+  const folders = Array.from(node.folders.values()).sort((a, b) => a.name.localeCompare(b.name, "ko"));
+  const files = [...node.problems].sort((a, b) => problemFileName(a).localeCompare(problemFileName(b), "ko"));
+
+  return (
+    <ul className="problem-tree-list">
+      {folders.map((folder) => {
+        const isCollapsed = !searching && collapsed.has(folder.path);
+        return (
+          <li className="problem-tree-item" key={folder.path}>
+            <button type="button" className="problem-folder-row" onClick={() => onToggleFolder(folder.path)}>
+              <span className="problem-chevron">{isCollapsed ? "▸" : "▾"}</span>
+              <span className="problem-folder-name">{folder.name}</span>
+            </button>
+            {isCollapsed ? null : (
+              <ProblemTree
+                node={folder}
+                selectedProblemId={selectedProblemId}
+                collapsed={collapsed}
+                searching={searching}
+                onToggleFolder={onToggleFolder}
+                onOpenProblem={onOpenProblem}
+                onPrefetchProblem={onPrefetchProblem}
+              />
+            )}
+          </li>
+        );
+      })}
+      {files.map((problem) => (
+        <li className="problem-tree-item" key={problem.problem_id}>
+          <button
+            type="button"
+            className={problem.problem_id === selectedProblemId ? "problem-file-row active" : "problem-file-row"}
+            title={problemTitle(problem)}
+            onClick={() => onOpenProblem(problem.problem_id)}
+            onPointerEnter={() => onPrefetchProblem?.(problem.problem_id)}
+            onFocus={() => onPrefetchProblem?.(problem.problem_id)}
+          >
+            <span className="problem-file-name">{problemDisplayName(problem)}</span>
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function languageLabel(language: ProblemLanguage): string {
+  return {
+    ko: "한국어",
+    uk: "Українська",
+  }[language];
+}
+
+function buildProblemTree(problems: ProblemSummary[]): ProblemTreeNode {
+  const root: ProblemTreeNode = { name: "", path: "", folders: new Map(), problems: [] };
+
+  for (const problem of problems) {
+    let node = root;
+    for (const part of problemFolderParts(problem)) {
+      const path = node.path ? `${node.path}/${part}` : part;
+      let folder = node.folders.get(part);
+      if (!folder) {
+        folder = { name: part, path, folders: new Map(), problems: [] };
+        node.folders.set(part, folder);
+      }
+      node = folder;
+    }
+    node.problems.push(problem);
+  }
+
+  return root;
+}
+
+function problemFolderParts(problem: ProblemSummary): string[] {
+  const rawPath = problem.path || folderPathFromProblemId(problem.problem_id);
+  const parts = rawPath.replace(/\\/g, "/").replace(/^\/+/, "").split("/").filter(Boolean);
+  if (parts[0] === "problems" && problemLanguages.includes(parts[1] as ProblemLanguage)) parts.splice(0, 2);
+  return parts.at(-1)?.endsWith(".dsl.py") ? parts.slice(0, -1) : parts;
+}
+
+function problemFileName(problem: ProblemSummary): string {
+  const parts = problem.problem_id.replace(/\\/g, "/").split("/").filter(Boolean);
+  const last = parts[parts.length - 1] || problem.problem_id;
+  return last.endsWith(".dsl.py") ? last : `${last}.dsl.py`;
+}
+
+function problemDisplayName(problem: ProblemSummary): string {
+  return problemFileName(problem).replace(/\.dsl\.py$/, "");
+}
+
+function problemTitle(problem: ProblemSummary): string {
+  const folder = problem.path || folderPathFromProblemId(problem.problem_id);
+  return folder ? `${folder}/${problemFileName(problem)}` : problemFileName(problem);
+}
+
+function folderPathFromProblemId(problemId: string): string {
+  const parts = problemId.replace(/\\/g, "/").split("/").filter(Boolean);
+  if (parts.at(-1)?.endsWith(".dsl.py")) parts.pop();
+  return parts.join("/");
+}
+
+function problemMatches(problem: ProblemSummary, normalizedQuery: string): boolean {
+  return (
+    normalizeSearch(problem.problem_id).includes(normalizedQuery) ||
+    normalizeSearch(problem.root).includes(normalizedQuery) ||
+    normalizeSearch(problem.path).includes(normalizedQuery) ||
+    normalizeSearch(problem.canonical_problem_id ?? "").includes(normalizedQuery) ||
+    normalizeSearch(problemFileName(problem)).includes(normalizedQuery)
+  );
+}
+
+function normalizeSearch(value: string): string {
+  return value.trim().toLocaleLowerCase("ko");
+}

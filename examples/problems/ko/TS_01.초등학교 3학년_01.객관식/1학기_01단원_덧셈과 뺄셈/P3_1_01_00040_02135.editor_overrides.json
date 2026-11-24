@@ -1,0 +1,196 @@
+{
+  "canvas": {
+    "width": 380,
+    "height": 260
+  },
+  "version": 1,
+  "deleted_slots": [
+    "slot.carry_hundreds",
+    "slot.carry_tens",
+    "slot.answer_hundreds",
+    "slot.answer_tens",
+    "slot.answer_ones"
+  ],
+  "slots": {
+    "slot.instruction": {
+      "text": "□ 안에 알맞은 수를 써넣으시오.",
+      "font_size": 24,
+      "fill": "#202124",
+      "align": "left",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.first_number": {
+      "text": "6 6 4",
+      "x": 161.636,
+      "y": 124.808,
+      "font_size": 28,
+      "fill": "#202124",
+      "width": 64,
+      "height": 35,
+      "align": "left",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.plus_sign": {
+      "text": "+",
+      "x": 121.636,
+      "y": 162.808,
+      "font_size": 28,
+      "fill": "#202124",
+      "width": 32,
+      "height": 43,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.second_number": {
+      "text": "2 5 7",
+      "x": 160.836,
+      "y": 162.408,
+      "font_size": 28,
+      "fill": "#202124",
+      "width": 66.8,
+      "height": 35,
+      "align": "left",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "konva_1785065387111_rect_91826": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 1,
+        "group_id": "final_answer",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "x": 180.036,
+      "y": 102.208
+    },
+    "konva_1785065387111_paste_117760_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "x": 157.836,
+      "y": 102.408
+    },
+    "konva_1785065387111_paste_146425_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 3,
+        "group_id": "final_answer",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "x": 177.236,
+      "y": 216.008
+    },
+    "konva_1785065387111_paste_146425_1": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 2,
+        "group_id": "final_answer",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "x": 154.436,
+      "y": 215.808
+    },
+    "konva_1785065387111_paste_166216_0": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 4,
+        "group_id": "final_answer",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "x": 200.036,
+      "y": 215.608
+    },
+    "slot.horizontal_line": {
+      "x1": 124.036,
+      "y1": 203.481,
+      "x2": 239.606,
+      "y2": 203.081
+    }
+  }
+}

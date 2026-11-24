@@ -1,0 +1,158 @@
+{
+  "problem_id": "S3_초등_3_008975",
+  "problem_type": "multiple_choice_geometry_ray",
+  "metadata": {
+    "title": "반직선 선택하기",
+    "tags": [],
+    "question": "반직선을 선택하세요.",
+    "required_layout_ids": [
+      "slot.diagram.fig0_curve",
+      "slot.diagram.fig0_dot1",
+      "slot.diagram.fig0_dot2",
+      "slot.diagram.fig1_path",
+      "slot.diagram.fig1_dot1",
+      "slot.diagram.fig1_dot2",
+      "slot.diagram.fig2_line",
+      "slot.diagram.fig2_dot1",
+      "slot.diagram.fig2_dot2",
+      "slot.choice.option_0",
+      "slot.choice.option_1",
+      "slot.choice.option_2"
+    ],
+    "extraction_confidence": 1.0,
+    "grade": 3,
+    "semester": 1,
+    "subject": "수학",
+    "chapter": "02단원_평면도형",
+    "language": "ko-KR",
+    "presentation_sources": {
+      "question": [
+        "slot.stem.question"
+      ],
+      "instruction": [],
+      "choice": [],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "반직선을 선택하세요."
+  },
+  "domain": {
+    "objects": [
+      {
+        "id": "figure.option_0",
+        "type": "curved_line",
+        "label": "첫 번째 도형",
+        "is_straight": false,
+        "extends_one_direction": true
+      },
+      {
+        "id": "figure.option_1",
+        "type": "broken_line",
+        "label": "두 번째 도형",
+        "is_straight": false,
+        "extends_one_direction": true
+      },
+      {
+        "id": "figure.option_2",
+        "type": "ray",
+        "label": "세 번째 도형",
+        "is_straight": true,
+        "extends_one_direction": true
+      }
+    ],
+    "relations": [
+      {
+        "id": "relation.classification",
+        "type": "is_ray",
+        "from_id": "figure.option_2",
+        "to_id": "concept.ray"
+      }
+    ],
+    "confidence": 1.0
+  },
+  "answer": {
+    "blanks": [],
+    "choices": [
+      {
+        "id": "slot.choice.option_0",
+        "label": "1",
+        "text": "1번 도형(굽은 선)",
+        "source_refs": [
+          "slot.choice.option_0"
+        ]
+      },
+      {
+        "id": "slot.choice.option_1",
+        "label": "2",
+        "text": "2번 도형(꺾인 선)",
+        "source_refs": [
+          "slot.choice.option_1"
+        ]
+      },
+      {
+        "id": "slot.choice.option_2",
+        "label": "3",
+        "text": "3번 도형(반직선)",
+        "source_refs": [
+          "slot.choice.option_2"
+        ]
+      }
+    ],
+    "answer_key": [
+      {
+        "id": "slot.choice.option_2",
+        "value": "3번 도형(반직선)"
+      }
+    ],
+    "confidence": 1.0,
+    "type": "choice",
+    "value": "3번 도형(반직선)",
+    "unit": "",
+    "answer_index": 2,
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "3번 도형(반직선)",
+            "ref": "slot.choice.option_2"
+          }
+        ],
+        "choices": [
+          {
+            "id": "slot.choice.option_0",
+            "text": "1번 도형(굽은 선)",
+            "correct": false,
+            "label": "1",
+            "sourceRefs": [
+              "slot.choice.option_0"
+            ]
+          },
+          {
+            "id": "slot.choice.option_1",
+            "text": "2번 도형(꺾인 선)",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.choice.option_1"
+            ]
+          },
+          {
+            "id": "slot.choice.option_2",
+            "text": "3번 도형(반직선)",
+            "correct": true,
+            "label": "3",
+            "sourceRefs": [
+              "slot.choice.option_2"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

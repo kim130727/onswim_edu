@@ -1,0 +1,82 @@
+{
+  "canvas": {
+    "width": 400,
+    "height": 250
+  },
+  "version": 1,
+  "slots": {
+    "slot.instruction": {
+      "x": 11.6,
+      "y": 20,
+      "width": 338.8,
+      "height": 43,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.example_box": {
+      "x": 56.725,
+      "y": 94.564
+    },
+    "slot.example_circle": {
+      "d": "M 66.725 158.564 C 66.725 130.95 89.111 108.564 116.725 108.564 C 144.339 108.564 166.725 130.95 166.725 158.564 C 166.725 186.178 144.339 208.564 116.725 208.564 C 89.111 208.564 66.725 186.178 66.725 158.564 Z"
+    },
+    "slot.example_horizontal_line": {
+      "d": "M 66.725 158.564 L 166.725 158.564"
+    },
+    "slot.example_vertical_line": {
+      "d": "M 116.725 108.564 L 116.725 158.564"
+    },
+    "slot.example_label": {
+      "x": 117.544,
+      "y": 78.711,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.example_left_value": {
+      "x": 92.725,
+      "y": 144.564,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.example_right_value": {
+      "x": 140.725,
+      "y": 144.564,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.example_sum": {
+      "x": 116.725,
+      "y": 188.564,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.item_1_circle": {
+      "d": "M 193.446 159.039 C 193.446 131.977 215.384 110.039 242.446 110.039 C 269.508 110.039 291.446 131.977 291.446 159.039 C 291.446 186.101 269.508 208.039 242.446 208.039 C 215.384 208.039 193.446 186.101 193.446 159.039 Z"
+    },
+    "slot.item_1_horizontal_line": {
+      "d": "M 193.446 159.039 L 291.446 159.039"
+    },
+    "slot.item_1_vertical_line": {
+      "d": "M 242.446 110.039 L 242.446 159.039"
+    },
+    "konva_1785217709470_rect_934908": {
+      "x": 215.569,
+      "y": 168.403
+    },
+    "slot.item_1_left_value": {
+      "x": 218.446,
+      "y": 145.039,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.item_1_right_value": {
+      "x": 266.446,
+      "y": 145.039,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    }
+  },
+  "deleted_slots": [
+    "slot.item_2_circle",
+    "slot.item_2_horizontal_line",
+    "slot.item_2_vertical_line",
+    "konva_1785217709470_paste_949846_0",
+    "slot.item_1_label",
+    "slot.item_2_label",
+    "slot.item_2_left_value",
+    "slot.item_2_right_value"
+  ]
+}

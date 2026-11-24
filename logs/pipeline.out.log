@@ -1,0 +1,1217 @@
+Python=C:\projects\modu_math\.venv\Scripts\python.exe
+Provider=openai, Mode=api, Items=101
+Phase1Provider=openai (vision/refine), Phase2Provider=openai (dsl)
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008961
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008961.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008961.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008961 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008961.png --problem-id S3_ÃÊµî_3_008961 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008961.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008962
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008962.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008962.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008962 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008962.png --problem-id S3_ÃÊµî_3_008962 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008962.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008963
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008963.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008963.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008963 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008963.png --problem-id S3_ÃÊµî_3_008963 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008963.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008964
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008964.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008964.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008964 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008964.png --problem-id S3_ÃÊµî_3_008964 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008964.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008965
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008965.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008965.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008965 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008965.png --problem-id S3_ÃÊµî_3_008965 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008965.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008966
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008966.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008966.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008966 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008966.png --problem-id S3_ÃÊµî_3_008966 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008966.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008967
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008967.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008967.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008967 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008967.png --problem-id S3_ÃÊµî_3_008967 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008967.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008968
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008968.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008968.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008968 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008968.png --problem-id S3_ÃÊµî_3_008968 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008968.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008969
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008969.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008969.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008969 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008969.png --problem-id S3_ÃÊµî_3_008969 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008969.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008970
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008970.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008970.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008970 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008970.png --problem-id S3_ÃÊµî_3_008970 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008970.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008971
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008971.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008971.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008971 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008971.png --problem-id S3_ÃÊµî_3_008971 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008971.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008972
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008972.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008972.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008972 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008972.png --problem-id S3_ÃÊµî_3_008972 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008972.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008973
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008973.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008973.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008973 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008973.png --problem-id S3_ÃÊµî_3_008973 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008973.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008974
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008974.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008974.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008974 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008974.png --problem-id S3_ÃÊµî_3_008974 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008974.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008975
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008975.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008975.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008975 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008975.png --problem-id S3_ÃÊµî_3_008975 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008975.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008976
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008976.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008976.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008976 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008976.png --problem-id S3_ÃÊµî_3_008976 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008976.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008977
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008977.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008977.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008977 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008977.png --problem-id S3_ÃÊµî_3_008977 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008977.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008978
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008978.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008978.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008978 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008978.png --problem-id S3_ÃÊµî_3_008978 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008978.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008979
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008979.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008979.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008979 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008979.png --problem-id S3_ÃÊµî_3_008979 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008979.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008980
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008980.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008980.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008980 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008980.png --problem-id S3_ÃÊµî_3_008980 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008980.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008981
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008981.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008981.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008981 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008981.png --problem-id S3_ÃÊµî_3_008981 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008981.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008982
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008982.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008982.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008982 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008982.png --problem-id S3_ÃÊµî_3_008982 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008982.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008983
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008983.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008983.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008983 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008983.png --problem-id S3_ÃÊµî_3_008983 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008983.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008984
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008984.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008984.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008984 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008984.png --problem-id S3_ÃÊµî_3_008984 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008984.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008985
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008985.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008985.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008985 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008985.png --problem-id S3_ÃÊµî_3_008985 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008985.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008986
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008986.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008986.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008986 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008986.png --problem-id S3_ÃÊµî_3_008986 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008986.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008987
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008987.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008987.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008987 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008987.png --problem-id S3_ÃÊµî_3_008987 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008987.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008988
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008988.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008988.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008988 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008988.png --problem-id S3_ÃÊµî_3_008988 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008988.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008989
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008989.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008989.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008989 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008989.png --problem-id S3_ÃÊµî_3_008989 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008989.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008990
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008990.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008990.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008990 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008990.png --problem-id S3_ÃÊµî_3_008990 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008990.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008991
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008991.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008991.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008991 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008991.png --problem-id S3_ÃÊµî_3_008991 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008991.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008992
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008992.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008992.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008992 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008992.png --problem-id S3_ÃÊµî_3_008992 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008992.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008993
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008993.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008993.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008993 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008993.png --problem-id S3_ÃÊµî_3_008993 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008993.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008994
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008994.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008994.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008994 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008994.png --problem-id S3_ÃÊµî_3_008994 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008994.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008995
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008995.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008995.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008995 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008995.png --problem-id S3_ÃÊµî_3_008995 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008995.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008996
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008996.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008996.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008996 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008996.png --problem-id S3_ÃÊµî_3_008996 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008996.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008997
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008997.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008997.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008997 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008997.png --problem-id S3_ÃÊµî_3_008997 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008997.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008998
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008998.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008998.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008998 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008998.png --problem-id S3_ÃÊµî_3_008998 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008998.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_008999
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008999.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_008999.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_008999 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008999.png --problem-id S3_ÃÊµî_3_008999 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_008999.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009000
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009000.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009000.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009000 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009000.png --problem-id S3_ÃÊµî_3_009000 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009000.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009001
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009001.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009001.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009001 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009001.png --problem-id S3_ÃÊµî_3_009001 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009001.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009002
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009002.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009002.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009002 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009002.png --problem-id S3_ÃÊµî_3_009002 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009002.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009004
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009004.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009004.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009004 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009004.png --problem-id S3_ÃÊµî_3_009004 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009004.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009005
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009005.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009005.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009005 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009005.png --problem-id S3_ÃÊµî_3_009005 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009005.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009006
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009006.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009006.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009006 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009006.png --problem-id S3_ÃÊµî_3_009006 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009006.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009007
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009007.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009007.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009007 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009007.png --problem-id S3_ÃÊµî_3_009007 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009007.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009008
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009008.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009008.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009008 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009008.png --problem-id S3_ÃÊµî_3_009008 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009008.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009009
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009009.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009009.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009009 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009009.png --problem-id S3_ÃÊµî_3_009009 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009009.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009010
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009010.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009010.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009010 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009010.png --problem-id S3_ÃÊµî_3_009010 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009010.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009011
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009011.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009011.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009011 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009011.png --problem-id S3_ÃÊµî_3_009011 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009011.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009013
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009013.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009013.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009013 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009013.png --problem-id S3_ÃÊµî_3_009013 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009013.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009014
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009014.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009014.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009014 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009014.png --problem-id S3_ÃÊµî_3_009014 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009014.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009015
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009015.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009015.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009015 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009015.png --problem-id S3_ÃÊµî_3_009015 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009015.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009016
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009016.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009016.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009016 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009016.png --problem-id S3_ÃÊµî_3_009016 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009016.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009017
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009017.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009017.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009017 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009017.png --problem-id S3_ÃÊµî_3_009017 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009017.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009018
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009018.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009018.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009018 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009018.png --problem-id S3_ÃÊµî_3_009018 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009018.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009019
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009019.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009019.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009019 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009019.png --problem-id S3_ÃÊµî_3_009019 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009019.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009020
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009020.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009020.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009020 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009020.png --problem-id S3_ÃÊµî_3_009020 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009020.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009021
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009021.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009021.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009021 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009021.png --problem-id S3_ÃÊµî_3_009021 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009021.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009024
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009024.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009024.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009024 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009024.png --problem-id S3_ÃÊµî_3_009024 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009024.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009025
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009025.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009025.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009025 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009025.png --problem-id S3_ÃÊµî_3_009025 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009025.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009026
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009026.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009026.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009026 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009026.png --problem-id S3_ÃÊµî_3_009026 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009026.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009027
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009027.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009027.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009027 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009027.png --problem-id S3_ÃÊµî_3_009027 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009027.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009028
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009028.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009028.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009028 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009028.png --problem-id S3_ÃÊµî_3_009028 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009028.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009029
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009029.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009029.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009029 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009029.png --problem-id S3_ÃÊµî_3_009029 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009029.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009030
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009030.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009030.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009030 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009030.png --problem-id S3_ÃÊµî_3_009030 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009030.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009031
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009031.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009031.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009031 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009031.png --problem-id S3_ÃÊµî_3_009031 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009031.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009032
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009032.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009032.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009032 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009032.png --problem-id S3_ÃÊµî_3_009032 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009032.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009033
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009033.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009033.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009033 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009033.png --problem-id S3_ÃÊµî_3_009033 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009033.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009034
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009034.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009034.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009034 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009034.png --problem-id S3_ÃÊµî_3_009034 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009034.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009035
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009035.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009035.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009035 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009035.png --problem-id S3_ÃÊµî_3_009035 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009035.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009036
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009036.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009036.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009036 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009036.png --problem-id S3_ÃÊµî_3_009036 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009036.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009037
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009037.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009037.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009037 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009037.png --problem-id S3_ÃÊµî_3_009037 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009037.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009038
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009038.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009038.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009038 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009038.png --problem-id S3_ÃÊµî_3_009038 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009038.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009039
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009039.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009039.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009039 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009039.png --problem-id S3_ÃÊµî_3_009039 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009039.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009040
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009040.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009040.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009040 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009040.png --problem-id S3_ÃÊµî_3_009040 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009040.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009041
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009041.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009041.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009041 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009041.png --problem-id S3_ÃÊµî_3_009041 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009041.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009043
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009043.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009043.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009043 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009043.png --problem-id S3_ÃÊµî_3_009043 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009043.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009045
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009045.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009045.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009045 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009045.png --problem-id S3_ÃÊµî_3_009045 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009045.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009046
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009046.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009046.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009046 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009046.png --problem-id S3_ÃÊµî_3_009046 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009046.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009047
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009047.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009047.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009047 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009047.png --problem-id S3_ÃÊµî_3_009047 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009047.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009048
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009048.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009048.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009048 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009048.png --problem-id S3_ÃÊµî_3_009048 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009048.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009049
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009049.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009049.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009049 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009049.png --problem-id S3_ÃÊµî_3_009049 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009049.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009050
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009050.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009050.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009050 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009050.png --problem-id S3_ÃÊµî_3_009050 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009050.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009051
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009051.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009051.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009051 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009051.png --problem-id S3_ÃÊµî_3_009051 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009051.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009052
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009052.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009052.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009052 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009052.png --problem-id S3_ÃÊµî_3_009052 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009052.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009053
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009053.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009053.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009053 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009053.png --problem-id S3_ÃÊµî_3_009053 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009053.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009054
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009054.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009054.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009054 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009054.png --problem-id S3_ÃÊµî_3_009054 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009054.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009055
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009055.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009055.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009055 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009055.png --problem-id S3_ÃÊµî_3_009055 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009055.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009056
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009056.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009056.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009056 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009056.png --problem-id S3_ÃÊµî_3_009056 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009056.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009057
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009057.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009057.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009057 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009057.png --problem-id S3_ÃÊµî_3_009057 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009057.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009058
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009058.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009058.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009058 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009058.png --problem-id S3_ÃÊµî_3_009058 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009058.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009059
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009059.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009059.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009059 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009059.png --problem-id S3_ÃÊµî_3_009059 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009059.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009060
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009060.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009060.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009060 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009060.png --problem-id S3_ÃÊµî_3_009060 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009060.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009061
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009061.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009061.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009061 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009061.png --problem-id S3_ÃÊµî_3_009061 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009061.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009062
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009062.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009062.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009062 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009062.png --problem-id S3_ÃÊµî_3_009062 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009062.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009063
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009063.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009063.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009063 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009063.png --problem-id S3_ÃÊµî_3_009063 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009063.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009064
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009064.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009064.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009064 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009064.png --problem-id S3_ÃÊµî_3_009064 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009064.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009065
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009065.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009065.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009065 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009065.png --problem-id S3_ÃÊµî_3_009065 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009065.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009066
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009066.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009066.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009066 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009066.png --problem-id S3_ÃÊµî_3_009066 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009066.vision_draft.md --mode api --provider openai --detail low --force
+
+########################################
+Processing: dir=examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä, prob_id=S3_ÃÊµî_3_009067
+########################################
+Reference source problem json not found (optional): examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009067.json
+
+=== 1) Generate vision prompt bundle ===
+Prompt bundle written. Add --llm-output-file later to generate vision draft.
+Wrote prompt bundle: examples\problems\TS_01.ì´ˆë“±í•™êµ_3í•™ë…„_01.ê°ê´€ì‹\S3_ì´ˆë“±_3_009067.vision_prompt.md
+
+=== 2) Generate vision draft via API ===
+FAILED: S3_ÃÊµî_3_009067 :: C:\projects\modu_math\.venv\Scripts\python.exe command failed: tools/generate_vision_draft.py --image examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009067.png --problem-id S3_ÃÊµî_3_009067 --out examples\problems\TS_01.ÃÊµîÇĞ±³_3ÇĞ³â_01.°´°ü½Ä\S3_ÃÊµî_3_009067.vision_draft.md --mode api --provider openai --detail low --force
+
+All items processed successfully.

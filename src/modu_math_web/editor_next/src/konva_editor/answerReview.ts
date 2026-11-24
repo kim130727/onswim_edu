@@ -1,0 +1,225 @@
+import type { EditorShape, InputInteraction } from "../types/editorShape";
+
+export interface AnswerBindingOption {
+  index: number;
+  label: string;
+  value: string;
+  unit?: string;
+  ref?: string;
+}
+
+export type AnswerBindingStatus = "connected" | "inferred" | "unlinked" | "duplicate";
+export type AnswerPresentationMode = "canvas_slots" | "panel_input" | "choice" | "canvas_select";
+
+export interface AnswerSlotReview {
+  shapeId: string;
+  displayOrder: number;
+  option: AnswerBindingOption | null;
+  status: AnswerBindingStatus;
+}
+
+export interface AnswerChoiceReview {
+  id: string;
+  label: string;
+  text: string;
+  correct: boolean;
+  sourceRefs?: string[];
+}
+
+export function answerChoicesFromArtifacts(
+  semantic: Record<string, unknown> | null,
+  solvable: Record<string, unknown> | null,
+  answerOptions: AnswerBindingOption[],
+): AnswerChoiceReview[] {
+  const raw = answerChoices(semantic) ?? answerChoices(solvable) ?? [];
+  const choices = raw.filter((item) => {
+    const entry = recordValue(item);
+    const id = stringValue(entry?.slot_id) || stringValue(entry?.id);
+    return !(id.endsWith(".marker") && raw.some((other) => {
+      const candidate = recordValue(other);
+      return (candidate?.slot_id ?? candidate?.id) === id.replace(/\.marker$/, ".value");
+    }));
+  });
+  const mapped = choices.map((item, index) => {
+    const record = recordValue(item);
+    const id = stringValue(record?.id) || `choice.${index + 1}`;
+    const rawText = scalarText(record?.text ?? record?.value ?? item);
+    const prefix = rawText.match(/^\s*([①-⑳]|\([1-9][0-9]?\)|[1-9][0-9]?[.)])\s*/);
+    const label = stringValue(record?.label) || prefix?.[1] || `${index + 1}`;
+    const text = prefix ? rawText.slice(prefix[0].length) : rawText;
+    const target = recordValue(recordValue(semantic?.answer)?.target)?.type ?? recordValue(recordValue(solvable?.answer)?.target)?.type;
+    const labelNumber = /^[①-⑳]$/.test(label) ? label.charCodeAt(0) - "①".charCodeAt(0) + 1 : Number(label.replace(/[^0-9]/g, ""));
+    const correct = answerOptions.some((option) => option.ref === id ||
+      (target === "choice_number" || target === "choice_order" ? Number(option.value) === labelNumber :
+        !choices.some((candidate) => recordValue(candidate)?.id === option.ref) && [rawText, text].some((value) => normalizedAnswer(option.value) === normalizedAnswer(value))));
+    const sourceRefs = Array.isArray(record?.source_refs) ? record.source_refs.filter((ref): ref is string => typeof ref === "string") : typeof record?.slot_id === "string" ? [record.slot_id] : [];
+    return { id, label, text, correct, sourceRefs };
+  });
+  return sortChoicesByLabel(mapped);
+}
+
+function choiceSortKey(label: string, index: number): number {
+  if (/^[①-⑳]$/.test(label)) {
+    return label.charCodeAt(0) - 0x2460 + 1;
+  }
+  const matchNum = label.match(/\d+/);
+  if (matchNum) {
+    return parseInt(matchNum[0], 10);
+  }
+  const hangulIdx = "ㄱㄴㄷㄹㅁㅂㅅㅇㅈㅊㅋㅌㅍㅎ".indexOf(label);
+  if (hangulIdx !== -1) {
+    return hangulIdx + 1;
+  }
+  const alphaIdx = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(label.toUpperCase());
+  if (alphaIdx !== -1) {
+    return alphaIdx + 1;
+  }
+  return 1000 + index;
+}
+
+export function sortChoicesByLabel(choices: AnswerChoiceReview[]): AnswerChoiceReview[] {
+  if (choices.length <= 1) return choices;
+  const keys = choices.map((c, i) => choiceSortKey(c.label, i));
+  const hasDistinctKeys = new Set(keys).size === choices.length;
+  const allOrdered = keys.every((k) => k < 1000);
+  if (hasDistinctKeys && allOrdered) {
+    return [...choices].sort((a, b) => choiceSortKey(a.label, 0) - choiceSortKey(b.label, 0));
+  }
+  return choices;
+}
+
+export function answerSlotReviews(shapes: EditorShape[], answerOptions: AnswerBindingOption[]): Map<string, AnswerSlotReview> {
+  const reviews = new Map<string, AnswerSlotReview>();
+  const optionUseCount = new Map<number, number>();
+
+  for (const shape of shapes) {
+    const interaction = shape.interaction;
+    if (!interaction || !isSubmittedAnswer(interaction)) continue;
+    const binding = resolveAnswerBinding(interaction, answerOptions);
+    if (binding.option) optionUseCount.set(binding.option.index, (optionUseCount.get(binding.option.index) ?? 0) + 1);
+    reviews.set(shape.id, {
+      shapeId: shape.id,
+      displayOrder: Math.max(0, interaction.order ?? binding.option?.index ?? reviews.size) + 1,
+      option: binding.option,
+      status: binding.status,
+    });
+  }
+
+  for (const [shapeId, review] of reviews) {
+    if (review.option && (optionUseCount.get(review.option.index) ?? 0) > 1) {
+      reviews.set(shapeId, { ...review, status: "duplicate" });
+    }
+  }
+  return reviews;
+}
+
+export function resolveAnswerBinding(
+  interaction: InputInteraction,
+  answerOptions: AnswerBindingOption[],
+): { option: AnswerBindingOption | null; status: Exclude<AnswerBindingStatus, "duplicate"> } {
+  if (typeof interaction.answer_key_index === "number") {
+    const option = answerOptions.find((candidate) => candidate.index === interaction.answer_key_index);
+    if (option) return { option, status: "connected" };
+  }
+  if (interaction.answer_ref) {
+    const option = answerOptions.find((candidate) => candidate.ref === interaction.answer_ref);
+    if (option) return { option, status: "connected" };
+  }
+  if (typeof interaction.answer_key_index === "number" || interaction.answer_ref) {
+    return { option: null, status: "unlinked" };
+  }
+  if (answerOptions.length === 1) {
+    return { option: answerOptions[0], status: "inferred" };
+  }
+  if (typeof interaction.order === "number") {
+    const option = answerOptions.find((candidate) => candidate.index === interaction.order);
+    if (option) return { option, status: "inferred" };
+  }
+  return { option: null, status: "unlinked" };
+}
+
+export function inferAnswerPresentationMode(
+  shapes: EditorShape[],
+  semantic: Record<string, unknown> | null,
+  solvable: Record<string, unknown> | null,
+): AnswerPresentationMode {
+  const explicit = explicitPresentationMode(semantic) ?? explicitPresentationMode(solvable);
+  if (explicit) return explicit;
+  if (shapes.some((shape) => shape.interaction && isCanvasAnswer(shape.interaction))) return "canvas_slots";
+  if (shapes.some((shape) => shape.interaction?.role === "choice") || hasChoices(semantic) || hasChoices(solvable)) return "choice";
+  return "panel_input";
+}
+
+function isSubmittedAnswer(interaction: InputInteraction): boolean {
+  return interaction.include_in_submission !== false && (interaction.role === "answer" || interaction.role === "choice");
+}
+
+function isCanvasAnswer(interaction: InputInteraction): boolean {
+  return interaction.include_in_submission !== false && interaction.role === "answer";
+}
+
+function explicitPresentationMode(artifact: Record<string, unknown> | null): AnswerPresentationMode | null {
+  const answer = recordValue(artifact?.answer);
+  const presentation = recordValue(answer?.presentation);
+  const mode = presentation?.mode;
+  return mode === "canvas_slots" || mode === "panel_input" || mode === "choice" || mode === "canvas_select" ? mode : null;
+}
+
+function hasChoices(artifact: Record<string, unknown> | null): boolean {
+  const answer = recordValue(artifact?.answer);
+  return Boolean(answerChoices(artifact)?.length || (Array.isArray(answer?.choice_groups) && answer.choice_groups.length));
+}
+
+function answerChoices(artifact: Record<string, unknown> | null): unknown[] | null {
+  const answer = recordValue(artifact?.answer);
+  if (Array.isArray(answer?.choices)) return answer.choices;
+  if (Array.isArray(artifact?.choices)) return artifact.choices;
+  return null;
+}
+
+function scalarText(value: unknown): string {
+  return value === null || value === undefined ? "" : String(value);
+}
+
+function stringValue(value: unknown): string {
+  return typeof value === "string" && value.trim() ? value.trim() : "";
+}
+
+export function normalizedAnswer(value: string): string {
+  const normalized = value.normalize("NFKC").trim().replace(/\s+/g, " ").toLowerCase();
+  if (/^[o○◯〇]$/.test(normalized)) return "o";
+  if (/^[x×✕✖]$/.test(normalized)) return "x";
+  return normalized;
+}
+
+export interface AnswerReviewSettings {
+  mode: AnswerPresentationMode | "ox" | "grouped_choice";
+  show_canvas: boolean;
+  status: "pending" | "needs_changes" | "verified";
+  note: string;
+  answers: { value: string; ref?: string; unit?: string }[];
+  choices: AnswerChoiceReview[];
+  groups?: { id: string; label: string; choices: string[]; correct_index: number; source_refs?: string[] }[];
+}
+
+export function reviewSettings(semantic: Record<string, unknown> | null, options: AnswerBindingOption[], choices: AnswerChoiceReview[], mode: AnswerPresentationMode): AnswerReviewSettings {
+  const saved = recordValue(recordValue(recordValue(semantic?.answer)?.presentation)?.review);
+  if (saved) return { show_canvas: true, ...saved } as unknown as AnswerReviewSettings;
+  const answer = recordValue(semantic?.answer);
+  const groups = Array.isArray(answer?.choice_groups) ? answer.choice_groups.map((group, index) => {
+    const record = recordValue(group) ?? {};
+    const items = Array.isArray(record.choices) ? record.choices.map(scalarText) : [];
+    return { id: stringValue(record.id) || `group.${index + 1}`, label: stringValue(record.label) || `문항 ${index + 1}`, choices: items,
+      correct_index: typeof record.correct_index === "number" ? record.correct_index : items.findIndex((item) => normalizedAnswer(item) === normalizedAnswer(options[index]?.value ?? "")) };
+  }) : [];
+  if (groups.length) return { mode: "grouped_choice", show_canvas: true, status: "pending", note: "", answers: options.map(({value, ref, unit}) => ({value, ref, ...(unit ? {unit} : {})})), choices, groups };
+  const tokens = options.length === 1 ? options[0].value.split(/\s*[,，]\s*/) : options.map((option) => option.value);
+  const ox = tokens.length > 0 && tokens.every((token) => /^[ox]$/.test(normalizedAnswer(token)));
+  const person = recordValue(answer?.target)?.type === "person_selection";
+  return { mode: ox ? "ox" : person ? "choice" : mode, show_canvas: true, status: person ? "needs_changes" : "pending", note: person ? "이름 선택지와 정답 연결을 확인하세요. 복수 정답 가능성도 검토해 주세요." : "",
+    answers: ox ? tokens.map((value) => ({ value: normalizedAnswer(value).toUpperCase() })) : options.map(({ value, ref, unit }) => ({ value, ref, ...(unit ? {unit} : {})})), choices };
+}
+
+function recordValue(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}

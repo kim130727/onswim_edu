@@ -1,0 +1,520 @@
+{
+  "slots": {
+    "slot.choice.1.rule.mark": {
+      "cx": 207.016,
+      "cy": 298.409
+    },
+    "slot.choice.2.rule.mark": {
+      "cx": 348.016,
+      "cy": 298.409
+    },
+    "slot.choice.3.rule.mark": {
+      "cx": 542.016,
+      "cy": 298.409
+    },
+    "slot.q_text": {
+      "x": 38.183,
+      "y": 165.393,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.q_text.copy1": {
+      "x": 98.016,
+      "y": 258.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas"
+    },
+    "slot.q_text.copy1.copy2": {
+      "x": 262.016,
+      "y": 257.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas"
+    },
+    "slot.q_text.copy1.copy3": {
+      "x": 420.016,
+      "y": 256.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas"
+    },
+    "slot.choice.1.rule.base": {
+      "x": 157.016,
+      "y": 296.409
+    },
+    "slot.choice.1.compass.head": {
+      "x": 181.816,
+      "y": 194.409
+    },
+    "slot.choice.1.compass.left_outer": {
+      "d": "M 183.216 217.409 L 161.416 295.409"
+    },
+    "slot.choice.1.compass.left_inner": {
+      "d": "M 184.416 217.409 L 162.616 295.409"
+    },
+    "slot.choice.1.compass.right_outer": {
+      "d": "M 186.816 217.409 L 208.616 295.409"
+    },
+    "slot.choice.1.compass.right_inner": {
+      "d": "M 185.616 217.409 L 207.416 295.409"
+    },
+    "slot.choice.2.rule.base": {
+      "x": 320.016,
+      "y": 296.409
+    },
+    "slot.choice.2.compass.head": {
+      "x": 344.816,
+      "y": 194.409
+    },
+    "slot.choice.2.compass.left_outer": {
+      "d": "M 346.216 217.409 L 324.416 295.409"
+    },
+    "slot.choice.2.compass.left_inner": {
+      "d": "M 347.416 217.409 L 325.616 295.409"
+    },
+    "slot.choice.2.compass.right_outer": {
+      "d": "M 349.816 217.409 L 349.616 295.409"
+    },
+    "slot.choice.2.compass.right_inner": {
+      "d": "M 348.616 217.409 L 348.416 295.409"
+    },
+    "slot.choice.3.rule.base": {
+      "x": 470.016,
+      "y": 296.409
+    },
+    "slot.choice.3.compass.head": {
+      "x": 494.816,
+      "y": 194.409
+    },
+    "slot.choice.3.compass.left_outer": {
+      "d": "M 496.216 217.409 L 474.416 295.409"
+    },
+    "slot.choice.3.compass.left_inner": {
+      "d": "M 497.416 217.409 L 475.616 295.409"
+    },
+    "slot.choice.3.compass.right_outer": {
+      "d": "M 499.816 217.409 L 543.616 295.409"
+    },
+    "slot.choice.3.compass.right_inner": {
+      "d": "M 498.616 217.409 L 542.416 295.409"
+    },
+    "slot.choice.1.rule.top": {
+      "x1": 157.016,
+      "y1": 298.409,
+      "x2": 245.016,
+      "y2": 298.409
+    },
+    "slot.choice.1.rule.bottom": {
+      "x1": 157.016,
+      "y1": 320.409,
+      "x2": 245.016,
+      "y2": 320.409
+    },
+    "slot.choice.1.rule.major.0": {
+      "x1": 163.016,
+      "y1": 298.409,
+      "x2": 163.016,
+      "y2": 308.409
+    },
+    "slot.choice.1.rule.minor.0.1": {
+      "x1": 167.416,
+      "y1": 298.409,
+      "x2": 167.416,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.minor.0.2": {
+      "x1": 171.816,
+      "y1": 298.409,
+      "x2": 171.816,
+      "y2": 305.409
+    },
+    "slot.choice.1.rule.minor.0.3": {
+      "x1": 176.216,
+      "y1": 298.409,
+      "x2": 176.216,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.minor.0.4": {
+      "x1": 180.616,
+      "y1": 298.409,
+      "x2": 180.616,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.major.1": {
+      "x1": 185.016,
+      "y1": 298.409,
+      "x2": 185.016,
+      "y2": 308.409
+    },
+    "slot.choice.1.rule.minor.1.1": {
+      "x1": 189.416,
+      "y1": 298.409,
+      "x2": 189.416,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.minor.1.2": {
+      "x1": 193.816,
+      "y1": 298.409,
+      "x2": 193.816,
+      "y2": 305.409
+    },
+    "slot.choice.1.rule.minor.1.3": {
+      "x1": 198.216,
+      "y1": 298.409,
+      "x2": 198.216,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.minor.1.4": {
+      "x1": 202.616,
+      "y1": 298.409,
+      "x2": 202.616,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.major.2": {
+      "x1": 207.016,
+      "y1": 298.409,
+      "x2": 207.016,
+      "y2": 308.409
+    },
+    "slot.choice.1.rule.minor.2.1": {
+      "x1": 211.416,
+      "y1": 298.409,
+      "x2": 211.416,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.minor.2.2": {
+      "x1": 215.816,
+      "y1": 298.409,
+      "x2": 215.816,
+      "y2": 305.409
+    },
+    "slot.choice.1.rule.minor.2.3": {
+      "x1": 220.216,
+      "y1": 298.409,
+      "x2": 220.216,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.minor.2.4": {
+      "x1": 224.616,
+      "y1": 298.409,
+      "x2": 224.616,
+      "y2": 303.909
+    },
+    "slot.choice.1.rule.major.3": {
+      "x1": 229.016,
+      "y1": 298.409,
+      "x2": 229.016,
+      "y2": 308.409
+    },
+    "slot.choice.2.rule.top": {
+      "x1": 320.016,
+      "y1": 298.409,
+      "x2": 408.016,
+      "y2": 298.409
+    },
+    "slot.choice.2.rule.bottom": {
+      "x1": 320.016,
+      "y1": 320.409,
+      "x2": 408.016,
+      "y2": 320.409
+    },
+    "slot.choice.2.rule.major.0": {
+      "x1": 326.016,
+      "y1": 298.409,
+      "x2": 326.016,
+      "y2": 308.409
+    },
+    "slot.choice.2.rule.minor.0.1": {
+      "x1": 330.416,
+      "y1": 298.409,
+      "x2": 330.416,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.minor.0.2": {
+      "x1": 334.816,
+      "y1": 298.409,
+      "x2": 334.816,
+      "y2": 305.409
+    },
+    "slot.choice.2.rule.minor.0.3": {
+      "x1": 339.216,
+      "y1": 298.409,
+      "x2": 339.216,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.minor.0.4": {
+      "x1": 343.616,
+      "y1": 298.409,
+      "x2": 343.616,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.major.1": {
+      "x1": 348.016,
+      "y1": 298.409,
+      "x2": 348.016,
+      "y2": 308.409
+    },
+    "slot.choice.2.rule.minor.1.1": {
+      "x1": 352.416,
+      "y1": 298.409,
+      "x2": 352.416,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.minor.1.2": {
+      "x1": 356.816,
+      "y1": 298.409,
+      "x2": 356.816,
+      "y2": 305.409
+    },
+    "slot.choice.2.rule.minor.1.3": {
+      "x1": 361.216,
+      "y1": 298.409,
+      "x2": 361.216,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.minor.1.4": {
+      "x1": 365.616,
+      "y1": 298.409,
+      "x2": 365.616,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.major.2": {
+      "x1": 370.016,
+      "y1": 298.409,
+      "x2": 370.016,
+      "y2": 308.409
+    },
+    "slot.choice.2.rule.minor.2.1": {
+      "x1": 374.416,
+      "y1": 298.409,
+      "x2": 374.416,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.minor.2.2": {
+      "x1": 378.816,
+      "y1": 298.409,
+      "x2": 378.816,
+      "y2": 305.409
+    },
+    "slot.choice.2.rule.minor.2.3": {
+      "x1": 383.216,
+      "y1": 298.409,
+      "x2": 383.216,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.minor.2.4": {
+      "x1": 387.616,
+      "y1": 298.409,
+      "x2": 387.616,
+      "y2": 303.909
+    },
+    "slot.choice.2.rule.major.3": {
+      "x1": 392.016,
+      "y1": 298.409,
+      "x2": 392.016,
+      "y2": 308.409
+    },
+    "slot.choice.3.rule.top": {
+      "x1": 470.016,
+      "y1": 298.409,
+      "x2": 558.016,
+      "y2": 298.409
+    },
+    "slot.choice.3.rule.bottom": {
+      "x1": 470.016,
+      "y1": 320.409,
+      "x2": 558.016,
+      "y2": 320.409
+    },
+    "slot.choice.3.rule.major.0": {
+      "x1": 476.016,
+      "y1": 298.409,
+      "x2": 476.016,
+      "y2": 308.409
+    },
+    "slot.choice.3.rule.minor.0.1": {
+      "x1": 480.416,
+      "y1": 298.409,
+      "x2": 480.416,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.minor.0.2": {
+      "x1": 484.816,
+      "y1": 298.409,
+      "x2": 484.816,
+      "y2": 305.409
+    },
+    "slot.choice.3.rule.minor.0.3": {
+      "x1": 489.216,
+      "y1": 298.409,
+      "x2": 489.216,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.minor.0.4": {
+      "x1": 493.616,
+      "y1": 298.409,
+      "x2": 493.616,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.major.1": {
+      "x1": 498.016,
+      "y1": 298.409,
+      "x2": 498.016,
+      "y2": 308.409
+    },
+    "slot.choice.3.rule.minor.1.1": {
+      "x1": 502.416,
+      "y1": 298.409,
+      "x2": 502.416,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.minor.1.2": {
+      "x1": 506.816,
+      "y1": 298.409,
+      "x2": 506.816,
+      "y2": 305.409
+    },
+    "slot.choice.3.rule.minor.1.3": {
+      "x1": 511.216,
+      "y1": 298.409,
+      "x2": 511.216,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.minor.1.4": {
+      "x1": 515.616,
+      "y1": 298.409,
+      "x2": 515.616,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.major.2": {
+      "x1": 520.016,
+      "y1": 298.409,
+      "x2": 520.016,
+      "y2": 308.409
+    },
+    "slot.choice.3.rule.minor.2.1": {
+      "x1": 524.416,
+      "y1": 298.409,
+      "x2": 524.416,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.minor.2.2": {
+      "x1": 528.816,
+      "y1": 298.409,
+      "x2": 528.816,
+      "y2": 305.409
+    },
+    "slot.choice.3.rule.minor.2.3": {
+      "x1": 533.216,
+      "y1": 298.409,
+      "x2": 533.216,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.minor.2.4": {
+      "x1": 537.616,
+      "y1": 298.409,
+      "x2": 537.616,
+      "y2": 303.909
+    },
+    "slot.choice.3.rule.major.3": {
+      "x1": 542.016,
+      "y1": 298.409,
+      "x2": 542.016,
+      "y2": 308.409
+    },
+    "slot.choice.1.compass.joint": {
+      "cx": 185.016,
+      "cy": 214.409
+    },
+    "slot.choice.1.compass.left_tip": {
+      "cx": 163.016,
+      "cy": 298.409
+    },
+    "slot.choice.1.compass.right_tip": {
+      "cx": 207.016,
+      "cy": 298.409
+    },
+    "slot.choice.2.compass.joint": {
+      "cx": 348.016,
+      "cy": 214.409
+    },
+    "slot.choice.2.compass.left_tip": {
+      "cx": 326.016,
+      "cy": 298.409
+    },
+    "slot.choice.2.compass.right_tip": {
+      "cx": 348.016,
+      "cy": 298.409
+    },
+    "slot.choice.3.compass.joint": {
+      "cx": 498.016,
+      "cy": 214.409
+    },
+    "slot.choice.3.compass.left_tip": {
+      "cx": 476.016,
+      "cy": 298.409
+    },
+    "slot.choice.3.compass.right_tip": {
+      "cx": 542.016,
+      "cy": 298.409
+    },
+    "slot.choice.1.rule.num.0": {
+      "x": 160.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.1.rule.num.1": {
+      "x": 182.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.1.rule.num.2": {
+      "x": 204.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.1.rule.num.3": {
+      "x": 226.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.2.rule.num.0": {
+      "x": 323.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.2.rule.num.1": {
+      "x": 345.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.2.rule.num.2": {
+      "x": 367.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.2.rule.num.3": {
+      "x": 389.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.3.rule.num.0": {
+      "x": 473.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.3.rule.num.1": {
+      "x": 495.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.3.rule.num.2": {
+      "x": 517.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.choice.3.rule.num.3": {
+      "x": 539.516,
+      "y": 319.409,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,202 @@
+{
+  "problem_id": "P3_1_01_00040_07646",
+  "problem_type": "text_answer_route_distance_comparison_problem",
+  "metadata": {
+    "title": "학교까지 더 먼 길 비교하기",
+    "tags": [],
+    "question": "집에서 학교로 가는 길은 소방서를 거쳐 가는 것과 주민센터를 거쳐서 가는 것 두 가지입니다. 집에서 소방서까지 168m이고 소방서에서 학교까지는 726m입니다. 그리고 집에서 주민센터까지는 625m이고 주민센터에서 학교까지의 거리는 186m입니다. 소방서를 거쳐서 가는 것과 주민센터를 거쳐서 가는 것 중 어느 곳을 거쳐서 가는 것이 더 멀겠습니까?",
+    "required_layout_ids": [],
+    "extraction_confidence": 1.0,
+    "grade": 3,
+    "semester": 1,
+    "subject": "수학",
+    "topic": "세 자리 수의 덧셈과 크기 비교",
+    "language": "ko-KR",
+    "presentation_sources": {
+      "question": [
+        "slot.question"
+      ],
+      "instruction": [],
+      "choice": [],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "집에서 학교로 가는 길은 소방서를 거쳐 가는 것과 주민센터를 거쳐서 가는 것 두 가지입니다. 집에서 소방서까지 168m이고 소방서에서 학교까지는 726m입니다. 그리고 집에서 주민센터까지는 625m이고 주민센터에서 학교까지의 거리는 186m입니다. 소방서를 거쳐서 가는 것과 주민센터를 거쳐서 가는 것 중 어느 곳을 거쳐서 가는 것이 더 멀겠습니까?"
+  },
+  "domain": {
+    "objects": [
+      {
+        "id": "place.home",
+        "type": "place",
+        "label": "집"
+      },
+      {
+        "id": "place.school",
+        "type": "place",
+        "label": "학교"
+      },
+      {
+        "id": "place.fire_station",
+        "type": "place",
+        "label": "소방서"
+      },
+      {
+        "id": "place.community_center",
+        "type": "place",
+        "label": "주민센터"
+      },
+      {
+        "id": "distance.home_to_fire_station",
+        "type": "distance",
+        "label": "집에서 소방서까지의 거리",
+        "value": 168,
+        "unit": "m"
+      },
+      {
+        "id": "distance.fire_station_to_school",
+        "type": "distance",
+        "label": "소방서에서 학교까지의 거리",
+        "value": 726,
+        "unit": "m"
+      },
+      {
+        "id": "distance.home_to_community_center",
+        "type": "distance",
+        "label": "집에서 주민센터까지의 거리",
+        "value": 625,
+        "unit": "m"
+      },
+      {
+        "id": "distance.community_center_to_school",
+        "type": "distance",
+        "label": "주민센터에서 학교까지의 거리",
+        "value": 186,
+        "unit": "m"
+      },
+      {
+        "id": "distance.fire_station_route",
+        "type": "distance",
+        "label": "소방서를 거쳐 학교로 가는 전체 거리",
+        "value": 894,
+        "unit": "m"
+      },
+      {
+        "id": "distance.community_center_route",
+        "type": "distance",
+        "label": "주민센터를 거쳐 학교로 가는 전체 거리",
+        "value": 811,
+        "unit": "m"
+      },
+      {
+        "id": "distance.route_difference",
+        "type": "distance",
+        "label": "두 경로의 거리 차이",
+        "value": 83,
+        "unit": "m"
+      }
+    ],
+    "relations": [
+      {
+        "id": "relation.fire_station_route_sum",
+        "type": "path_distance_sum",
+        "from_id": "place.fire_station",
+        "to_id": "place.school",
+        "subject": "distance.fire_station_route",
+        "via": "place.fire_station",
+        "segments": [
+          "distance.home_to_fire_station",
+          "distance.fire_station_to_school"
+        ]
+      },
+      {
+        "id": "relation.community_center_route_sum",
+        "type": "path_distance_sum",
+        "from_id": "place.community_center",
+        "to_id": "place.school",
+        "subject": "distance.community_center_route",
+        "via": "place.community_center",
+        "segments": [
+          "distance.home_to_community_center",
+          "distance.community_center_to_school"
+        ]
+      },
+      {
+        "id": "relation.fire_station_route_is_farther",
+        "type": "greater_than",
+        "from_id": "distance.fire_station_route",
+        "to_id": "distance.community_center_route",
+        "subject": "distance.fire_station_route",
+        "object": "distance.community_center_route",
+        "difference": "distance.route_difference"
+      }
+    ],
+    "confidence": 1.0
+  },
+  "answer": {
+    "type": "choice",
+    "value": "소방서",
+    "unit": "",
+    "target_ref": "place.fire_station",
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "소방서",
+            "ref": "answer.value"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795337647636_select_64114",
+            "text": "소방서",
+            "correct": true,
+            "label": "1",
+            "sourceRefs": [
+              "konva_1792368892203_text_422073"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795337647636_select_67978",
+            "text": "주민센터",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "konva_1795337647636_paste_22161_0"
+            ]
+          }
+        ]
+      }
+    },
+    "choices": [
+      {
+        "id": "choice.canvas.konva_1795337647636_select_64114",
+        "label": "1",
+        "text": "소방서",
+        "source_refs": [
+          "konva_1792368892203_text_422073"
+        ]
+      },
+      {
+        "id": "choice.canvas.konva_1795337647636_select_67978",
+        "label": "2",
+        "text": "주민센터",
+        "source_refs": [
+          "konva_1795337647636_paste_22161_0"
+        ]
+      }
+    ],
+    "answer_key": [
+      {
+        "id": "choice.canvas.konva_1795337647636_select_64114",
+        "value": "소방서"
+      }
+    ],
+    "blanks": []
+  }
+}

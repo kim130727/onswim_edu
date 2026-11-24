@@ -1,0 +1,66 @@
+{
+  "canvas": {
+    "width": 300,
+    "height": 230
+  },
+  "version": 1,
+  "deleted_slots": [
+    "konva_1786192274303_paste_1202178_0",
+    "slot.expression_2.line",
+    "slot.expression_1.label",
+    "slot.expression_2.label",
+    "slot.expression_2.top",
+    "slot.expression_2.operator",
+    "slot.expression_2.bottom"
+  ],
+  "slots": {
+    "konva_1786192274303_rect_1194250": {
+      "x": 127.357,
+      "y": 159.387,
+      "width": 76.91,
+      "height": 35.34
+    },
+    "slot.expression_1.line": {
+      "x1": 115.541,
+      "y1": 149.059,
+      "x2": 199.541,
+      "y2": 149.059
+    },
+    "slot.expression_1.top": {
+      "x": 142.541,
+      "y": 70.059,
+      "width": 55,
+      "height": 29,
+      "align": "right",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box",
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.expression_1.operator": {
+      "x": 122.541,
+      "y": 132.059,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.expression_1.bottom": {
+      "x": 142.541,
+      "y": 108.059,
+      "width": 55,
+      "height": 29,
+      "align": "right",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box",
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.instruction": {
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    }
+  }
+}

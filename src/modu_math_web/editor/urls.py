@@ -1,0 +1,27 @@
+from __future__ import annotations
+
+from django.urls import path
+
+from . import views
+
+urlpatterns = [
+    path("problems/", views.problems_list),
+    path("problems/create/", views.create_problem),
+    path("problems/<path:problem_id>/publication/", views.problem_publication),
+    path("problems/<path:problem_id>/student-preview/", views.student_preview),
+    path("tutor-preview/status/", views.tutor_preview_status),
+    path("tutor-preview/speech/", views.tutor_preview_speech),
+    path("tutor-preview/", views.tutor_preview),
+    path("assets/<path:problem_id>/<str:filename>", views.problem_asset),
+    path("problems/<path:problem_id>/dsl/", views.save_dsl),
+    path("problems/<path:problem_id>/dsl/format/", views.format_dsl),
+    path("problems/<path:problem_id>/build/", views.build_problem),
+    path("problems/<path:problem_id>/tutor-flow/", views.tutor_flow),
+    path("problems/<path:problem_id>/choice-groups/", views.choice_groups),
+    path("problems/<path:problem_id>/answer-review/", views.answer_review),
+    path("problems/<path:problem_id>/placement-sync/", views.placement_sync),
+    path("problems/<path:problem_id>/answer-review-sync/", views.answer_review_sync),
+    path("problems/<path:problem_id>/layout-patch/", views.layout_patch),
+    path("problems/<path:problem_id>/layout-patch-and-build/", views.layout_patch_and_build),
+    path("problems/<path:problem_id>/", views.problem_detail),
+]

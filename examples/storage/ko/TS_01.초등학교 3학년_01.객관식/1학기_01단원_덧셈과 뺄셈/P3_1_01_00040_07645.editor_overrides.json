@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 800,
+    "height": 230
+  },
+  "slots": {
+    "slot.question": {
+      "text": "미정이는 어제 동화책을 처음부터 119쪽까지 읽었더니 167쪽이 남았습니다. 미정이가 읽는 동화책의 전체 쪽수를 구하시오.",
+      "x": 16.938,
+      "y": 9.787,
+      "font_size": 30,
+      "fill": "#202124",
+      "width": 763.128,
+      "height": 143,
+      "align": "left",
+      "line_height": 1.5,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "konva_1785217709470_rect_1760037": {
+      "x": 563.876,
+      "y": 137.193,
+      "width": 103.53,
+      "height": 57.27
+    },
+    "konva_1785217709470_paste_1729186_0": {
+      "x": 681.785,
+      "y": 144.298,
+      "height": 35,
+      "width": 27,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    }
+  }
+}

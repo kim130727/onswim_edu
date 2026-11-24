@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "slots": {
+    "slot.q_text": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.choice.1.label": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.choice.2.label": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.choice.3.label": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.choice.4.label": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.choice.5.label": {
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    }
+  }
+}

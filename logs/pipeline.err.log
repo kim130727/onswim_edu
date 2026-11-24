@@ -1,0 +1,2626 @@
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\llm_client.py", line 188, in _call_openai
+    from openai import OpenAI
+ModuleNotFoundError: No module named 'openai'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 206, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 178, in main
+    result = generate_vision_draft(
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\generate_vision_draft.py", line 136, in generate_vision_draft
+    draft_text = run_llm_or_load_output(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 160, in run_llm_or_load_output
+    output_text = call_llm_text_with_optional_image(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 121, in call_llm_text_with_optional_image
+    return _call_openai(
+           ^^^^^^^^^^^^^
+  File "C:\projects\modu_math\tools\llm_client.py", line 190, in _call_openai
+    raise ImportError("openai package is required. Install with: pip install openai") from exc
+ImportError: openai package is required. Install with: pip install openai

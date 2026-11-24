@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">모두수학</string>
+    <string name="title_activity_main">모두수학</string>
+    <string name="package_name">edu.onswim.modumath</string>
+    <string name="custom_url_scheme">edu.onswim.modumath</string>
+</resources>

@@ -1,0 +1,201 @@
+from copy import deepcopy
+import json
+
+from modu_math_web.editor.services.presentation import structure_presentation
+from test_editor_api import _setup_django
+
+
+def test_answer_prompt_moves_independently_of_question_and_choices():
+    layout = {"slots": [
+        {"id": "slot.q1", "kind": "text", "content": {
+            "text": "Look at the circle", "semantic_role": "question",
+            "semantic_role_source": "explicit"}},
+        {"id": "slot.choice", "kind": "text_box", "content": {
+            "text": "All distances are", "semantic_role": "answer_prompt",
+            "semantic_role_source": "explicit"}},
+    ]}
+    answer = {"choices": ["equal", "different"], "value": "equal"}
+    result, semantic, solvable = structure_presentation(
+        layout, {"answer": answer}, {"answer": answer})
+    assert semantic["metadata"]["presentation_prompt"] == "Look at the circle"
+    assert semantic["metadata"]["answer_prompt"] == "All distances are"
+    assert semantic["metadata"]["presentation_sources"]["answer_prompt"] == ["slot.choice"]
+    assert semantic["answer"] == solvable["answer"] == answer
+    assert structure_presentation(result, semantic, solvable) == (result, semantic, solvable)
+
+    # Moving the sentence back must clear the previously generated panel text.
+    result["slots"][1]["content"]["semantic_role"] = "canvas"
+    _, moved, _ = structure_presentation(result, semantic, solvable)
+    assert moved["metadata"]["answer_prompt"] == ""
+
+
+def test_roles_restore_without_classifying_diagram_labels():
+    layout = {"slots": [
+        {"id": "slot.q1", "kind": "text", "content": {"text": "New question"}},
+        {"id": "slot.choice.1", "kind": "text", "content": {"text": "(1) New"}},
+        {"id": "slot.choice.2", "kind": "text", "content": {"text": "(2) B"}},
+        {"id": "slot.diagram", "kind": "text", "content": {"text": "(1) New"}},
+    ]}
+    semantic = {"metadata": {"question": "Old question"},
+                "answer": {"choices": ["(1) Old", "(2) B"], "value": "Old"}}
+    original = deepcopy((layout, semantic))
+    result, updated, _ = structure_presentation(layout, semantic)
+    assert updated["metadata"]["presentation_prompt"] == "New question"
+    assert updated["answer"]["choices"][0]["text"] == "(1) New"
+    assert updated["answer"]["value"] == "New"
+    assert "semantic_role" not in result["slots"][3]["content"]
+    assert (layout, semantic) == original
+    assert structure_presentation(result, updated) == (result, updated, None)
+
+
+def test_explicit_roles_and_deleted_prompt():
+    layout = {"slots": [
+        {"id": "random", "kind": "text_box", "content": {"text": "Question", "semantic_role": "question", "semantic_role_source": "explicit"}},
+        {"id": "slot.q1", "kind": "text", "content": {"text": "Label", "semantic_role": "diagram_label", "semantic_role_source": "explicit"}},
+    ]}
+    result, semantic, _ = structure_presentation(layout, {})
+    result["slots"] = result["slots"][1:]
+    _, updated, _ = structure_presentation(result, semantic)
+    assert updated["metadata"]["presentation_prompt"] == ""
+
+
+def test_legacy_role_without_provenance_is_not_promoted_to_explicit():
+    layout = {"slots": [
+        {"id": "legacy-text", "kind": "text", "content": {
+            "text": "자동 판단된 문장",
+            "semantic_role": "question",
+        }},
+    ]}
+
+    result, semantic, _ = structure_presentation(layout, {})
+
+    content = result["slots"][0]["content"]
+    assert content["semantic_role"] == "question"
+    assert content["semantic_role_source"] == "inferred"
+    assert semantic["metadata"]["presentation_prompt"] == "자동 판단된 문장"
+
+
+def test_stem_region_promotes_only_first_unclassified_text_to_prompt():
+    layout = {
+        "regions": [{
+            "id": "region.stem",
+            "role": "stem",
+            "slot_ids": ["slot.expression", "slot.question", "slot.unit"],
+        }],
+        "slots": [
+            {"id": "slot.expression", "kind": "text_box", "content": {"text": "259 + 248 ="}},
+            {"id": "slot.question", "kind": "text_box", "content": {"text": "두 수의 합은 얼마인가요?"}},
+            {"id": "slot.unit", "kind": "text_box", "content": {"text": "개"}},
+        ],
+    }
+
+    result, semantic, _ = structure_presentation(layout, {})
+
+    roles = {
+        slot["id"]: slot["content"].get("semantic_role")
+        for slot in result["slots"]
+    }
+    assert roles == {
+        "slot.expression": "canvas",
+        "slot.question": "question",
+        "slot.unit": "canvas",
+    }
+    assert semantic["metadata"]["presentation_prompt"] == "두 수의 합은 얼마인가요?"
+
+
+def test_explicit_canvas_role_never_moves_text_to_flutter_header():
+    layout = {
+        "regions": [{
+            "id": "region.stem",
+            "role": "stem",
+            "slot_ids": ["slot.expression", "slot.question"],
+        }],
+        "slots": [
+            {"id": "slot.expression", "kind": "text_box", "content": {"text": "259 + 248 =", "semantic_role": "canvas", "semantic_role_source": "explicit"}},
+            {"id": "slot.question", "kind": "text_box", "content": {"text": "두 수의 합은 얼마인가요?"}},
+        ],
+    }
+
+    result, semantic, _ = structure_presentation(layout, {})
+
+    assert result["slots"][0]["content"]["semantic_role"] == "canvas"
+    assert result["slots"][1]["content"]["semantic_role"] == "question"
+    assert semantic["metadata"]["presentation_prompt"] == "두 수의 합은 얼마인가요?"
+
+
+def test_copied_stem_number_labels_stay_on_canvas():
+    layout = {
+        "regions": [{
+            "id": "region.stem",
+            "role": "stem",
+            "slot_ids": ["slot.stem.copy1", "slot.stem.copy2", "slot.stem"],
+        }],
+        "slots": [
+            {"id": "slot.stem.copy1", "kind": "text", "content": {"text": "1번"}},
+            {"id": "slot.stem.copy2", "kind": "text", "content": {"text": "2번"}},
+            {"id": "slot.stem", "kind": "text", "content": {
+                "text": "반지름만 다르게 한 그림을 선택하세요.",
+                "style_role": "question",
+            }},
+        ],
+    }
+
+    result, semantic, _ = structure_presentation(layout, {})
+    roles = {slot["id"]: slot["content"]["semantic_role"] for slot in result["slots"]}
+    sources = {slot["id"]: slot["content"]["semantic_role_source"] for slot in result["slots"]}
+
+    assert roles == {
+        "slot.stem.copy1": "canvas",
+        "slot.stem.copy2": "canvas",
+        "slot.stem": "question",
+    }
+    assert sources == {
+        "slot.stem.copy1": "inferred",
+        "slot.stem.copy2": "inferred",
+        "slot.stem": "inferred",
+    }
+    assert semantic["metadata"]["presentation_prompt"] == "반지름만 다르게 한 그림을 선택하세요."
+    assert structure_presentation(result, semantic) == (result, semantic, None)
+
+
+def test_new_text_choices_replace_blank_template_placeholders():
+    layout = {"slots": [
+        {"id": "custom-a", "kind": "text_box", "content": {"text": "A", "semantic_role": "choice", "semantic_role_source": "explicit"}},
+        {"id": "custom-b", "kind": "text_box", "content": {"text": "B", "semantic_role": "choice", "semantic_role_source": "explicit"}},
+    ]}
+    semantic = {"answer": {"choices": [{"id": str(i), "text": ""} for i in range(4)]}}
+    _, updated, solvable = structure_presentation(layout, semantic, semantic)
+    assert [c['text'] for c in updated['answer']['choices']] == ['A', 'B']
+    assert updated['answer'] == solvable['answer']
+
+
+def test_new_problem_edit_build_and_reopen_keep_presentation(tmp_path):
+    client = _setup_django(tmp_path)
+    created = client.post('/api/editor/problems/create/',
+                          data=json.dumps({"problem_id": "presentation-new"}), content_type='application/json')
+    assert created.status_code == 200, created.content
+    response = client.post('/api/editor/problems/presentation-new/layout-patch-and-build/',
+        data=json.dumps({"patches": [{"target": "slot.question", "op": "update",
+                                    "value": {"text": "새로 편집한 문제입니다."}}]}),
+        content_type='application/json')
+    assert response.status_code == 200, response.json().get("build")
+    detail = client.get('/api/editor/problems/presentation-new/').json()
+    assert detail['semantic']['metadata']['question'] == '새로 편집한 문제입니다.'
+    assert '알맞은 답을 구하세요.' in detail['semantic']['metadata']['presentation_prompt']
+    question = next(e for e in detail['renderer']['elements'] if e.get('source_ref') == 'slot.question')
+    assert question['attributes']['data-semantic-role'] == 'question'
+
+
+def test_instruction_without_layout_slot_not_synthesized_into_presentation_prompt():
+    layout = {"slots": [
+        {"id": "slot.q_text", "kind": "text", "content": {"text": "길이가 가장 긴 선분은 어느 것인가요?"}},
+    ]}
+    semantic = {
+        "metadata": {
+            "question": "길이가 가장 긴 선분은 어느 것인가요?",
+            "instruction": "도형을 보고 보기 중 맞는 선분을 고르기",
+        }
+    }
+    _, updated, _ = structure_presentation(layout, semantic)
+    assert updated["metadata"]["presentation_prompt"] == "길이가 가장 긴 선분은 어느 것인가요?"
+

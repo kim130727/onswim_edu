@@ -1,0 +1,830 @@
+from __future__ import annotations
+
+import json
+import re
+import time
+from dataclasses import dataclass
+from pathlib import Path, PurePosixPath
+from typing import Any
+from urllib.parse import quote
+
+from django.conf import settings
+
+from .dsl_format import format_dsl_source
+
+ARTIFACT_FILES = {
+    "semantic": ".semantic.json",
+    "solvable": ".solvable.json",
+    "layout": ".layout.json",
+    "renderer": ".renderer.json",
+    "svg": ".svg",
+}
+
+_PROBLEM_LIST_CACHE_TTL_SECONDS = 5.0
+_PROBLEM_LIST_CACHE: dict[tuple[bool, tuple[tuple[str, str], ...]], tuple[float, list[dict[str, Any]]]] = {}
+LANGUAGE_PROBLEM_FOLDERS = {"ko", "uk"}
+LANGUAGE_FILENAME_SUFFIXES = {
+    "ko": "_ko",
+    "uk": "_uk",
+}
+
+
+BLANK_PROBLEM_DSL = '''from __future__ import annotations
+
+from modu_math.dsl import BlankSlot, Canvas, ProblemTemplate, Region, TextBoxSlot
+
+
+PROBLEM_ID = "{problem_id}"
+PROBLEM_TITLE = "{title}"
+
+ANSWER = {{
+    "blanks": [
+        {{
+            "id": "slot.answer",
+            "label": "정답",
+            "expected": "",
+            "unit": "",
+        }},
+    ],
+    "choices": [
+        {{
+            "id": "choice.A",
+            "label": "A",
+            "text": "",
+        }},
+        {{
+            "id": "choice.B",
+            "label": "B",
+            "text": "",
+        }},
+        {{
+            "id": "choice.C",
+            "label": "C",
+            "text": "",
+        }},
+        {{
+            "id": "choice.D",
+            "label": "D",
+            "text": "",
+        }},
+    ],
+    "answer_key": [
+        {{
+            "blank_id": "slot.answer",
+            "value": "",
+            "unit": "",
+        }},
+    ],
+    "confidence": 1.0,
+    "target": {{
+        "type": "draft_answer",
+        "description": "정답",
+    }},
+    "value": "",
+    "unit": "",
+}}
+
+
+def build_problem_template() -> ProblemTemplate:
+    return ProblemTemplate(
+        id=PROBLEM_ID,
+        title=PROBLEM_TITLE,
+        canvas=Canvas(width=900, height=420, coordinate_mode="logical"),
+        regions=(
+            Region(
+                id="region.stem",
+                role="stem",
+                flow="vertical",
+                slot_ids=("slot.question", "slot.instruction"),
+            ),
+            Region(
+                id="region.diagram",
+                role="diagram",
+                flow="absolute",
+                slot_ids=("slot.work_area",),
+            ),
+            Region(
+                id="region.answer",
+                role="answer",
+                flow="vertical",
+                slot_ids=("slot.answer",),
+            ),
+        ),
+        slots=(
+            TextBoxSlot(
+                id="slot.question",
+                text="문제를 입력하세요.",
+                prompt="학생에게 제시할 문제 문장",
+                semantic_role="question",
+                x=48,
+                y=40,
+                width=804,
+                height=64,
+                font_size=28,
+                line_height=1.35,
+            ),
+            TextBoxSlot(
+                id="slot.instruction",
+                text="알맞은 답을 구하세요.",
+                prompt="풀이 또는 응답 지시문",
+                semantic_role="instruction",
+                x=48,
+                y=112,
+                width=804,
+                height=44,
+                font_size=20,
+                line_height=1.35,
+            ),
+            TextBoxSlot(
+                id="slot.work_area",
+                text="",
+                prompt="그림, 표, 수식 등 문제 자료를 배치하는 영역",
+                semantic_role="work_area",
+                x=48,
+                y=176,
+                width=520,
+                height=184,
+                font_size=22,
+                line_height=1.35,
+            ),
+            BlankSlot(
+                id="slot.answer",
+                prompt="단답형 정답",
+                answer_key="",
+                placeholder="정답",
+            ),
+        ),
+        diagrams=(),
+        groups=(),
+        constraints=(),
+        tags=("draft", "authoring-template", "schema-compliant"),
+    )
+
+
+PROBLEM_TEMPLATE = build_problem_template()
+
+SEMANTIC_OVERRIDE = {{
+    "problem_id": PROBLEM_ID,
+    "problem_type": "draft_math_problem",
+    "metadata": {{
+        "title": PROBLEM_TITLE,
+        "tags": ["draft", "authoring-template"],
+        "language": "ko",
+        "question": "문제를 입력하세요.",
+        "instruction": "알맞은 답을 구하세요.",
+        "required_layout_ids": [],
+        "authoring_status": "draft",
+    }},
+    "domain": {{
+        "objects": [
+            {{
+                "id": "obj.problem",
+                "type": "math_problem",
+                "properties": {{
+                    "source": "new_file_template",
+                    "description": "새 문제 제작용 기본 객체입니다.",
+                }},
+            }},
+            {{
+                "id": "obj.answer",
+                "type": "answer",
+                "properties": {{
+                    "label": "정답",
+                    "value": "",
+                    "unit": "",
+                }},
+            }},
+        ],
+        "relations": [],
+    }},
+    "answer": ANSWER,
+}}
+
+SOLVABLE = {{
+    "schema": "modu.solvable.v1.2",
+    "problem_id": PROBLEM_ID,
+    "problem_type": "draft_math_problem",
+    "inputs": {{
+        "target_label": "정답",
+        "unit": "",
+        "quantities": {{
+            "answer": "",
+        }},
+        "conditions": [
+            "문제에 주어진 조건을 입력하세요.",
+        ],
+    }},
+    "given": [
+        {{
+            "ref": "obj.problem",
+            "value": "문제를 입력하세요.",
+        }},
+        {{
+            "ref": "obj.answer",
+            "value": "",
+        }},
+    ],
+    "target": {{
+        "ref": "answer.value",
+        "type": "draft_answer",
+    }},
+    "understanding": {{
+        "summary": "臾몄젣?먯꽌 二쇱뼱吏?寃껉낵 援ы빐???섎뒗 寃껋쓣 援щ텇?섎뒗 珥덇린 ?댄빐 ?④퀎",
+        "facts": [
+            {{
+                "ref": "obj.problem",
+                "label": "臾몄젣?먯꽌 二쇱뼱吏?寃?",
+                "value": "臾몄젣瑜??낅젰?섏꽭??",
+                "unit": "",
+                "source": "explicit",
+            }},
+        ],
+        "unknowns": [
+            {{
+                "ref": "answer.value",
+                "label": "援ы빐???섎뒗 寃?",
+                "unit": "",
+            }},
+        ],
+        "relation": {{
+            "type": "author_defined",
+            "statement": "二쇱뼱吏??뺣낫瑜?蹂닿퀬 援ы빐???섎뒗 寃껋쓣 ?먮떒?⑸땲??",
+            "uses": ["obj.problem"],
+            "result": "answer.value",
+        }},
+        "diagnostic_questions": [
+            {{
+                "id": "understand.target",
+                "type": "free_response",
+                "prompt": "이 문제에서 구해야 하는 것은 무엇인가요?",
+            }},
+        ],
+    }},
+    "method": "author_defined_solution",
+    "plan": [
+        "문제에 주어진 값을 확인한다.",
+        "조건에 맞는 풀이식을 세운다.",
+        "계산 또는 추론으로 정답을 구한다.",
+    ],
+    "steps": [
+        {{
+            "id": "step.1",
+            "expr": "문제 조건 확인",
+            "value": "",
+            "explanation": "문제에 필요한 수량과 조건을 정리합니다.",
+        }},
+        {{
+            "id": "step.2",
+            "expr": "풀이식 작성",
+            "value": "",
+            "explanation": "정답을 구하는 식 또는 추론 과정을 작성합니다.",
+        }},
+        {{
+            "id": "step.3",
+            "expr": "정답 도출",
+            "value": "",
+            "explanation": "계산 결과 또는 선택한 보기를 정답으로 기록합니다.",
+        }},
+    ],
+    "checks": [
+        {{
+            "id": "check.1",
+            "expr": "정답 형식 확인",
+            "expected": "",
+            "actual": "",
+            "pass": True,
+        }},
+    ],
+    "answer": ANSWER,
+}}
+'''
+
+
+@dataclass(frozen=True)
+class ProblemPaths:
+    problem_id: str
+    root_alias: str
+    root_dir: Path
+    base_dir: Path
+    dsl_path: Path
+    artifact_base: str
+
+    def artifact_path(self, key: str) -> Path:
+        return self.base_dir / f"{self.artifact_base}{ARTIFACT_FILES[key]}"
+
+    def read_dsl(self) -> str:
+        from modu_math.dsl.variants import read_source
+        return read_source(self.dsl_path)
+
+    def write_dsl(self, source: str) -> None:
+        from modu_math.dsl.variants import write_source
+        write_source(self.dsl_path, source)
+
+
+def problems_root() -> Path:
+    return Path(settings.PROBLEMS_ROOT).resolve()
+
+
+def problem_roots() -> list[tuple[str, Path]]:
+    roots = [("", problems_root())]
+    golden_root = Path(
+        getattr(settings, "GOLDEN_PROBLEMS_ROOT", Path(settings.BASE_DIR) / "examples" / "golden")
+    ).resolve()
+    if golden_root != roots[0][1]:
+        roots.append(("golden", golden_root))
+    return roots
+
+
+def validate_problem_id(problem_id: str) -> str:
+    if not problem_id:
+        raise ValueError("problem_id is required")
+    normalized = problem_id.replace("\\", "/")
+    if normalized.startswith("/"):
+        raise ValueError("invalid problem_id")
+    parts = PurePosixPath(normalized).parts
+    if any(part in ("", ".", "..") for part in parts):
+        raise ValueError("invalid problem_id")
+    return "/".join(parts)
+
+
+def _split_problem_root(problem_id: str) -> tuple[str, str, Path]:
+    parts = problem_id.split("/")
+    for alias, root in problem_roots():
+        if alias and parts[0] == alias:
+            relative_id = "/".join(parts[1:])
+            if not relative_id:
+                raise ValueError("problem_id is required")
+            return alias, relative_id, root
+    return "", problem_id, problems_root()
+
+
+def _display_problem_id(alias: str, relative_id: str) -> str:
+    return f"{alias}/{relative_id}" if alias else relative_id
+
+
+def _manifest_path_for_root(root: Path) -> Path:
+    return root / "manifest.json"
+
+
+def _manifest_relative_path(value: str, root: Path) -> Path:
+    path = Path(value)
+    if path.is_absolute():
+        return path
+
+    base_dir_path = (Path(settings.BASE_DIR) / path).resolve()
+    if base_dir_path.exists():
+        return base_dir_path
+
+    value_parts = PurePosixPath(value.replace("\\", "/")).parts
+    root_name = root.name
+    if root_name in value_parts:
+        idx = value_parts.index(root_name)
+        return root.parent / PurePosixPath(*value_parts[idx:])
+
+    return root / path
+
+
+def _resolve_manifest_problem_paths(
+    safe_problem_id: str,
+    *,
+    alias: str,
+    relative_id: str,
+    root: Path,
+) -> ProblemPaths | None:
+    if alias or "/" in relative_id:
+        return None
+
+    manifest_path = _manifest_path_for_root(root)
+    if not manifest_path.exists():
+        return None
+
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+    except Exception:
+        return None
+
+    entries = manifest.get("problems") if isinstance(manifest, dict) else manifest
+    if not isinstance(entries, list):
+        return None
+
+    matches: list[ProblemPaths] = []
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        manifest_id = entry.get("id")
+        file_prefix = entry.get("filePrefix") or manifest_id
+        entry_path = entry.get("path")
+        if relative_id not in {manifest_id, file_prefix}:
+            continue
+        if not isinstance(file_prefix, str) or not isinstance(entry_path, str):
+            continue
+
+        base_dir = _manifest_relative_path(entry_path, root).resolve()
+        dsl_path = (base_dir / f"{file_prefix}.dsl.py").resolve()
+        if dsl_path != root and root not in dsl_path.parents:
+            continue
+        if not dsl_path.exists() or not dsl_path.is_file():
+            continue
+
+        rel = dsl_path.relative_to(root).as_posix()
+        matches.append(
+            ProblemPaths(
+                problem_id=_display_problem_id(alias, rel),
+                root_alias=alias,
+                root_dir=root,
+                base_dir=dsl_path.parent,
+                dsl_path=dsl_path,
+                artifact_base=file_prefix,
+            )
+        )
+
+    if len(matches) == 1:
+        return matches[0]
+    if len(matches) > 1:
+        raise FileNotFoundError(f"ambiguous problem alias in manifest: {safe_problem_id}")
+    return None
+
+
+def _resolve_unique_basename_problem_paths(
+    safe_problem_id: str,
+    *,
+    alias: str,
+    relative_id: str,
+    root: Path,
+) -> ProblemPaths | None:
+    if alias or "/" in relative_id:
+        return None
+
+    candidates = sorted(root.rglob(f"{relative_id}.dsl.py"))
+    candidates = [
+        candidate.resolve()
+        for candidate in candidates
+        if candidate.is_file() and (candidate.resolve() == root or root in candidate.resolve().parents)
+    ]
+    if len(candidates) == 1:
+        dsl_path = candidates[0]
+        artifact_base = dsl_path.name[: -len(".dsl.py")]
+        rel = dsl_path.relative_to(root).as_posix()
+        return ProblemPaths(
+            problem_id=_display_problem_id(alias, rel),
+            root_alias=alias,
+            root_dir=root,
+            base_dir=dsl_path.parent,
+            dsl_path=dsl_path,
+            artifact_base=artifact_base,
+        )
+    if len(candidates) > 1:
+        raise FileNotFoundError(f"ambiguous problem alias by file name: {safe_problem_id}")
+    return None
+
+
+def _language_problem_metadata(relative_id: str) -> tuple[str | None, str | None]:
+    parts = PurePosixPath(relative_id).parts
+    if not parts or parts[0] not in LANGUAGE_PROBLEM_FOLDERS:
+        return None, None
+
+    language = parts[0]
+    language_relative = PurePosixPath(*parts[1:]).as_posix() if len(parts) > 1 else ""
+    if not language_relative:
+        return language, None
+
+    if language_relative.endswith(".dsl.py"):
+        language_relative = language_relative[: -len(".dsl.py")]
+        suffix = LANGUAGE_FILENAME_SUFFIXES.get(language)
+        if suffix and language_relative.endswith(suffix):
+            language_relative = language_relative[: -len(suffix)]
+
+    if language_relative.endswith("/problem"):
+        language_relative = language_relative[: -len("/problem")]
+
+    return language, language_relative or None
+
+
+def resolve_problem_paths(problem_id: str) -> ProblemPaths:
+    safe_problem_id = validate_problem_id(problem_id)
+    alias, relative_id, root = _split_problem_root(safe_problem_id)
+    target = (root / relative_id).resolve()
+    if target != root and root not in target.parents:
+        raise ValueError("invalid problem path")
+
+    from modu_math.dsl.variants import delta_path
+    virtual = target if target.name.endswith(".dsl.py") else target.with_name(target.name + ".dsl.py")
+    if delta_path(virtual).is_file():
+        return ProblemPaths(
+            problem_id=_display_problem_id(alias, virtual.relative_to(root).as_posix()),
+            root_alias=alias, root_dir=root, base_dir=virtual.parent,
+            dsl_path=virtual, artifact_base=virtual.name.removesuffix(".dsl.py"),
+        )
+
+    if target.exists() and target.is_dir():
+        dsl_path = target / "problem.dsl.py"
+        if not dsl_path.exists():
+            raise FileNotFoundError(f"dsl file not found in folder: {safe_problem_id}")
+        return ProblemPaths(
+            problem_id=_display_problem_id(alias, relative_id),
+            root_alias=alias,
+            root_dir=root,
+            base_dir=target,
+            dsl_path=dsl_path,
+            artifact_base="problem",
+        )
+
+    if target.exists() and target.is_file() and target.name.endswith(".dsl.py"):
+        artifact_base = target.name[: -len(".dsl.py")]
+        rel = target.relative_to(root).as_posix()
+        return ProblemPaths(
+            problem_id=_display_problem_id(alias, rel),
+            root_alias=alias,
+            root_dir=root,
+            base_dir=target.parent,
+            dsl_path=target,
+            artifact_base=artifact_base,
+        )
+
+    file_target = target.with_name(f"{target.name}.dsl.py")
+    if file_target.exists() and file_target.is_file():
+        artifact_base = file_target.name[: -len(".dsl.py")]
+        rel = file_target.relative_to(root).as_posix()
+        return ProblemPaths(
+            problem_id=_display_problem_id(alias, rel),
+            root_alias=alias,
+            root_dir=root,
+            base_dir=file_target.parent,
+            dsl_path=file_target,
+            artifact_base=artifact_base,
+        )
+
+    manifest_paths = _resolve_manifest_problem_paths(
+        safe_problem_id,
+        alias=alias,
+        relative_id=relative_id,
+        root=root,
+    )
+    if manifest_paths is not None:
+        return manifest_paths
+
+    basename_paths = _resolve_unique_basename_problem_paths(
+        safe_problem_id,
+        alias=alias,
+        relative_id=relative_id,
+        root=root,
+    )
+    if basename_paths is not None:
+        return basename_paths
+
+    raise FileNotFoundError(f"problem not found: {safe_problem_id}")
+
+
+def _find_solvable_path(base_dir: Path, artifact_base: str) -> Path | None:
+    canonical = base_dir / f"{artifact_base}{ARTIFACT_FILES['solvable']}"
+    if canonical.exists():
+        return canonical
+    versioned = sorted(base_dir.glob(f"{artifact_base}.solvable.v*.json"))
+    if not versioned:
+        return None
+    return versioned[-1]
+
+
+def _read_json(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _read_text(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    return path.read_text(encoding="utf-8")
+
+
+def _is_external_href(value: str) -> bool:
+    return (
+        not value
+        or value.startswith("#")
+        or value.startswith("/")
+        or value.startswith("data:")
+        or re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", value) is not None
+    )
+
+
+def _asset_url(problem_id: str, filename: str) -> str:
+    return f"/api/editor/assets/{quote(problem_id, safe='')}/{quote(filename)}"
+
+
+def _rewrite_svg_asset_hrefs(svg: str | None, paths: ProblemPaths) -> str | None:
+    if svg is None:
+        return None
+
+    def replace(match: re.Match[str]) -> str:
+        attr = match.group("attr")
+        quote_char = match.group("quote")
+        href = match.group("href")
+        if _is_external_href(href):
+            return match.group(0)
+        if "/" in href or "\\" in href:
+            return match.group(0)
+        if not (paths.base_dir / href).exists():
+            return match.group(0)
+        return f"{attr}={quote_char}{_asset_url(paths.problem_id, href)}{quote_char}"
+
+    return re.sub(
+        r"(?P<attr>\b(?:href|xlink:href))=(?P<quote>['\"])(?P<href>.*?)(?P=quote)",
+        replace,
+        svg,
+    )
+
+
+def invalidate_problem_list_cache() -> None:
+    _PROBLEM_LIST_CACHE.clear()
+
+
+def list_problem_directories(*, include_artifacts: bool = False) -> list[dict[str, Any]]:
+    now = time.monotonic()
+    roots_key = tuple((alias, str(root)) for alias, root in problem_roots())
+    cache_key = (include_artifacts, roots_key)
+    cached = _PROBLEM_LIST_CACHE.get(cache_key)
+    if cached and now - cached[0] < _PROBLEM_LIST_CACHE_TTL_SECONDS:
+        return [dict(problem) for problem in cached[1]]
+
+    problems: list[dict[str, Any]] = []
+    for alias, root in problem_roots():
+        if not root.exists():
+            continue
+        from modu_math.dsl.variants import SUFFIX
+        dsl_paths = set(root.rglob("*.dsl.py"))
+        from modu_math.dsl.problem_store import virtual_paths
+        dsl_paths.update(virtual_paths(root))
+        dsl_paths.update(path.with_name(path.name.removesuffix(SUFFIX) + ".dsl.py")
+                         for path in root.rglob("*" + SUFFIX))
+        for dsl_path in sorted(dsl_paths):
+            child = dsl_path.parent
+            if dsl_path.name == "problem.dsl.py":
+                artifact_base = "problem"
+                relative_id = child.relative_to(root).as_posix()
+            else:
+                artifact_base = dsl_path.name[: -len(".dsl.py")]
+                relative_id = dsl_path.relative_to(root).as_posix()
+            problem = {
+                "problem_id": _display_problem_id(alias, relative_id),
+                "root": alias or "problems",
+                "path": str(child.relative_to(root.parent)).replace("\\", "/"),
+                "language": None,
+                "canonical_problem_id": None,
+                "equivalent_problem_ids": {},
+                "has_input_png": False,
+                "has_dsl": True,
+                "has_semantic": False,
+                "has_solvable": False,
+                "has_layout": False,
+                "has_renderer": False,
+                "has_svg": False,
+            }
+            if include_artifacts:
+                solvable_path = _find_solvable_path(child, artifact_base)
+                problem.update(
+                    {
+                        "has_input_png": (child / "input.png").exists(),
+                        "has_semantic": (child / f"{artifact_base}{ARTIFACT_FILES['semantic']}").exists(),
+                        "has_solvable": solvable_path is not None,
+                        "has_layout": (child / f"{artifact_base}{ARTIFACT_FILES['layout']}").exists(),
+                        "has_renderer": (child / f"{artifact_base}{ARTIFACT_FILES['renderer']}").exists(),
+                        "has_svg": (child / f"{artifact_base}{ARTIFACT_FILES['svg']}").exists(),
+                    }
+                )
+            language, canonical_problem_id = _language_problem_metadata(relative_id)
+            problem["language"] = language
+            problem["canonical_problem_id"] = canonical_problem_id
+            problems.append(
+                problem
+            )
+    equivalents_by_canonical: dict[str, dict[str, str]] = {}
+    for problem in problems:
+        language = problem.get("language")
+        canonical_problem_id = problem.get("canonical_problem_id")
+        if not isinstance(language, str) or not isinstance(canonical_problem_id, str):
+            continue
+        equivalents_by_canonical.setdefault(canonical_problem_id, {})[language] = problem["problem_id"]
+
+    for problem in problems:
+        canonical_problem_id = problem.get("canonical_problem_id")
+        if isinstance(canonical_problem_id, str):
+            problem["equivalent_problem_ids"] = dict(equivalents_by_canonical.get(canonical_problem_id, {}))
+
+    result = sorted(problems, key=lambda p: p["problem_id"])
+    _PROBLEM_LIST_CACHE[cache_key] = (now, result)
+    return [dict(problem) for problem in result]
+
+
+def read_problem_detail(problem_id: str) -> dict[str, Any]:
+    paths = resolve_problem_paths(problem_id)
+    from modu_math.dsl.variants import delta_path, source_path, review_paths
+    is_variant = delta_path(paths.dsl_path).exists()
+    dsl = paths.read_dsl()
+    from modu_math.dsl.problem_store import consolidated
+    if consolidated(paths.dsl_path):
+        return {
+            "problem_id": paths.problem_id, "base_dir": str(paths.base_dir), "dsl": dsl,
+            "dsl_storage": "locale_catalog" if is_variant else "source",
+            "source_problem_id": (
+                _display_problem_id(paths.root_alias, source_path(paths.dsl_path).relative_to(paths.root_dir).as_posix())
+                if is_variant else paths.problem_id),
+            "translation_review_paths": review_paths(paths.dsl_path),
+            **read_artifacts(problem_id),
+        }
+    solvable_path = _find_solvable_path(paths.base_dir, paths.artifact_base)
+    svg_path = paths.artifact_path("svg")
+    return {
+        "problem_id": paths.problem_id,
+        "base_dir": str(paths.base_dir),
+        "dsl": dsl,
+        "dsl_storage": "locale_catalog" if is_variant else "source",
+        "source_problem_id": (
+            _display_problem_id(paths.root_alias, source_path(paths.dsl_path).relative_to(paths.root_dir).as_posix())
+            if is_variant else paths.problem_id
+        ),
+        "translation_review_paths": review_paths(paths.dsl_path),
+        "semantic": _read_json(paths.artifact_path("semantic")),
+        "solvable": _read_json(solvable_path) if solvable_path else None,
+        "layout": _read_json(paths.artifact_path("layout")),
+        "renderer": _read_json(paths.artifact_path("renderer")),
+        "svg": _rewrite_svg_asset_hrefs(_read_text(svg_path), paths),
+        "svg_url": _asset_url(paths.problem_id, svg_path.name) if svg_path.exists() else None,
+    }
+
+
+def create_blank_problem(problem_id: str, title: str | None = None) -> dict[str, Any]:
+    safe_problem_id = validate_problem_id(problem_id)
+    alias, relative_id, root = _split_problem_root(safe_problem_id)
+    if alias:
+        raise ValueError("new problems can only be created under the main problems root")
+
+    target = (root / relative_id).resolve()
+    if target != root and root not in target.parents:
+        raise ValueError("invalid problem path")
+
+    if target.name.endswith(".dsl.py"):
+        dsl_path = target
+        base_dir = target.parent
+        display_id = relative_id
+        template_problem_id = target.name[: -len(".dsl.py")]
+        create_parent_only = True
+    else:
+        base_dir = target
+        dsl_path = base_dir / "problem.dsl.py"
+        display_id = relative_id
+        template_problem_id = PurePosixPath(relative_id).name
+        create_parent_only = False
+
+    from modu_math.dsl.variants import available
+    if available(dsl_path):
+        raise FileExistsError(f"problem already exists: {display_id}")
+    if not create_parent_only and base_dir.exists():
+        raise FileExistsError(f"problem folder already exists: {display_id}")
+
+    base_dir.mkdir(parents=True, exist_ok=create_parent_only)
+    clean_title = (title or template_problem_id or "New problem").replace('"', '\\"')
+    dsl_path.write_text(
+        BLANK_PROBLEM_DSL.format(problem_id=template_problem_id, title=clean_title),
+        encoding="utf-8",
+    )
+    invalidate_problem_list_cache()
+    return read_problem_detail(display_id)
+
+
+def save_problem_dsl(problem_id: str, dsl: str) -> tuple[ProblemPaths, str]:
+    paths = resolve_problem_paths(problem_id)
+    dsl = format_dsl_source(dsl)
+    paths.write_dsl(dsl)
+    return paths, dsl
+
+
+def format_problem_dsl(problem_id: str) -> tuple[ProblemPaths, str]:
+    paths = resolve_problem_paths(problem_id)
+    dsl = paths.read_dsl()
+    formatted = format_dsl_source(dsl)
+    paths.write_dsl(formatted)
+    return paths, formatted
+
+
+def read_artifacts(problem_id: str) -> dict[str, Any]:
+    paths = resolve_problem_paths(problem_id)
+    from modu_math.dsl.problem_store import consolidated
+    if consolidated(paths.dsl_path):
+        from .artifact_cache import get_artifacts
+        from .presentation import structure_artifacts
+        artifacts = get_artifacts(paths)
+        artifacts["svg"] = _rewrite_svg_asset_hrefs(artifacts.get("svg"), paths)
+        artifacts["svg_url"] = _asset_url(paths.problem_id, f"{paths.artifact_base}.svg")
+        return structure_artifacts(artifacts)
+    solvable_path = _find_solvable_path(paths.base_dir, paths.artifact_base)
+    svg_path = paths.artifact_path("svg")
+    from .presentation import structure_artifacts
+
+    return structure_artifacts({
+        "semantic": _read_json(paths.artifact_path("semantic")),
+        "solvable": _read_json(solvable_path) if solvable_path else None,
+        "layout": _read_json(paths.artifact_path("layout")),
+        "renderer": _read_json(paths.artifact_path("renderer")),
+        "svg": _rewrite_svg_asset_hrefs(_read_text(svg_path), paths),
+        "svg_url": _asset_url(paths.problem_id, svg_path.name) if svg_path.exists() else None,
+    })

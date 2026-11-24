@@ -1,0 +1,164 @@
+{
+  "slots": {
+    "slot.calculation.2.box.ones": {
+      "x": 197.395,
+      "y": 145.077,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "answer_key_index": 0,
+        "answer_ref": "answer.2.ones",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "width": 21.89
+    },
+    "slot.calculation.2.box.tens": {
+      "x": 184.616,
+      "y": 179.077,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "integer",
+        "max_length": 2,
+        "include_in_submission": true,
+        "order": 1,
+        "group_id": "final_answer",
+        "answer_key_index": 1,
+        "answer_ref": "answer.2.tens",
+        "auto_advance": false,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "width": 34.68
+    },
+    "slot.calculation.2.box.hundreds": {
+      "x": 166.285,
+      "y": 214.077,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "integer",
+        "max_length": 3,
+        "include_in_submission": true,
+        "order": 2,
+        "group_id": "final_answer",
+        "answer_key_index": 2,
+        "answer_ref": "answer.2.hundreds",
+        "auto_advance": false,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "width": 53
+    },
+    "slot.calculation.2.box.total": {
+      "x": 164.064,
+      "y": 258.077,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "integer",
+        "max_length": 3,
+        "include_in_submission": true,
+        "order": 3,
+        "group_id": "final_answer",
+        "answer_key_index": 3,
+        "answer_ref": "answer.2.total",
+        "auto_advance": false,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "width": 55.22
+    },
+    "slot.calculation.2.line.top": {
+      "x1": 140.288,
+      "y1": 136.077,
+      "x2": 232.288,
+      "y2": 136.077
+    },
+    "slot.calculation.2.line.bottom": {
+      "x1": 142.288,
+      "y1": 248.077,
+      "x2": 234.288,
+      "y2": 248.077
+    },
+    "slot.calculation.2.top": {
+      "x": 186.788,
+      "y": 90.077,
+      "text": "3 8 6",
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.calculation.2.plus": {
+      "x": 143.288,
+      "y": 123.077,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.calculation.2.bottom": {
+      "x": 188.788,
+      "y": 123.077,
+      "text": "2 1 1",
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.instruction": {
+      "x": 17.672,
+      "y": 33.879,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    }
+  },
+  "version": 1,
+  "deleted_slots": [
+    "slot.calculation.2.label"
+  ],
+  "canvas": {
+    "width": 350,
+    "height": 350
+  }
+}

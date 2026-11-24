@@ -1,0 +1,675 @@
+from __future__ import annotations
+
+from dataclasses import asdict
+import re
+from typing import Any
+
+from modu_math.layout.sanitizer import sanitize_answer_input_content
+
+from .models.base import (
+    BlankSlot,
+    ChoiceSlot,
+    CircleSlot,
+    Constraint,
+    Group,
+    ImageSlot,
+    LabelSlot,
+    LineSlot,
+    PathSlot,
+    PolygonSlot,
+    RectSlot,
+    Region,
+    TextBoxSlot,
+    TextSlot,
+)
+from .models.objects import ShapeObject
+from .symbol_roles import infer_symbol_text_role
+from .models.templates import AuthoringSlot, DiagramTemplate, ProblemTemplate
+
+
+def compile_problem_template_to_layout(problem: ProblemTemplate) -> dict[str, Any]:
+    """Compile declarative DSL template objects into a normalized layout contract."""
+    _assert_unique_ids(problem)
+
+    slots = [_normalize_slot_with_interaction(slot) for slot in problem.slots]
+    _normalize_graphpaper_bounds(slots)
+    normalized_regions = _normalize_regions(problem.regions, slots)
+    diagrams = [_normalize_diagram(diagram) for diagram in problem.diagrams]
+    groups = [_normalize_group(group) for group in problem.groups]
+    constraints = [
+        _normalize_constraint(constraint) for constraint in problem.constraints
+    ]
+
+    layout: dict[str, Any] = {
+        "schema": "modu.layout.v1",
+        "problem_id": problem.id,
+        "title": problem.title,
+        "canvas": {
+            "width": problem.canvas.width,
+            "height": problem.canvas.height,
+            "coordinate_mode": problem.canvas.coordinate_mode,
+            "background": "#FFFFFF",
+        },
+        "regions": normalized_regions,
+        "slots": slots,
+        "groups": groups,
+        "constraints": constraints,
+        "diagrams": diagrams,
+        "reading_order": _build_reading_order(normalized_regions, diagrams),
+    }
+    return layout
+
+
+def _normalize_graphpaper_bounds(slots: list[dict[str, Any]]) -> None:
+    groups: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for slot in slots:
+        if slot.get("kind") != "line":
+            continue
+        slot_id = slot.get("id")
+        if not isinstance(slot_id, str):
+            continue
+        match = re.match(r"^(slot\.graphpaper(?:_\d+)?)\.(v|h)\d+$", slot_id)
+        if not match:
+            continue
+        content = slot.get("content")
+        if not isinstance(content, dict):
+            continue
+        groups.setdefault(match.group(1), {"v": [], "h": []})[match.group(2)].append(
+            content
+        )
+
+    for group in groups.values():
+        verticals = group["v"]
+        horizontals = group["h"]
+        if len(verticals) < 2 or len(horizontals) < 2:
+            continue
+        vertical_xs = [
+            float(content["x1"])
+            for content in verticals
+            if isinstance(content.get("x1"), int | float)
+            and content.get("x1") == content.get("x2")
+        ]
+        horizontal_ys = [
+            float(content["y1"])
+            for content in horizontals
+            if isinstance(content.get("y1"), int | float)
+            and content.get("y1") == content.get("y2")
+        ]
+        if len(vertical_xs) < 2 or len(horizontal_ys) < 2:
+            continue
+        left = min(vertical_xs)
+        right = max(vertical_xs)
+        top = min(horizontal_ys)
+        bottom = max(horizontal_ys)
+        for content in verticals:
+            content["y1"] = top
+            content["y2"] = bottom
+        for content in horizontals:
+            content["x1"] = left
+            content["x2"] = right
+
+
+def _assert_unique_ids(problem: ProblemTemplate) -> None:
+    seen_ids: set[str] = set()
+
+    def consume(node_id: str, scope: str) -> None:
+        if node_id in seen_ids:
+            raise ValueError(f"Duplicate id '{node_id}' in {scope}")
+        seen_ids.add(node_id)
+
+    consume(problem.id, "problem")
+    for region in problem.regions:
+        consume(region.id, "regions")
+    for slot in problem.slots:
+        consume(slot.id, "slots")
+    for group in problem.groups:
+        consume(group.id, "groups")
+    for constraint in problem.constraints:
+        consume(constraint.id, "constraints")
+    for diagram in problem.diagrams:
+        consume(diagram.id, "diagrams")
+        for obj in diagram.objects:
+            consume(obj.id, f"diagram '{diagram.id}' objects")
+        for label_slot in diagram.label_slots:
+            consume(label_slot.id, f"diagram '{diagram.id}' label_slots")
+        for constraint in diagram.constraints:
+            consume(constraint.id, f"diagram '{diagram.id}' constraints")
+
+
+def _normalize_regions(
+    regions: tuple[Region, ...], slots: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    slot_by_id = {slot["id"]: slot for slot in slots}
+    slot_ids = [slot["id"] for slot in slots]
+    known_slots = set(slot_ids)
+    assigned: set[str] = set()
+    normalized: list[dict[str, Any]] = []
+
+    for region in regions:
+        safe_slot_ids: list[str] = []
+        for slot_id in _flatten_slot_ids(region.slot_ids):
+            if slot_id in known_slots and slot_id not in assigned:
+                safe_slot_ids.append(slot_id)
+                assigned.add(slot_id)
+        normalized.append(
+            {
+                "id": region.id,
+                "role": region.role,
+                "flow": region.flow,
+                "slot_ids": safe_slot_ids,
+            }
+        )
+
+    if not normalized:
+        unassigned = [slot_id for slot_id in slot_ids if slot_id not in assigned]
+        normalized.append(
+            {
+                "id": "region.stem",
+                "role": "stem",
+                "flow": "vertical",
+                "slot_ids": unassigned,
+            }
+        )
+    else:
+        unassigned = [
+            slot_id
+            for slot_id in slot_ids
+            if slot_id not in assigned
+            and not _is_unplaced_contract_blank(slot_by_id.get(slot_id, {}))
+        ]
+        if unassigned:
+            target_region = next(
+                (region for region in normalized if region["role"] == "stem"),
+                normalized[0],
+            )
+            target_region["slot_ids"] = [*target_region["slot_ids"], *unassigned]
+
+    # Automatic Layering: Stable sort by z-priority to prevent background covering foreground.
+    for region in normalized:
+        region["slot_ids"].sort(
+            key=lambda sid: _get_z_priority(slot_by_id.get(sid, {}))
+        )
+
+    return normalized
+
+
+def _flatten_slot_ids(items: Any) -> tuple[str, ...]:
+    if isinstance(items, str):
+        return (items,)
+    if not isinstance(items, (list, tuple)):
+        return ()
+    out: list[str] = []
+    for item in items:
+        if isinstance(item, str):
+            out.append(item)
+        elif isinstance(item, (list, tuple)):
+            out.extend(_flatten_slot_ids(item))
+    return tuple(out)
+
+
+def _is_unplaced_contract_blank(slot: dict[str, Any]) -> bool:
+    if slot.get("kind") != "blank":
+        return False
+    content = slot.get("content")
+    if not isinstance(content, dict):
+        return True
+    return not any(
+        isinstance(content.get(key), int | float)
+        for key in ("x", "y", "width", "height")
+    )
+
+
+def _get_z_priority(slot: dict[str, Any]) -> int:
+    """Return the rendering priority for a slot kind (lower is back, higher is front)."""
+    kind = str(slot.get("kind", ""))
+    slot_id = str(slot.get("id", ""))
+    content = slot.get("content", {})
+    if kind == "circle" and isinstance(content, dict):
+        radius = content.get("r")
+        if (
+            "center" in slot_id
+            or "point" in slot_id
+            or (isinstance(radius, int | float) and radius <= 8)
+        ):
+            return 25
+    priorities = {
+        "image": 0,
+        "rect": 10,
+        "circle": 10,
+        "polygon": 10,
+        "path": 10,
+        "line": 20,
+        "text": 30,
+        "text_box": 30,
+        "blank": 40,
+        "choice": 40,
+        "label": 50,
+    }
+    return priorities.get(kind, 100)  # Default to front for unknown kinds
+
+
+def _normalize_slot(slot: AuthoringSlot) -> dict[str, Any]:
+    if isinstance(slot, TextSlot):
+        content: dict[str, Any] = {
+            "text": slot.text,
+            "style_role": slot.style_role,
+        }
+        if slot.x is not None:
+            content["x"] = float(slot.x)
+        if slot.y is not None:
+            content["y"] = float(slot.y)
+        if slot.width is not None:
+            content["width"] = float(slot.width)
+        if slot.height is not None:
+            content["height"] = float(slot.height)
+        if slot.font_size is not None:
+            content["font_size"] = int(slot.font_size)
+        if slot.max_width is not None:
+            content["max_width"] = float(slot.max_width)
+        if slot.align is not None:
+            content["align"] = slot.align
+        if slot.valign is not None:
+            content["valign"] = slot.valign
+        if slot.line_height is not None:
+            content["line_height"] = float(slot.line_height)
+        if isinstance(slot.font_family, str) and slot.font_family:
+            content["font_family"] = slot.font_family
+        if isinstance(slot.anchor, str) and slot.anchor:
+            content["anchor"] = slot.anchor
+        if isinstance(slot.fill, str) and slot.fill:
+            content["fill"] = slot.fill
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        semantic_role = infer_symbol_text_role(
+            slot_id=slot.id,
+            text=slot.text,
+            style_role=slot.style_role,
+            semantic_role=slot.semantic_role if isinstance(slot.semantic_role, str) else None,
+        )
+        if semantic_role:
+            content["semantic_role"] = semantic_role
+            content["semantic_role_source"] = (
+                "explicit" if isinstance(slot.semantic_role, str) and slot.semantic_role else "inferred"
+            )
+        slot_kind = "text_box" if slot.kind == "text_box" or isinstance(slot, TextBoxSlot) else "text"
+        return {
+            "id": slot.id,
+            "kind": slot_kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, TextBoxSlot):
+        content = {
+            "text": slot.text,
+            "style_role": slot.style_role,
+            "x": float(slot.x),
+            "y": float(slot.y),
+            "width": float(slot.width),
+            "height": float(slot.height),
+            "align": slot.align,
+            "valign": slot.valign,
+        }
+        if slot.font_size is not None:
+            content["font_size"] = int(slot.font_size)
+        if isinstance(slot.font_family, str) and slot.font_family:
+            content["font_family"] = slot.font_family
+        if slot.line_height is not None:
+            content["line_height"] = float(slot.line_height)
+        if isinstance(slot.fill, str) and slot.fill:
+            content["fill"] = slot.fill
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        semantic_role = infer_symbol_text_role(
+            slot_id=slot.id,
+            text=slot.text,
+            style_role=slot.style_role,
+            semantic_role=slot.semantic_role if isinstance(slot.semantic_role, str) else None,
+        )
+        if semantic_role:
+            content["semantic_role"] = semantic_role
+            content["semantic_role_source"] = (
+                "explicit" if isinstance(slot.semantic_role, str) and slot.semantic_role else "inferred"
+            )
+        _normalize_pasted_short_text_box(slot.id, content)
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, ChoiceSlot):
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": {
+                "choices": list(slot.choices),
+                "multiple_select": slot.multiple_select,
+            },
+        }
+
+    if isinstance(slot, BlankSlot):
+        content: dict[str, Any] = {
+            "placeholder": slot.placeholder,
+        }
+        if slot.x is not None:
+            content["x"] = float(slot.x)
+        if slot.y is not None:
+            content["y"] = float(slot.y)
+        if slot.width is not None:
+            content["width"] = float(slot.width)
+        if slot.height is not None:
+            content["height"] = float(slot.height)
+        if isinstance(slot.fill, str):
+            content["fill"] = slot.fill
+        if isinstance(slot.stroke, str):
+            content["stroke"] = slot.stroke
+        if slot.stroke_width is not None:
+            content["stroke_width"] = float(slot.stroke_width)
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, LabelSlot):
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": {
+                "text": slot.text,
+                "target_object_id": slot.target_object_id,
+                "target_anchor": slot.target_anchor,
+            },
+        }
+
+    if isinstance(slot, RectSlot):
+        content: dict[str, Any] = {
+            "x": float(slot.x),
+            "y": float(slot.y),
+            "width": float(slot.width),
+            "height": float(slot.height),
+        }
+        if isinstance(slot.stroke, str):
+            content["stroke"] = slot.stroke
+        if slot.stroke_width is not None:
+            content["stroke_width"] = float(slot.stroke_width)
+        if isinstance(slot.stroke_dasharray, str) and slot.stroke_dasharray:
+            content["stroke_dasharray"] = slot.stroke_dasharray
+        if slot.rx is not None:
+            content["rx"] = float(slot.rx)
+        if slot.ry is not None:
+            content["ry"] = float(slot.ry)
+        if isinstance(slot.fill, str):
+            content["fill"] = slot.fill
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        if isinstance(slot.semantic_role, str) and slot.semantic_role:
+            content["semantic_role"] = slot.semantic_role
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, LineSlot):
+        content: dict[str, Any] = {
+            "x1": float(slot.x1 + slot.x),
+            "y1": float(slot.y1 + slot.y),
+            "x2": float(slot.x2 + slot.x),
+            "y2": float(slot.y2 + slot.y),
+        }
+        if isinstance(slot.stroke, str):
+            content["stroke"] = slot.stroke
+        if slot.stroke_width is not None:
+            content["stroke_width"] = float(slot.stroke_width)
+        if isinstance(slot.stroke_dasharray, str) and slot.stroke_dasharray:
+            content["stroke_dasharray"] = slot.stroke_dasharray
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        if isinstance(slot.semantic_role, str) and slot.semantic_role:
+            content["semantic_role"] = slot.semantic_role
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, CircleSlot):
+        content: dict[str, Any] = {
+            "cx": float(slot.cx),
+            "cy": float(slot.cy),
+            "r": float(slot.r),
+        }
+        if isinstance(slot.stroke, str):
+            content["stroke"] = slot.stroke
+        if slot.stroke_width is not None:
+            content["stroke_width"] = float(slot.stroke_width)
+        if isinstance(slot.stroke_dasharray, str) and slot.stroke_dasharray:
+            content["stroke_dasharray"] = slot.stroke_dasharray
+        if isinstance(slot.fill, str):
+            content["fill"] = slot.fill
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        if isinstance(slot.semantic_role, str) and slot.semantic_role:
+            content["semantic_role"] = slot.semantic_role
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, PolygonSlot):
+        content: dict[str, Any] = {
+            "points": [[float(x + slot.x), float(y + slot.y)] for x, y in slot.points],
+        }
+        if isinstance(slot.stroke, str):
+            content["stroke"] = slot.stroke
+        if slot.stroke_width is not None:
+            content["stroke_width"] = float(slot.stroke_width)
+        if isinstance(slot.stroke_dasharray, str) and slot.stroke_dasharray:
+            content["stroke_dasharray"] = slot.stroke_dasharray
+        if isinstance(slot.fill, str):
+            content["fill"] = slot.fill
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        if isinstance(slot.semantic_role, str) and slot.semantic_role:
+            content["semantic_role"] = slot.semantic_role
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, ImageSlot):
+        content: dict[str, Any] = {
+            "href": slot.href,
+            "x": float(slot.x),
+            "y": float(slot.y),
+            "width": float(slot.width),
+            "height": float(slot.height),
+        }
+        if isinstance(slot.preserve_aspect_ratio, str) and slot.preserve_aspect_ratio:
+            content["preserve_aspect_ratio"] = slot.preserve_aspect_ratio
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        if isinstance(slot.semantic_role, str) and slot.semantic_role:
+            content["semantic_role"] = slot.semantic_role
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    if isinstance(slot, PathSlot):
+        content: dict[str, Any] = {
+            "d": slot.d,
+            "x": float(slot.x),
+            "y": float(slot.y),
+        }
+        if isinstance(slot.stroke, str):
+            content["stroke"] = slot.stroke
+        if slot.stroke_width is not None:
+            content["stroke_width"] = float(slot.stroke_width)
+        if isinstance(slot.stroke_dasharray, str) and slot.stroke_dasharray:
+            content["stroke_dasharray"] = slot.stroke_dasharray
+        if isinstance(slot.fill, str):
+            content["fill"] = slot.fill
+        if isinstance(slot.transform, str) and slot.transform:
+            content["transform"] = slot.transform
+        if isinstance(slot.semantic_role, str) and slot.semantic_role:
+            content["semantic_role"] = slot.semantic_role
+        return {
+            "id": slot.id,
+            "kind": slot.kind,
+            "prompt": slot.prompt or "",
+            "content": content,
+        }
+
+    raise TypeError(f"Unsupported slot type: {type(slot)!r}")
+
+
+def _normalize_group(group: Group) -> dict[str, Any]:
+    return {
+        "id": group.id,
+        "role": group.role,
+        "member_ids": list(group.member_ids),
+    }
+
+
+def _normalize_constraint(constraint: Constraint) -> dict[str, Any]:
+    return {
+        "id": constraint.id,
+        "type": constraint.type,
+        "target_ids": list(constraint.target_ids),
+        "params": dict(sorted(constraint.params.items())),
+    }
+
+
+def _normalize_diagram(diagram: DiagramTemplate) -> dict[str, Any]:
+    return {
+        "id": diagram.id,
+        "objects": [_normalize_shape_object(obj) for obj in diagram.objects],
+        "label_slots": [
+            _normalize_slot_with_interaction(slot) for slot in diagram.label_slots
+        ],
+        "constraints": [
+            _normalize_constraint(constraint) for constraint in diagram.constraints
+        ],
+    }
+
+
+def _normalize_slot_with_interaction(slot: AuthoringSlot) -> dict[str, Any]:
+    normalized = _normalize_slot(slot)
+    if slot.interaction is not None:
+        normalized["content"]["interaction"] = dict(slot.interaction)
+    if slot.input_style is not None:
+        normalized["content"]["input_style"] = dict(slot.input_style)
+    _normalize_answer_input_interaction(normalized)
+    return normalized
+
+
+def _normalize_answer_input_interaction(slot: dict[str, Any]) -> None:
+    content = slot.get("content")
+    if not isinstance(content, dict):
+        return
+    interaction = content.get("interaction")
+    if not isinstance(interaction, dict):
+        return
+    if interaction.get("type") != "input" or interaction.get("role") != "answer":
+        return
+    sanitize_answer_input_content(content)
+    # Visual width does not determine whether this is a digit cell or a whole
+    # answer. Student field bindings decide that when constructing input rules.
+
+
+def _normalize_pasted_short_text_box(slot_id: str, content: dict[str, Any]) -> None:
+    if "konva_" not in slot_id or "paste" not in slot_id:
+        return
+    text = content.get("text")
+    font_size = content.get("font_size")
+    width = content.get("width")
+    height = content.get("height")
+    if not isinstance(text, str) or not text.strip():
+        return
+    stripped = text.strip()
+    if len(stripped) > 3 or any(char.isspace() for char in stripped):
+        return
+    if not isinstance(font_size, int | float) or font_size <= 0:
+        return
+    if not isinstance(width, int | float) or not isinstance(height, int | float):
+        return
+    text_width = _text_width(stripped, float(font_size))
+    target_width = max(float(font_size) * 1.05, text_width + float(font_size) * 0.3)
+    target_height = max(float(font_size) * 1.25, float(font_size) + 6.0)
+    if width > target_width * 1.6:
+        align = str(content.get("align") or "left")
+        if align == "center":
+            content["x"] = round(
+                float(content["x"]) + (float(width) - target_width) / 2, 3
+            )
+        elif align == "right":
+            content["x"] = round(float(content["x"]) + float(width) - target_width, 3)
+        content["width"] = round(target_width, 3)
+    if height > target_height * 1.05:
+        content["height"] = round(target_height, 3)
+
+
+def _text_width(text: str, font_size: float) -> float:
+    width = 0.0
+    for char in text:
+        if char.isspace():
+            width += font_size * 0.34
+        elif (
+            "\u1100" <= char <= "\u11ff"
+            or "\u3130" <= char <= "\u318f"
+            or "\uac00" <= char <= "\ud7af"
+            or "\u3400" <= char <= "\u9fff"
+        ):
+            width += font_size
+        elif char.isupper() or char.isdigit():
+            width += font_size * 0.62
+        elif char.islower():
+            width += font_size * 0.54
+        else:
+            width += font_size * 0.5
+    return width
+
+
+def _normalize_shape_object(obj: ShapeObject) -> dict[str, Any]:
+    return asdict(obj)
+
+
+def _build_reading_order(
+    regions: list[dict[str, Any]], diagrams: list[dict[str, Any]]
+) -> list[str]:
+    ordered: list[str] = []
+    seen: set[str] = set()
+
+    def push(value: str) -> None:
+        if value not in seen:
+            ordered.append(value)
+            seen.add(value)
+
+    for region in regions:
+        push(str(region["id"]))
+        for slot_id in region["slot_ids"]:
+            push(str(slot_id))
+
+    for diagram in diagrams:
+        push(str(diagram["id"]))
+        for obj in diagram["objects"]:
+            push(str(obj["id"]))
+        for label_slot in diagram["label_slots"]:
+            push(str(label_slot["id"]))
+
+    return ordered

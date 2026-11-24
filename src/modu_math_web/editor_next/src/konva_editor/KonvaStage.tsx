@@ -1,0 +1,1925 @@
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { Circle, Group, Layer, Line, Path, Rect, Stage, Text, Transformer } from "react-konva";
+import type Konva from "konva";
+import type { CanvasPresentation, TutorRendererOverlay } from "../api/editorApi";
+import type { BaseTenBlockKind, ConnectorShape, EditorShape, LineShape } from "../types/editorShape";
+import { scalePathData } from "../utils/pathData";
+import { connectorArrowForPreset, connectorBounds, connectorControl, connectorEnd, connectorKindForPreset, connectorPathData, connectorStart } from "./connectorGeometry";
+import { estimateTextWidth, fittedTextHeight, normalizedTextBoxHeight, normalizedTextBoxWidth } from "./converters";
+import { KONVA_PREVIEW_FONT_FAMILY, KONVA_PREVIEW_FONT_LOAD_SPEC } from "./fonts";
+import { ShapeRenderer } from "./ShapeRenderer";
+import { adjustableShapePoint } from "./shapeGeometry";
+import type { ShapePreset } from "./KonvaToolbar";
+import {
+  answerSlotReviews,
+  type AnswerBindingOption,
+  type AnswerBindingStatus,
+  type AnswerChoiceReview,
+  type AnswerPresentationMode,
+  type AnswerSlotReview,
+} from "./answerReview";
+
+interface KonvaStageProps {
+  width: number;
+  height: number;
+  shapes: EditorShape[];
+  selectedShapeIds: string[];
+  tutorOverlays?: TutorRendererOverlay[];
+  activeTutorOverlayIndex?: number | null;
+  drawingPreset?: ShapePreset | null;
+  answerReviewMode?: boolean;
+  highlightedAnswerIndex?: number | null;
+  answerOptions?: AnswerBindingOption[];
+  answerChoices?: AnswerChoiceReview[];
+  answerPresentationMode?: AnswerPresentationMode;
+  canvasPresentation?: CanvasPresentation | null;
+  diagramRegionIds?: ReadonlySet<string>;
+  showAnswerCanvas?: boolean;
+  editorPanel?: ReactNode;
+  reviewPanel?: ReactNode;
+  onSelectShapes: (ids: string[]) => void;
+  onChangeShapes: (shapes: EditorShape[]) => void;
+  onConvertShapesToAnswer?: (ids: string[]) => void;
+  onRestoreShapesFromAnswer?: (ids: string[]) => void;
+  onEditPresentationShape?: (id: string) => void;
+  onDrawShape?: (preset: ShapePreset, start: CanvasPoint, end: CanvasPoint, points?: CanvasPoint[]) => void;
+  onDrawingComplete?: () => void;
+  onTutorOverlaySelect?: (overlayIndex: number | null) => void;
+  onTutorOverlayChange?: (overlayIndex: number, patch: Partial<TutorRendererOverlay>) => void;
+  onTutorOverlayMove?: (overlayIndex: number, x: number, y: number) => void;
+}
+
+export function KonvaStage({
+  width,
+  height,
+  shapes,
+  selectedShapeIds,
+  tutorOverlays = [],
+  activeTutorOverlayIndex = null,
+  drawingPreset = null,
+  answerReviewMode = false,
+  highlightedAnswerIndex = null,
+  answerOptions = [],
+  answerChoices = [],
+  answerPresentationMode = "panel_input",
+  canvasPresentation,
+  diagramRegionIds,
+  showAnswerCanvas = true,
+  editorPanel,
+  reviewPanel,
+  onSelectShapes,
+  onChangeShapes,
+  onConvertShapesToAnswer,
+  onRestoreShapesFromAnswer,
+  onEditPresentationShape,
+  onDrawShape,
+  onDrawingComplete,
+  onTutorOverlaySelect,
+  onTutorOverlayChange,
+  onTutorOverlayMove,
+}: KonvaStageProps) {
+  const wrapRef = useRef<HTMLDivElement | null>(null);
+  const surfaceRef = useRef<HTMLDivElement | null>(null);
+  const transformerRef = useRef<Konva.Transformer | null>(null);
+  const shapeRefs = useRef<Record<string, Konva.Node | null>>({});
+  const dragStartRef = useRef<{ activeId: string; ids: string[]; positions: Map<string, { x: number; y: number }> } | null>(null);
+  const dragFrameRef = useRef<number | null>(null);
+  const pendingDragMoveRef = useRef<{
+    shapeId: string;
+    x: number;
+    y: number;
+    layer: Konva.Layer | null;
+  } | null>(null);
+  const selectionStartRef = useRef<{ x: number; y: number; additive: boolean } | null>(null);
+  const drawStartRef = useRef<CanvasPoint | null>(null);
+  const drawPointsRef = useRef<CanvasPoint[]>([]);
+  const tutorTextEditorRef = useRef<HTMLTextAreaElement | null>(null);
+  const [viewport, setViewport] = useState({ width: 900, height: 640 });
+  const [selectionRect, setSelectionRect] = useState<CanvasRect | null>(null);
+  const [drawingPreview, setDrawingPreview] = useState<EditorShape | null>(null);
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; shapeId: string } | null>(null);
+  const [editingTutorLabel, setEditingTutorLabel] = useState<{
+    index: number;
+    text: string;
+    left: number;
+    top: number;
+    width: number;
+    fontSize: number;
+    color: string;
+  } | null>(null);
+  const [, setFontLoadRevision] = useState(0);
+
+  useEffect(() => {
+    if (!surfaceRef.current) return;
+    let frame = 0;
+    const observer = new ResizeObserver(([entry]) => {
+      const next = {
+        width: Math.max(1, Math.floor(entry.contentRect.width)),
+        height: Math.max(1, Math.floor(entry.contentRect.height)),
+      };
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        setViewport((current) =>
+          current.width === next.width && current.height === next.height ? current : next,
+        );
+      });
+    });
+    observer.observe(surfaceRef.current);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => () => {
+    if (dragFrameRef.current !== null) cancelAnimationFrame(dragFrameRef.current);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (document.fonts) {
+      void Promise.allSettled([
+        document.fonts.load(KONVA_PREVIEW_FONT_LOAD_SPEC),
+        document.fonts.load('30px "Noto Sans KR"'),
+        document.fonts.ready,
+      ]).then(() => {
+        if (!cancelled) setFontLoadRevision((revision) => revision + 1);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const closeMenu = () => setContextMenu(null);
+    window.addEventListener("pointerdown", closeMenu);
+    window.addEventListener("keydown", closeMenu);
+    return () => {
+      window.removeEventListener("pointerdown", closeMenu);
+      window.removeEventListener("keydown", closeMenu);
+    };
+  }, [contextMenu]);
+
+  useEffect(() => {
+    if (!transformerRef.current) return;
+    const selectedNodes = answerReviewMode ? [] : selectedShapeIds
+      .map((id) => {
+        const shape = shapes.find((candidate) => candidate.id === id);
+        if (shape?.type === "line" || shape?.type === "connector") return null;
+        return shapeRefs.current[id];
+      })
+      .filter((node): node is Konva.Node => Boolean(node));
+    transformerRef.current.nodes(selectedNodes);
+    transformerRef.current.getLayer()?.batchDraw();
+  }, [answerReviewMode, selectedShapeIds, shapes]);
+
+  useEffect(() => {
+    if (!answerReviewMode) return;
+    selectionStartRef.current = null;
+    drawStartRef.current = null;
+    drawPointsRef.current = [];
+    dragStartRef.current = null;
+    setSelectionRect(null);
+    setDrawingPreview(null);
+    setContextMenu(null);
+    setEditingTutorLabel(null);
+  }, [answerReviewMode]);
+
+  useEffect(() => {
+    if (!editingTutorLabel) return;
+    tutorTextEditorRef.current?.focus();
+    tutorTextEditorRef.current?.select();
+  }, [editingTutorLabel?.index]);
+
+  const selectedIdSet = useMemo(
+    () => new Set(answerReviewMode ? [] : selectedShapeIds),
+    [answerReviewMode, selectedShapeIds],
+  );
+  const promptShapes = useMemo(
+    () => shapes.filter(isTopPresentationShape),
+    [shapes],
+  );
+  const answerPromptShapes = useMemo(
+    () => shapes.filter((shape) => shape.type === "text" && shape.semanticRole === "answer_prompt"),
+    [shapes],
+  );
+  const isCanvasSelect = answerPresentationMode === "canvas_select";
+  const renderedShapes = useMemo(() => {
+    if (canvasPresentation) {
+      const hidden = new Set(canvasPresentation.hidden_slot_ids);
+      return shapes.filter((shape) => !hidden.has(shape.id)).sort(compareRenderOrder);
+    }
+    // After a local edit the built viewport is stale. Resolve the current
+    // frames before hiding panel choices, just as the server does at build.
+    const diagramFrames = shapes
+      .filter((shape) => isDiagramFrame(shape, diagramRegionIds))
+      .map(shapeBounds);
+    const hiddenChoices: EditorShape[] = [];
+    const kept: EditorShape[] = [];
+    for (const shape of shapes) {
+      if (isTopPresentationShape(shape) || shape.semanticRole === "answer_prompt") {
+        continue;
+      }
+      const visibleCardLabel = isChoiceShape(shape) && diagramFrames.some((frame) => shapeCenterInside(frame, shape));
+      if (!isCanvasSelect && answerChoices.length > 0 && !visibleCardLabel && (isChoiceShape(shape) || isChoiceDecoration(shape))) {
+        hiddenChoices.push(shape);
+        continue;
+      }
+      kept.push(shape);
+    }
+    const visible = hiddenChoices.length
+      ? kept.filter((shape) => isDiagramFrame(shape, diagramRegionIds) || !isEmptyChoiceFrame(shape, hiddenChoices, kept))
+      : kept;
+    return visible.sort(compareRenderOrder);
+  }, [answerChoices.length, canvasPresentation, diagramRegionIds, isCanvasSelect, shapes]);
+  const [fitContent, setFitContent] = useState(true);
+  const [zoom, setZoom] = useState<number | null>(null);
+  const crop = useMemo(
+    () => (fitContent && canvasPresentation?.viewport) || contentCrop(renderedShapes, width, height, fitContent),
+    [canvasPresentation, fitContent, height, renderedShapes, width],
+  );
+  const presentationPanel = answerReviewMode ? reviewPanel : editorPanel;
+  // Measure the canvas grid cell so prompt, answer and panel sizes are all respected.
+  const canvasGutter = 32;
+  const fitScale = Math.max(0.01, Math.min(Math.max(1, viewport.width - canvasGutter) / crop.width, Math.max(1, viewport.height - canvasGutter) / crop.height, 5));
+  const scale = zoom ?? fitScale;
+  const stageWidth = Math.max(viewport.width, crop.width * scale + canvasGutter);
+  const stageHeight = Math.max(viewport.height, crop.height * scale + canvasGutter);
+  const offsetX = (stageWidth - crop.width * scale) / 2 - crop.x * scale;
+  const offsetY = (stageHeight - crop.height * scale) / 2 - crop.y * scale;
+  const answerReviews = answerReviewMode && !reviewPanel ? answerSlotReviews(shapes, answerOptions) : new Map<string, AnswerSlotReview>();
+  const shapesById = new Map(shapes.map((shape) => [shape.id, shape]));
+  const selectedLine =
+    !answerReviewMode && selectedShapeIds.length === 1
+      ? shapes.find((shape): shape is LineShape => shape.id === selectedShapeIds[0] && shape.type === "line" && !shape.locked) ?? null
+      : null;
+  const selectedConnector =
+    !answerReviewMode && selectedShapeIds.length === 1
+      ? shapes.find((shape): shape is ConnectorShape => shape.id === selectedShapeIds[0] && shape.type === "connector" && !shape.locked) ?? null
+      : null;
+  const selectedAdjustablePath =
+    !answerReviewMode && selectedShapeIds.length === 1
+      ? shapes.find(
+          (shape): shape is Extract<EditorShape, { type: "path" }> =>
+            shape.id === selectedShapeIds[0] && shape.type === "path" && !shape.locked && Boolean(adjustableShapePoint(shape)),
+        ) ?? null
+      : null;
+  const hasImageSelected = !answerReviewMode && selectedShapeIds.some((id) => shapes.find((shape) => shape.id === id)?.type === "image");
+
+  const pointFromEvent = (event: Konva.KonvaEventObject<MouseEvent | TouchEvent>) => {
+    const stage = event.target.getStage();
+    const pointer = stage?.getPointerPosition();
+    if (!pointer) return null;
+    return {
+      x: (pointer.x - offsetX) / scale,
+      y: (pointer.y - offsetY) / scale,
+    };
+  };
+
+  const selectShape = (shapeId: string, event: Konva.KonvaEventObject<MouseEvent | TouchEvent>) => {
+    if ("button" in event.evt && event.evt.button !== 0) return;
+    event.cancelBubble = true;
+    const additive = isAdditiveSelection(event.evt);
+    if (!additive) {
+      onSelectShapes([shapeId]);
+      return;
+    }
+    onSelectShapes(
+      selectedIdSet.has(shapeId) ? selectedShapeIds.filter((id) => id !== shapeId) : [...selectedShapeIds, shapeId],
+    );
+  };
+
+  const openShapeContextMenu = (shape: EditorShape, event: Konva.KonvaEventObject<MouseEvent>) => {
+    if (!canOpenShapeContextMenu(shape)) return;
+    event.evt.preventDefault();
+    event.cancelBubble = true;
+    if (!selectedIdSet.has(shape.id)) onSelectShapes([shape.id]);
+    setContextMenu({ x: event.evt.clientX, y: event.evt.clientY, shapeId: shape.id });
+  };
+
+  const setLineDash = (shapeId: string, strokeDasharray: string | undefined) => {
+    const shape = shapes.find(
+      (candidate): candidate is LineShape | ConnectorShape =>
+        candidate.id === shapeId && (candidate.type === "line" || candidate.type === "connector"),
+    );
+    if (!shape) return;
+    onChangeShapes([{ ...shape, strokeDasharray }]);
+    setContextMenu(null);
+  };
+
+  const contextMenuShape = contextMenu ? shapes.find((shape) => shape.id === contextMenu.shapeId) ?? null : null;
+  const contextMenuSelectionIds = contextMenuShape
+    ? selectedIdSet.has(contextMenuShape.id)
+      ? selectedShapeIds
+      : [contextMenuShape.id]
+    : [];
+  const contextAnswerTargets = shapes.filter((shape) => contextMenuSelectionIds.includes(shape.id) && isAnswerSlotShape(shape));
+
+  const startShapeDrag = (shapeId: string) => {
+    const ids = selectedIdSet.has(shapeId) ? selectedShapeIds : [shapeId];
+    if (!selectedIdSet.has(shapeId)) onSelectShapes([shapeId]);
+    if (dragFrameRef.current !== null) cancelAnimationFrame(dragFrameRef.current);
+    dragFrameRef.current = null;
+    pendingDragMoveRef.current = null;
+    dragStartRef.current = {
+      activeId: shapeId,
+      ids,
+      positions: new Map(
+        shapes
+          .filter((shape) => ids.includes(shape.id))
+          .map((shape) => [shape.id, { x: shape.x, y: shape.y }]),
+      ),
+    };
+    // A multi-node Transformer recalculates the combined bounds whenever any
+    // attached node moves. Detach it while dragging so one pointer event does
+    // not trigger the same O(n) bounds calculation for every selected node.
+    if (ids.length > 1) transformerRef.current?.nodes([]);
+  };
+
+  const positionSelectedDragNodes = (
+    dragStart: NonNullable<typeof dragStartRef.current>,
+    shapeId: string,
+    x: number,
+    y: number,
+    layer: Konva.Layer | null,
+  ) => {
+    const activeStart = dragStart?.positions.get(shapeId);
+    if (!activeStart) return;
+    const dx = x - activeStart.x;
+    const dy = y - activeStart.y;
+    for (const id of dragStart.ids) {
+      if (id === shapeId) continue;
+      const start = dragStart.positions.get(id);
+      const node = shapeRefs.current[id];
+      if (start && node) node.position({ x: start.x + dx, y: start.y + dy });
+    }
+    layer?.batchDraw();
+  };
+
+  const flushSelectedDragMove = () => {
+    dragFrameRef.current = null;
+    const pending = pendingDragMoveRef.current;
+    pendingDragMoveRef.current = null;
+    const dragStart = dragStartRef.current;
+    if (!pending || !dragStart) return;
+    positionSelectedDragNodes(dragStart, pending.shapeId, pending.x, pending.y, pending.layer);
+  };
+
+  const moveSelectedShapes = (shapeId: string, event: Konva.KonvaEventObject<DragEvent>) => {
+    if (!dragStartRef.current) return;
+    pendingDragMoveRef.current = {
+      shapeId,
+      x: event.target.x(),
+      y: event.target.y(),
+      layer: event.target.getLayer(),
+    };
+    if (dragFrameRef.current === null) {
+      dragFrameRef.current = requestAnimationFrame(flushSelectedDragMove);
+    }
+  };
+
+  const finishSelectedDrag = (shapeId: string, event: Konva.KonvaEventObject<DragEvent>) => {
+    const dragStart = dragStartRef.current;
+    if (dragFrameRef.current !== null) cancelAnimationFrame(dragFrameRef.current);
+    dragFrameRef.current = null;
+    pendingDragMoveRef.current = null;
+    dragStartRef.current = null;
+    const activeStart = dragStart?.positions.get(shapeId);
+    if (!dragStart || !activeStart) return;
+    positionSelectedDragNodes(dragStart, shapeId, event.target.x(), event.target.y(), event.target.getLayer());
+    const dx = event.target.x() - activeStart.x;
+    const dy = event.target.y() - activeStart.y;
+    const selected = new Set(dragStart.ids);
+    onChangeShapes(
+      shapes
+        .filter((shape) => selected.has(shape.id))
+        .map((shape) => {
+          const start = dragStart.positions.get(shape.id);
+          return start
+            ? ({ ...shape, x: roundStageNumber(start.x + dx), y: roundStageNumber(start.y + dy) } as EditorShape)
+            : shape;
+        }),
+    );
+  };
+
+  const updateLineEndpoint = (
+    line: LineShape,
+    endpoint: "start" | "end",
+    event: Konva.KonvaEventObject<DragEvent>,
+  ) => {
+    event.cancelBubble = true;
+    const point = pointFromEvent(event);
+    if (!point || line.points.length < 4) return;
+    const start = localLinePointToCanvasPoint(line, { x: line.points[0], y: line.points[1] });
+    const end = localLinePointToCanvasPoint(line, {
+      x: line.points[line.points.length - 2],
+      y: line.points[line.points.length - 1],
+    });
+    const nextStart = endpoint === "start" ? point : start;
+    const nextEnd = endpoint === "end" ? point : end;
+    onChangeShapes([
+      {
+        ...line,
+        x: nextStart.x,
+        y: nextStart.y,
+        rotation: 0,
+        offsetX: 0,
+        offsetY: 0,
+        points: [0, 0, roundStageNumber(nextEnd.x - nextStart.x), roundStageNumber(nextEnd.y - nextStart.y)],
+      },
+    ]);
+  };
+
+  const updateConnectorEndpoint = (
+    connector: ConnectorShape,
+    endpoint: "start" | "end",
+    event: Konva.KonvaEventObject<DragEvent>,
+  ) => {
+    event.cancelBubble = true;
+    const point = pointFromEvent(event);
+    if (!point) return;
+    const start = connectorPointToCanvasPoint(connector, connectorStart(connector));
+    const end = connectorPointToCanvasPoint(connector, connectorEnd(connector));
+    const control = connector.kind === "straight" ? undefined : connectorPointToCanvasPoint(connector, connectorControl(connector));
+    const nextStart = endpoint === "start" ? point : start;
+    const nextEnd = endpoint === "end" ? point : end;
+    onChangeShapes([
+      {
+        ...connector,
+        x: nextStart.x,
+        y: nextStart.y,
+        rotation: 0,
+        offsetX: 0,
+        offsetY: 0,
+        start: { x: 0, y: 0 },
+        end: { x: roundStageNumber(nextEnd.x - nextStart.x), y: roundStageNumber(nextEnd.y - nextStart.y) },
+        control: control
+          ? { x: roundStageNumber(control.x - nextStart.x), y: roundStageNumber(control.y - nextStart.y) }
+          : undefined,
+      },
+    ]);
+  };
+
+  const updateConnectorControl = (connector: ConnectorShape, event: Konva.KonvaEventObject<DragEvent>) => {
+    event.cancelBubble = true;
+    const point = pointFromEvent(event);
+    if (!point || connector.kind === "straight") return;
+    onChangeShapes([
+      {
+        ...connector,
+        control: { x: roundStageNumber(point.x - connector.x), y: roundStageNumber(point.y - connector.y) },
+      },
+    ]);
+  };
+
+  const updatePathAdjustment = (shape: Extract<EditorShape, { type: "path" }>, event: Konva.KonvaEventObject<DragEvent>) => {
+    event.cancelBubble = true;
+    const point = pointFromEvent(event);
+    if (!point) return;
+    const localPoint = canvasPointToLocalPathPoint(shape, point);
+    onChangeShapes([
+      {
+        ...shape,
+        adjustment: {
+          x: roundStageNumber(clamp(localPoint.x, 0, shape.width)),
+          y: roundStageNumber(clamp(localPoint.y, 0, shape.height)),
+        },
+      },
+    ]);
+  };
+
+  return (
+    <div className={`konva-stage-wrap presentation-layout${drawingPreset ? " drawing" : ""}${presentationPanel ? " presentation-with-panel" : ""}${answerReviewMode ? " presentation-review" : ""}${answerReviewMode && !showAnswerCanvas ? " presentation-canvas-hidden" : ""}`} ref={wrapRef}>
+      {promptShapes.length > 0 ? <div className="konva-question-preview" role="region" aria-label="문제 지문">
+          <div className="presentation-zone-title">
+            <span>문제 지문</span>
+            <small>지문을 누르면 표시 영역을 바꿀 수 있습니다.</small>
+          </div>
+          {promptShapes.length ? promptShapes.map((shape) => (
+            <button type="button" className="presentation-prompt-item" key={shape.id}
+              onClick={() => onEditPresentationShape?.(shape.id)}>
+              <span className="presentation-role-badge">{shape.semanticRole === "instruction" ? "풀이 지시문" : "문제 지문"}</span>
+              <span>{shape.type === "text" ? shape.text : ""}</span>
+            </button>
+          )) : null}
+      </div> : null}
+      <div className="review-canvas-toolbar">
+        <strong>문제 캔버스</strong>
+        <label className="review-fit-toggle"><input type="checkbox" checked={fitContent} onChange={(event) => { setFitContent(event.target.checked); setZoom(null); }} />내용에 맞춰 보기</label>
+        <div className="canvas-zoom-controls" aria-label="캔버스 확대 및 축소">
+          <button type="button" aria-label="캔버스 축소" disabled={scale <= 0.1} onClick={() => setZoom(Math.max(0.1, scale - 0.25))}>−</button>
+          <span aria-live="polite">{Math.round(scale * 100)}%</span>
+          <button type="button" aria-label="캔버스 확대" disabled={scale >= 5} onClick={() => setZoom(Math.min(5, scale + 0.25))}>+</button>
+          <button type="button" title="실제 크기" onClick={() => setZoom(1)}>1:1</button>
+          <button type="button" title="화면에 맞추기" aria-pressed={zoom === null} onClick={() => setZoom(null)}>맞춤</button>
+        </div>
+      </div>
+      <div className="konva-canvas-viewport" ref={surfaceRef}>
+      <Stage
+        className="konva-canvas-surface"
+        width={stageWidth}
+        height={stageHeight}
+        onMouseDown={(event) => {
+          if (answerReviewMode) return;
+          if (event.evt.button !== 0) return;
+          if (event.target !== event.target.getStage()) return;
+          const point = pointFromEvent(event);
+          if (!point) return;
+          if (drawingPreset && onDrawShape) {
+            drawStartRef.current = point;
+            drawPointsRef.current = [point];
+            setDrawingPreview(previewShapeForDrawing(drawingPreset, point, point, drawPointsRef.current));
+            onSelectShapes([]);
+            return;
+          }
+          selectionStartRef.current = { ...point, additive: isAdditiveSelection(event.evt) };
+          setSelectionRect({ x: point.x, y: point.y, width: 0, height: 0 });
+        }}
+        onMouseMove={(event) => {
+          if (answerReviewMode) return;
+          if (event.evt.buttons && (event.evt.buttons & 1) === 0) return;
+          if (drawStartRef.current && drawingPreset) {
+            const point = pointFromEvent(event);
+            if (!point) return;
+            if (drawingPreset === "freeformScribble") drawPointsRef.current = appendFreeformPoint(drawPointsRef.current, point);
+            setDrawingPreview(previewShapeForDrawing(drawingPreset, drawStartRef.current, point, drawPointsRef.current));
+            return;
+          }
+          const start = selectionStartRef.current;
+          if (!start) return;
+          const point = pointFromEvent(event);
+          if (!point) return;
+          setSelectionRect(normalizeRect(start.x, start.y, point.x - start.x, point.y - start.y));
+        }}
+        onMouseUp={(event) => {
+          if (answerReviewMode) return;
+          if (event.evt.button !== 0) return;
+          if (drawStartRef.current && drawingPreset && onDrawShape) {
+            const start = drawStartRef.current;
+            const points = drawPointsRef.current;
+            const end = pointFromEvent(event) ?? drawingEndPoint(drawingPreview ?? previewShapeForDrawing(drawingPreset, start, start, points));
+            drawStartRef.current = null;
+            drawPointsRef.current = [];
+            const preview = drawingPreview;
+            setDrawingPreview(null);
+            if (preview && shapeLongEnough(preview)) {
+              onDrawShape(drawingPreset, start, end, points);
+            }
+            onDrawingComplete?.();
+            return;
+          }
+          const start = selectionStartRef.current;
+          const rect = selectionRect;
+          selectionStartRef.current = null;
+          setSelectionRect(null);
+          if (!start || !rect) return;
+
+          if (Math.abs(rect.width) < 4 && Math.abs(rect.height) < 4) {
+            if (!start.additive) onSelectShapes([]);
+            return;
+          }
+
+          const hits = renderedShapes.filter((shape) => intersectsRect(shapeBounds(shape), rect)).map((shape) => shape.id);
+          onSelectShapes(start.additive ? Array.from(new Set([...selectedShapeIds, ...hits])) : hits);
+        }}
+        onTouchStart={(event) => {
+          if (answerReviewMode) return;
+          if (event.target === event.target.getStage()) onSelectShapes([]);
+        }}
+      >
+        <Layer x={offsetX} y={offsetY} scaleX={scale} scaleY={scale}>
+          <Rect x={crop.x} y={crop.y} width={crop.width} height={crop.height} fill="#ffffff" stroke="#cbd5e1" strokeWidth={1} listening={false} />
+          {renderedShapes.map((shape) => (
+            <ShapeRenderer
+              key={shape.id}
+              shape={shape}
+              isSelected={selectedIdSet.has(shape.id)}
+              interactive={!answerReviewMode}
+              nodeRef={(node) => {
+                shapeRefs.current[shape.id] = node;
+              }}
+              onSelect={(event) => selectShape(shape.id, event)}
+              onDragStart={() => startShapeDrag(shape.id)}
+              onDragMove={(event) => moveSelectedShapes(shape.id, event)}
+              onDragEnd={(event) => finishSelectedDrag(shape.id, event)}
+              onContextMenu={(event) => openShapeContextMenu(shape, event)}
+            />
+          ))}
+          {isCanvasSelect
+            ? answerChoices.map((choice, index) => {
+                const refs = choice.sourceRefs?.length ? choice.sourceRefs : [choice.id];
+                const matched = renderedShapes.filter((shape) => refs.includes(shape.id));
+                if (!matched.length) return null;
+                const boxes = matched.map(shapeBounds);
+                const minX = Math.min(...boxes.map((b) => b.x)) - 3;
+                const minY = Math.min(...boxes.map((b) => b.y)) - 3;
+                const maxX = Math.max(...boxes.map((b) => b.x + b.width)) + 3;
+                const maxY = Math.max(...boxes.map((b) => b.y + b.height)) + 3;
+                const badgeText = choice.correct ? `✓ 정답` : `보기 ${index + 1}`;
+                const badgeWidth = Math.max(46, badgeText.length * 9 + 12);
+                const color = choice.correct ? "#15803d" : "#2563eb";
+                return (
+                  <Group key={`canvas-choice-${choice.id}`} listening={false}>
+                    <Rect
+                      x={minX}
+                      y={minY}
+                      width={Math.max(16, maxX - minX)}
+                      height={Math.max(16, maxY - minY)}
+                      stroke={color}
+                      strokeWidth={choice.correct ? 2.5 : 1.6}
+                      dash={choice.correct ? undefined : [6, 4]}
+                      fill={choice.correct ? "rgba(21, 128, 61, 0.08)" : "rgba(37, 99, 235, 0.05)"}
+                      cornerRadius={6}
+                    />
+                    <Rect
+                      x={minX}
+                      y={Math.max(2, minY - 20)}
+                      width={badgeWidth}
+                      height={18}
+                      fill={color}
+                      cornerRadius={4}
+                    />
+                    <Text
+                      x={minX}
+                      y={Math.max(4, minY - 18)}
+                      width={badgeWidth}
+                      text={badgeText}
+                      fontFamily={KONVA_PREVIEW_FONT_FAMILY}
+                      fontSize={11}
+                      fontStyle="bold"
+                      fill="#ffffff"
+                      align="center"
+                    />
+                  </Group>
+                );
+              })
+            : null}
+          {renderedShapes.map((shape) => {
+            if (!shape.interaction) return null;
+            const review = answerReviews.get(shape.id);
+            const answerIndex = review?.option?.index ?? (review ? review.displayOrder - 1 : null);
+            const highlighted = highlightedAnswerIndex !== null && answerIndex === highlightedAnswerIndex;
+            return (
+              <AnswerSlotOverlay
+                key={`${shape.id}.answer-overlay`}
+                shape={shape}
+                review={review}
+                reviewMode={answerReviewMode}
+                highlighted={highlighted}
+              />
+            );
+          })}
+          <TutorOverlayLayer
+            overlays={tutorOverlays}
+            shapesById={shapesById}
+            activeOverlayIndex={answerReviewMode ? null : activeTutorOverlayIndex}
+            onOverlaySelect={answerReviewMode ? undefined : onTutorOverlaySelect}
+            onOverlayTextEditStart={answerReviewMode ? undefined : (index, overlay, metrics) => {
+              onTutorOverlaySelect?.(index);
+              setEditingTutorLabel({
+                index,
+                text: overlay.text ?? "",
+                left: offsetX + (overlay.x ?? 0) * scale,
+                top: offsetY + (overlay.y ?? 0) * scale,
+                width: Math.max(160, metrics.width * scale),
+                fontSize: Math.max(14, metrics.fontSize * scale),
+                color: metrics.fill,
+              });
+            }}
+            onOverlayMove={answerReviewMode ? undefined : onTutorOverlayMove}
+          />
+          {!answerReviewMode && selectionRect ? (
+            <Rect
+              x={selectionRect.x}
+              y={selectionRect.y}
+              width={selectionRect.width}
+              height={selectionRect.height}
+              fill="rgba(37, 99, 235, 0.08)"
+              stroke="#2563eb"
+              strokeWidth={1}
+              dash={[5, 4]}
+              listening={false}
+            />
+          ) : null}
+          {drawingPreview ? (
+            <ShapeRenderer
+              shape={drawingPreview}
+              isSelected={false}
+              interactive={false}
+              nodeRef={() => undefined}
+              onSelect={(event) => {
+                event.cancelBubble = true;
+              }}
+              onDragStart={() => undefined}
+              onDragMove={() => undefined}
+              onDragEnd={() => undefined}
+              onContextMenu={(event) => {
+                event.cancelBubble = true;
+              }}
+            />
+          ) : null}
+          {selectedLine ? (
+            <LineEndpointHandles
+              line={selectedLine}
+              onDragMove={(endpoint, event) => updateLineEndpoint(selectedLine, endpoint, event)}
+              onDragEnd={(endpoint, event) => updateLineEndpoint(selectedLine, endpoint, event)}
+            />
+          ) : null}
+          {selectedConnector ? (
+            <ConnectorHandles
+              connector={selectedConnector}
+              onEndpointDrag={(endpoint, event) => updateConnectorEndpoint(selectedConnector, endpoint, event)}
+              onControlDrag={(event) => updateConnectorControl(selectedConnector, event)}
+            />
+          ) : null}
+          {!answerReviewMode ? <Transformer
+            ref={transformerRef}
+            keepRatio={hasImageSelected}
+            rotateEnabled
+            ignoreStroke
+            borderStroke="#6b7280"
+            borderStrokeWidth={1}
+            anchorFill="#ffffff"
+            anchorStroke="#6b7280"
+            anchorStrokeWidth={2}
+            anchorSize={10}
+            anchorCornerRadius={10}
+            rotateAnchorOffset={34}
+            rotateAnchorCursor="grab"
+            boundBoxFunc={(_oldBox, newBox) => {
+              if (newBox.width < 6 || newBox.height < 6) return _oldBox;
+              return newBox;
+            }}
+            onTransformEnd={() => {
+              const transformed = selectedShapeIds
+                .map((id) => {
+                  const node = shapeRefs.current[id];
+                  const shape = shapes.find((candidate) => candidate.id === id);
+                  return node && shape ? shapeFromNode(shape, node) : null;
+                })
+                .filter((shape): shape is EditorShape => Boolean(shape));
+              if (transformed.length) onChangeShapes(transformed);
+            }}
+          /> : null}
+          {selectedAdjustablePath ? (
+            <PathAdjustmentHandle
+              shape={selectedAdjustablePath}
+              onDragMove={(event) => updatePathAdjustment(selectedAdjustablePath, event)}
+              onDragEnd={(event) => updatePathAdjustment(selectedAdjustablePath, event)}
+            />
+          ) : null}
+        </Layer>
+      </Stage>
+      </div>
+      {(answerPromptShapes.length > 0 || (!isCanvasSelect && answerChoices.length > 0)) && !answerReviewMode ? (
+        <div className="konva-answer-prompt-preview" role="region" aria-label="정답 선택 영역">
+          <strong>정답 선택 영역</strong>
+          {answerPromptShapes.map((shape) => (
+            <button type="button" className="presentation-prompt-item" key={shape.id}
+              onClick={() => onEditPresentationShape?.(shape.id)}>
+              {shape.type === "text" ? shape.text : ""}
+            </button>
+          ))}
+          <div className="answer-review-choices">
+            {answerChoices.map((choice) => (
+              <button type="button" key={choice.id} className="answer-review-choice"
+                onClick={() => onEditPresentationShape?.(choice.sourceRefs?.[0] ?? choice.id)}>
+                <span>{choice.label}</span><span>{choice.text}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {presentationPanel}
+      {answerReviewMode && !reviewPanel && answerPresentationMode === "panel_input" ? (
+        <AnswerPanelPreview answerOptions={answerOptions} />
+      ) : null}
+      {answerReviewMode && !reviewPanel && answerPresentationMode === "choice" && answerChoices.length > 0 ? <AnswerChoicePanelPreview choices={answerChoices} /> : null}
+      {!answerReviewMode && editingTutorLabel ? (
+        <textarea
+          ref={tutorTextEditorRef}
+          className="konva-overlay-text-editor"
+          value={editingTutorLabel.text}
+          style={{
+            left: editingTutorLabel.left,
+            top: editingTutorLabel.top,
+            width: editingTutorLabel.width,
+            fontSize: editingTutorLabel.fontSize,
+            color: editingTutorLabel.color,
+          }}
+          onChange={(event) => {
+            const text = event.target.value;
+            setEditingTutorLabel((current) => (current ? { ...current, text } : current));
+            onTutorOverlayChange?.(editingTutorLabel.index, { text });
+          }}
+          onBlur={() => setEditingTutorLabel(null)}
+          onPointerDown={(event) => event.stopPropagation()}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" || (event.key === "Enter" && (event.ctrlKey || event.metaKey))) {
+              event.preventDefault();
+              setEditingTutorLabel(null);
+            }
+          }}
+        />
+      ) : null}
+      {!answerReviewMode && contextMenu ? (
+        <div className="konva-context-menu" style={{ left: contextMenu.x, top: contextMenu.y }} onPointerDown={(event) => event.stopPropagation()}>
+          {contextAnswerTargets.length ? (
+            contextAnswerTargets.every((shape) => shape.interaction) ? (
+              <button
+                type="button"
+                onClick={() => {
+                  onRestoreShapesFromAnswer?.(contextAnswerTargets.map((shape) => shape.id));
+                  setContextMenu(null);
+                }}
+              >
+                일반 도형으로 되돌리기
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  onConvertShapesToAnswer?.(contextAnswerTargets.map((shape) => shape.id));
+                  setContextMenu(null);
+                }}
+              >
+                AnswerSlot으로 변환
+              </button>
+            )
+          ) : null}
+          <button type="button" onClick={() => setLineDash(contextMenu.shapeId, "8 7")}>
+            점선으로 변경
+          </button>
+          <button type="button" onClick={() => setLineDash(contextMenu.shapeId, undefined)}>
+            실선으로 변경
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function TutorOverlayLayer({
+  overlays,
+  shapesById,
+  activeOverlayIndex,
+  onOverlaySelect,
+  onOverlayTextEditStart,
+  onOverlayMove,
+}: {
+  overlays: TutorRendererOverlay[];
+  shapesById: Map<string, EditorShape>;
+  activeOverlayIndex: number | null;
+  onOverlaySelect?: (overlayIndex: number | null) => void;
+  onOverlayTextEditStart?: (
+    overlayIndex: number,
+    overlay: TutorRendererOverlay,
+    metrics: { width: number; fontSize: number; fill: string },
+  ) => void;
+  onOverlayMove?: (overlayIndex: number, x: number, y: number) => void;
+}) {
+  if (!overlays.length) return null;
+  return (
+    <>
+      {overlays.map((overlay, index) => {
+        if (overlay.type === "highlight" && overlay.target_ref) {
+          const shape = shapesById.get(overlay.target_ref);
+          if (!shape) return null;
+          return <TutorHighlight key={`highlight-${overlay.target_ref}-${index}`} shape={shape} />;
+        }
+        if (overlay.type === "label" && typeof overlay.text === "string" && typeof overlay.x === "number" && typeof overlay.y === "number") {
+          const style = isRecord(overlay.style) ? overlay.style : {};
+          const fontSize = numberStyle(style.font_size, 22);
+          const fill = stringStyle(style.fill, "#0f766e");
+          const width = Math.max(120, overlay.text.length * fontSize * 0.62 + 24);
+          const isActive = activeOverlayIndex === index;
+          const canEdit = Boolean(onOverlayMove);
+          return (
+            <Text
+              key={`label-${index}`}
+              x={overlay.x}
+              y={overlay.y}
+              text={overlay.text}
+              fontSize={fontSize}
+              fontFamily="Noto Sans KR, sans-serif"
+              fill={fill}
+              width={width}
+              height={fontSize * 1.45}
+              padding={4}
+              draggable={canEdit}
+              listening={canEdit}
+              stroke={isActive ? "#0f766e" : undefined}
+              strokeWidth={isActive ? 0.5 : 0}
+              onMouseDown={(event) => {
+                event.cancelBubble = true;
+                onOverlaySelect?.(index);
+              }}
+              onTouchStart={(event) => {
+                event.cancelBubble = true;
+                onOverlaySelect?.(index);
+              }}
+              onDblClick={(event) => {
+                event.cancelBubble = true;
+                onOverlayTextEditStart?.(index, overlay, { width, fontSize, fill });
+              }}
+              onDblTap={(event) => {
+                event.cancelBubble = true;
+                onOverlayTextEditStart?.(index, overlay, { width, fontSize, fill });
+              }}
+              onDragStart={(event) => {
+                event.cancelBubble = true;
+                onOverlaySelect?.(index);
+              }}
+              onDragEnd={(event) => {
+                onOverlaySelect?.(index);
+                onOverlayMove?.(index, roundCanvasNumber(event.target.x()), roundCanvasNumber(event.target.y()));
+              }}
+            />
+          );
+        }
+        return null;
+      })}
+    </>
+  );
+}
+
+function roundCanvasNumber(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function TutorHighlight({ shape }: { shape: EditorShape }) {
+  const common = {
+    stroke: "#0f766e",
+    strokeWidth: 5,
+    dash: [8, 5],
+    opacity: 0.92,
+    listening: false,
+  };
+  if (shape.type === "circle") {
+    return <Circle x={shape.x} y={shape.y} radius={shape.radius + 5} {...common} fill="rgba(15, 118, 110, 0.08)" />;
+  }
+  if (shape.type === "line") {
+    return (
+      <Line
+        x={shape.x}
+        y={shape.y}
+        points={shape.points}
+        rotation={shape.rotation ?? 0}
+        offsetX={shape.offsetX ?? 0}
+        offsetY={shape.offsetY ?? 0}
+        lineCap="round"
+        {...common}
+      />
+    );
+  }
+  if (shape.type === "path") {
+    return (
+      <Path
+        x={shape.x}
+        y={shape.y}
+        data={shape.d}
+        rotation={shape.rotation ?? 0}
+        offsetX={shape.offsetX ?? 0}
+        offsetY={shape.offsetY ?? 0}
+        fill="rgba(15, 118, 110, 0.04)"
+        {...common}
+      />
+    );
+  }
+  if (shape.type === "connector") {
+    return (
+      <Path
+        x={shape.x}
+        y={shape.y}
+        data={connectorPathData(shape)}
+        rotation={shape.rotation ?? 0}
+        offsetX={shape.offsetX ?? 0}
+        offsetY={shape.offsetY ?? 0}
+        fill="rgba(15, 118, 110, 0.04)"
+        {...common}
+      />
+    );
+  }
+  const bounds = paddedRect(shapeBounds(shape), 6);
+  return (
+    <Rect
+      x={bounds.x}
+      y={bounds.y}
+      width={bounds.width}
+      height={bounds.height}
+      fill="rgba(15, 118, 110, 0.10)"
+      cornerRadius={8}
+      {...common}
+    />
+  );
+}
+
+function AnswerSlotOverlay({
+  shape,
+  review,
+  reviewMode,
+  highlighted = false,
+}: {
+  shape: EditorShape;
+  review?: AnswerSlotReview;
+  reviewMode: boolean;
+  highlighted?: boolean;
+}) {
+  const bounds = paddedRect(shapeBounds(shape), reviewMode ? 5 : 2);
+  if (!shape.interaction) return null;
+  if (reviewMode && review) {
+    const colors = answerReviewColors(review.status);
+    const isChoice = shape.interaction.role === "choice";
+    const value = isChoice ? "정답" : review.option?.value ?? "미연결";
+    const fontSize = calculateAnswerPreviewFontSize(shape, value);
+    const badgeText = `답 ${review.displayOrder}`;
+    const badgeWidth = Math.max(38, badgeText.length * 10 + 12);
+    return (
+      <>
+        <Rect
+          x={bounds.x}
+          y={bounds.y}
+          width={bounds.width}
+          height={bounds.height}
+          stroke={colors.stroke}
+          strokeWidth={2}
+          dash={review.status === "inferred" ? [6, 4] : undefined}
+          fill={colors.fill}
+          cornerRadius={4}
+          listening={false}
+        />
+        <Text
+          x={bounds.x}
+          y={bounds.y + Math.max(0, (bounds.height - fontSize * 1.15) / 2)}
+          width={bounds.width}
+          height={Math.max(bounds.height, fontSize * 1.2)}
+          text={value}
+          fontFamily={KONVA_PREVIEW_FONT_FAMILY}
+          fontSize={fontSize}
+          fontStyle="bold"
+          fill={colors.text}
+          align="center"
+          verticalAlign="middle"
+          listening={false}
+        />
+        <Rect
+          x={bounds.x}
+          y={bounds.y - 22}
+          width={badgeWidth}
+          height={20}
+          fill={colors.stroke}
+          cornerRadius={5}
+          listening={false}
+        />
+        <Text
+          x={bounds.x}
+          y={bounds.y - 19}
+          width={badgeWidth}
+          text={badgeText}
+          fontFamily={KONVA_PREVIEW_FONT_FAMILY}
+          fontSize={11}
+          fontStyle="bold"
+          fill="#ffffff"
+          align="center"
+          listening={false}
+        />
+      </>
+    );
+  }
+  const orderLabel = review ? String(review.displayOrder) : "";
+  const badgeSize = 14;
+  return (
+    <>
+      <Rect
+        x={bounds.x}
+        y={bounds.y}
+        width={bounds.width}
+        height={bounds.height}
+        stroke={highlighted ? "#4338ca" : "#2563eb"}
+        strokeWidth={highlighted ? 2.2 : 1.2}
+        dash={highlighted ? undefined : [5, 4]}
+        fill={highlighted ? "rgba(67, 56, 202, 0.14)" : "rgba(37, 99, 235, 0.05)"}
+        cornerRadius={3}
+        listening={false}
+      />
+      {orderLabel ? (
+        <>
+          <Rect
+            x={bounds.x + 1}
+            y={bounds.y + 1}
+            width={Math.max(badgeSize, orderLabel.length * 7 + 6)}
+            height={badgeSize}
+            fill={highlighted ? "#4338ca" : "rgba(37, 99, 235, 0.88)"}
+            cornerRadius={3}
+            listening={false}
+          />
+          <Text
+            x={bounds.x + 1}
+            y={bounds.y + 2}
+            width={Math.max(badgeSize, orderLabel.length * 7 + 6)}
+            height={badgeSize}
+            text={orderLabel}
+            fontFamily={KONVA_PREVIEW_FONT_FAMILY}
+            fontSize={10}
+            fontStyle="bold"
+            fill="#ffffff"
+            align="center"
+            listening={false}
+          />
+        </>
+      ) : null}
+    </>
+  );
+}
+
+function calculateAnswerPreviewFontSize(shape: EditorShape, answerValue = ""): number {
+  const bounds = shapeBounds(shape);
+  const style = shape.input_style;
+  if (style?.font_size_mode === "fixed" && typeof style.font_size === "number") return Math.round(style.font_size);
+  const capacity = shape.interaction?.max_length ?? 64;
+  const displayHint = capacity >= 64 ? (shape.interaction?.value_type === "integer" ? 3 : 1) : capacity;
+  const maxLength = Math.max(1, answerValue.length, displayHint);
+  const padding = style?.padding ?? 6;
+  const availableWidth = Math.max(1, bounds.width - padding * 2);
+  const availableHeight = Math.max(1, bounds.height - padding * 2);
+  const byHeight = availableHeight * 0.68;
+  const byWidth = availableWidth / maxLength / characterWidthRatio(shape.interaction?.value_type);
+  const adjusted = Math.min(byHeight, byWidth) + (style?.font_size_adjust ?? 0);
+  return Math.round(clamp(adjusted, style?.min_font_size ?? 14, style?.max_font_size ?? 52));
+}
+
+function answerReviewColors(status: AnswerBindingStatus): { stroke: string; fill: string; text: string } {
+  if (status === "connected") return { stroke: "#16a34a", fill: "rgba(34, 197, 94, 0.14)", text: "#166534" };
+  if (status === "inferred") return { stroke: "#d97706", fill: "rgba(245, 158, 11, 0.16)", text: "#92400e" };
+  return { stroke: "#dc2626", fill: "rgba(239, 68, 68, 0.14)", text: "#991b1b" };
+}
+
+function AnswerPanelPreview({ answerOptions }: { answerOptions: AnswerBindingOption[] }) {
+  return (
+    <aside className="answer-review-panel" aria-label="Flutter 정답 패널 미리보기">
+      <div className="answer-review-panel__eyebrow">정답 검수 · panel_input</div>
+      <strong>정답을 입력하세요</strong>
+      <div className="answer-review-panel__field">
+        {answerOptions.length ? answerOptions.map((option) => `${option.value}${option.unit ? ` ${option.unit}` : ""}`).join(" / ") : "정답 데이터 없음"}
+      </div>
+      <button type="button" disabled>정답 확인</button>
+    </aside>
+  );
+}
+
+function AnswerChoicePanelPreview({ choices }: { choices: AnswerChoiceReview[] }) {
+  return (
+    <aside className="answer-review-panel" aria-label="선택형 정답 패널 미리보기">
+      <div className="answer-review-panel__eyebrow">정답 검수 · choice</div>
+      <strong>알맞은 정답을 선택하세요</strong>
+      <div className="answer-review-choices">
+        {choices.length ? (
+          choices.map((choice) => (
+            <div key={choice.id} className={choice.correct ? "answer-review-choice correct" : "answer-review-choice"}>
+              <span>{choice.label}</span>
+              <span>{choice.text}</span>
+              {choice.correct ? <b>정답</b> : null}
+            </div>
+          ))
+        ) : (
+          <div className="answer-review-choice missing">선택지 데이터 없음</div>
+        )}
+      </div>
+      <button type="button" disabled>정답 확인</button>
+    </aside>
+  );
+}
+
+function characterWidthRatio(valueType: string | undefined): number {
+  if (valueType === "digit") return 0.58;
+  if (valueType === "integer") return 0.6;
+  if (valueType === "decimal") return 0.62;
+  if (valueType === "fraction") return 0.72;
+  if (valueType === "text") return 0.92;
+  return 0.7;
+}
+
+function compareRenderOrder(a: EditorShape, b: EditorShape): number {
+  return renderPriority(a) - renderPriority(b);
+}
+
+function renderPriority(shape: EditorShape): number {
+  if (shape.type === "text" || shape.type === "math") return 2;
+  if (shape.type === "line" || shape.type === "connector") return 1;
+  return 0;
+}
+
+function canOpenShapeContextMenu(shape: EditorShape): boolean {
+  return shape.type === "line" || shape.type === "connector" || isAnswerSlotShape(shape);
+}
+
+function isAnswerSlotShape(shape: EditorShape): boolean {
+  return shape.type === "rect" || shape.type === "circle" || shape.type === "path" || shape.type === "text";
+}
+
+interface CanvasRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface CanvasPoint {
+  x: number;
+  y: number;
+}
+
+function normalizeRect(x: number, y: number, width: number, height: number): CanvasRect {
+  return {
+    x: width < 0 ? x + width : x,
+    y: height < 0 ? y + height : y,
+    width: Math.abs(width),
+    height: Math.abs(height),
+  };
+}
+
+function isAdditiveSelection(event: MouseEvent | TouchEvent): boolean {
+  return "shiftKey" in event && (event.shiftKey || event.ctrlKey || event.metaKey);
+}
+
+function intersectsRect(a: CanvasRect, b: CanvasRect): boolean {
+  return a.x <= b.x + b.width && a.x + a.width >= b.x && a.y <= b.y + b.height && a.y + a.height >= b.y;
+}
+
+function isTopPresentationShape(shape: EditorShape): shape is Extract<EditorShape, { type: "text" }> {
+  if (shape.type !== "text" || !["question", "instruction"].includes(shape.semanticRole ?? "")) return false;
+  return shape.semanticRoleSource !== "inferred" || /(?:^|[._])stem(?:[._]|$)/.test(shape.sourceRegionId ?? "");
+}
+
+function isChoiceShape(shape: EditorShape): boolean {
+  return shape.type === "text" && shape.semanticRole === "choice";
+}
+
+function isDiagramFrame(shape: EditorShape, diagramRegionIds?: ReadonlySet<string>): boolean {
+  if (shape.type !== "rect" || shape.visible === false || shape.interaction) return false;
+  const region = shape.sourceRegionId ?? "";
+  return Boolean(diagramRegionIds?.has(region))
+    || /(?:^|[._])(?:diagram|canvas)(?:[._]|$)/i.test(region)
+    || ["canvas", "diagram", "diagram_label", "symbol_label", "label"].includes(shape.semanticRole ?? "");
+}
+
+function shapeCenterInside(box: CanvasRect, shape: EditorShape): boolean {
+  const bounds = shapeBounds(shape);
+  const x = bounds.x + bounds.width / 2;
+  const y = bounds.y + bounds.height / 2;
+  return x >= box.x && x <= box.x + box.width && y >= box.y && y <= box.y + box.height;
+}
+
+function isChoiceDecoration(shape: EditorShape): boolean {
+  return shape.type === "text" && /(?:^|[._])choices(?:[._]|$)/.test(shape.sourceRegionId ?? "") && /^[\s(),，]+$/.test(shape.text);
+}
+
+function isEmptyChoiceFrame(shape: EditorShape, hiddenChoices: EditorShape[], kept: EditorShape[]): boolean {
+  if (shape.type !== "rect" || shape.interaction) return false;
+  if (!/choice|option/i.test(`${shape.id} ${shape.sourceRegionId ?? ""}`)) return false;
+  const box = shapeBounds(shape);
+  const belongsInside = (other: EditorShape) => {
+    const b = shapeBounds(other);
+    const cx = b.x + b.width / 2;
+    const cy = b.y + b.height / 2;
+    if (cx >= box.x && cx <= box.x + box.width && cy >= box.y && cy <= box.y + box.height) return true;
+    if (other.type === "text") {
+      return other.x >= box.x && other.x <= box.x + box.width && other.y >= box.y && other.y <= box.y + box.height;
+    }
+    return false;
+  };
+  return (
+    hiddenChoices.some(belongsInside) &&
+    !kept.some((other) => other.id !== shape.id && belongsInside(other))
+  );
+}
+
+function contentCrop(shapes: EditorShape[], width: number, height: number, fitContent: boolean): CanvasRect {
+  if (!fitContent) return { x: 0, y: 0, width, height };
+  const boxes = shapes
+    .filter((shape) => shape.visible !== false)
+    .map(shapeBounds)
+    .filter((box) => Number.isFinite(box.x + box.y + box.width + box.height));
+  if (!boxes.length) return { x: 0, y: 0, width, height };
+  const minX = Math.min(...boxes.map((box) => box.x));
+  const minY = Math.min(...boxes.map((box) => box.y));
+  const maxX = Math.max(...boxes.map((box) => box.x + box.width));
+  const maxY = Math.max(...boxes.map((box) => box.y + box.height));
+  return {
+    x: minX - 20,
+    y: minY - 20,
+    width: Math.max(1, maxX - minX + 40),
+    height: Math.max(1, maxY - minY + 40),
+  };
+}
+
+function shapeBounds(shape: EditorShape): CanvasRect {
+  let bounds: CanvasRect;
+  if (shape.type === "circle") {
+    bounds = { x: shape.x - shape.radius, y: shape.y - shape.radius, width: shape.radius * 2, height: shape.radius * 2 };
+  } else if (shape.type === "line") {
+    const xs = shape.points.filter((_, index) => index % 2 === 0);
+    const ys = shape.points.filter((_, index) => index % 2 === 1);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    bounds = { x: shape.x + minX, y: shape.y + minY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
+  } else if (shape.type === "connector") {
+    bounds = connectorBounds(shape);
+  } else if (shape.type === "text") {
+    const textWidth =
+      shape.sourceKind === "text_box"
+        ? normalizedTextBoxWidth(shape.text, shape.fontSize, shape.width ?? estimateTextWidth(shape.text, shape.fontSize), shape.align ?? "left")
+        : shape.width ?? estimateTextWidth(shape.text, shape.fontSize);
+    bounds = {
+      x: shape.x,
+      y: shape.y,
+      width: textWidth,
+      height: normalizedTextBoxHeight(shape.text, shape.fontSize, textWidth, shape.height, shape.lineHeight ?? 1.25, shape.fontFamily, Boolean(shape.interaction)),
+    };
+  } else if (shape.type === "path") {
+    bounds = { x: shape.x, y: shape.y, width: shape.width, height: shape.height };
+  } else if (shape.type === "baseTenBlock") {
+    const depth = naturalBaseTenDepth(shape);
+    bounds = { x: shape.x, y: shape.y, width: shape.width + depth, height: shape.height + depth };
+  } else {
+    bounds = { x: shape.x, y: shape.y, width: shape.width, height: shape.height };
+  }
+  return transformedBounds(bounds, shape.x, shape.y, shape.rotation ?? 0, shape.offsetX ?? 0, shape.offsetY ?? 0);
+}
+
+function transformedBounds(
+  bounds: CanvasRect,
+  originX: number,
+  originY: number,
+  rotationDegrees: number,
+  offsetX: number,
+  offsetY: number,
+): CanvasRect {
+  if (!rotationDegrees && !offsetX && !offsetY) return bounds;
+  const radians = degreesToRadians(rotationDegrees);
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  const corners = [
+    [bounds.x, bounds.y],
+    [bounds.x + bounds.width, bounds.y],
+    [bounds.x + bounds.width, bounds.y + bounds.height],
+    [bounds.x, bounds.y + bounds.height],
+  ].map(([x, y]) => {
+    const localX = x - originX - offsetX;
+    const localY = y - originY - offsetY;
+    return {
+      x: originX + localX * cos - localY * sin,
+      y: originY + localX * sin + localY * cos,
+    };
+  });
+  const xs = corners.map((corner) => corner.x);
+  const ys = corners.map((corner) => corner.y);
+  const minX = Math.min(...xs);
+  const minY = Math.min(...ys);
+  return {
+    x: minX,
+    y: minY,
+    width: Math.max(1, Math.max(...xs) - minX),
+    height: Math.max(1, Math.max(...ys) - minY),
+  };
+}
+
+function paddedRect(rect: CanvasRect, padding: number): CanvasRect {
+  return {
+    x: rect.x - padding,
+    y: rect.y - padding,
+    width: rect.width + padding * 2,
+    height: rect.height + padding * 2,
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function numberStyle(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function stringStyle(value: unknown, fallback: string): string {
+  return typeof value === "string" && value.trim() ? value : fallback;
+}
+
+function previewShapeForDrawing(preset: ShapePreset, start: CanvasPoint, end: CanvasPoint, points: CanvasPoint[] = []): EditorShape {
+  const stroke = "#111827";
+  const strokeWidth = 1.2;
+  const connectorKind = connectorKindForPreset(preset);
+  if (connectorKind) {
+    return {
+      id: "drawing.preview",
+      type: "connector",
+      kind: connectorKind,
+      x: start.x,
+      y: start.y,
+      start: { x: 0, y: 0 },
+      end: { x: end.x - start.x, y: end.y - start.y },
+      control: defaultPreviewConnectorControl(connectorKind, start, end),
+      ...connectorArrowForPreset(preset),
+      stroke,
+      strokeWidth,
+    };
+  }
+  if (preset === "line") {
+    return {
+      id: "drawing.preview",
+      type: "line",
+      x: start.x,
+      y: start.y,
+      points: [0, 0, end.x - start.x, end.y - start.y],
+      stroke,
+      strokeWidth,
+    };
+  }
+  const bounds = normalizeRect(start.x, start.y, end.x - start.x, end.y - start.y);
+  const width = Math.max(1, bounds.width);
+  const height = Math.max(1, bounds.height);
+  return {
+    id: "drawing.preview",
+    type: "path",
+    x: bounds.x,
+    y: bounds.y,
+    width,
+    height,
+    d: pathForDrawingPreset(preset, start, end, points, bounds),
+    fill: preset === "freeformShape" ? "rgba(255,255,255,0.01)" : "none",
+    stroke,
+    strokeWidth,
+  };
+}
+
+function defaultPreviewConnectorControl(kind: "straight" | "elbow" | "curve", start: CanvasPoint, end: CanvasPoint): { x: number; y: number } | undefined {
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+  if (kind === "straight") return undefined;
+  if (kind === "curve") {
+    const lift = Math.max(24, Math.min(90, Math.hypot(dx, dy) * 0.22));
+    return { x: dx / 2, y: dy / 2 - lift };
+  }
+  return { x: dx / 2, y: dy / 2 };
+}
+
+function pathForDrawingPreset(
+  preset: ShapePreset,
+  start: CanvasPoint,
+  end: CanvasPoint,
+  points: CanvasPoint[],
+  bounds: CanvasRect,
+): string {
+  const a = { x: start.x - bounds.x, y: start.y - bounds.y };
+  const b = { x: end.x - bounds.x, y: end.y - bounds.y };
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  if (preset === "elbow" || preset === "elbowArrow" || preset === "elbowDoubleArrow") {
+    const mid = { x: a.x, y: b.y };
+    return withArrowHeads(`M ${a.x} ${a.y} L ${mid.x} ${mid.y} L ${b.x} ${b.y}`, [a, mid, b], arrowMode(preset));
+  }
+  if (preset === "curvedConnector" || preset === "curvedArrow" || preset === "curvedDoubleArrow" || preset === "curve") {
+    const lift = Math.max(20, Math.min(90, Math.hypot(dx, dy) * 0.28));
+    const c1 = { x: a.x + dx * 0.34, y: a.y - lift };
+    const c2 = { x: a.x + dx * 0.66, y: b.y - lift };
+    return withArrowHeads(`M ${a.x} ${a.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${b.x} ${b.y}`, [a, c1, c2, b], arrowMode(preset));
+  }
+  if (preset === "freeformScribble" && points.length > 1) {
+    const local = points.map((point) => ({ x: point.x - bounds.x, y: point.y - bounds.y }));
+    return local.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+  }
+  if (preset === "freeformShape") {
+    const c = { x: a.x + dx * 0.48, y: a.y + dy * 0.18 - 22 };
+    const d = { x: a.x + dx * 0.84, y: a.y + dy * 0.78 };
+    return `M ${a.x} ${a.y} L ${c.x} ${c.y} L ${b.x} ${b.y} L ${d.x} ${d.y} Z`;
+  }
+  return withArrowHeads(`M ${a.x} ${a.y} L ${b.x} ${b.y}`, [a, b], arrowMode(preset));
+}
+
+function arrowMode(preset: ShapePreset): "none" | "end" | "both" {
+  if (preset === "doubleArrow" || preset === "elbowDoubleArrow" || preset === "curvedDoubleArrow") return "both";
+  if (preset === "arrow" || preset === "elbowArrow" || preset === "curvedArrow") return "end";
+  return "none";
+}
+
+function withArrowHeads(path: string, points: CanvasPoint[], mode: "none" | "end" | "both"): string {
+  if (mode === "none" || points.length < 2) return path;
+  const parts = [path];
+  if (mode === "end" || mode === "both") parts.push(arrowHeadPath(points[points.length - 2], points[points.length - 1]));
+  if (mode === "both") parts.push(arrowHeadPath(points[1], points[0]));
+  return parts.join(" ");
+}
+
+function arrowHeadPath(from: CanvasPoint, to: CanvasPoint): string {
+  const angle = Math.atan2(to.y - from.y, to.x - from.x);
+  const length = 11;
+  const spread = Math.PI / 7;
+  const left = {
+    x: to.x - Math.cos(angle - spread) * length,
+    y: to.y - Math.sin(angle - spread) * length,
+  };
+  const right = {
+    x: to.x - Math.cos(angle + spread) * length,
+    y: to.y - Math.sin(angle + spread) * length,
+  };
+  return `M ${to.x} ${to.y} L ${left.x} ${left.y} M ${to.x} ${to.y} L ${right.x} ${right.y}`;
+}
+
+function appendFreeformPoint(points: CanvasPoint[], point: CanvasPoint): CanvasPoint[] {
+  const last = points[points.length - 1];
+  if (last && Math.hypot(point.x - last.x, point.y - last.y) < 3) return points;
+  return [...points, point];
+}
+
+function shapeLongEnough(shape: EditorShape): boolean {
+  if (shape.type === "line") return Math.hypot(shape.points[2] ?? 0, shape.points[3] ?? 0) >= 4;
+  if (shape.type === "connector") return Math.hypot(shape.end.x - shape.start.x, shape.end.y - shape.start.y) >= 4;
+  if (shape.type === "path" || shape.type === "rect" || shape.type === "image" || shape.type === "math") {
+    return Math.max(shape.width, shape.height) >= 4;
+  }
+  if (shape.type === "baseTenBlock") return Math.max(shape.width, shape.height) >= 4;
+  if (shape.type === "text") return Math.max(shape.width ?? 0, shape.height ?? 0) >= 4;
+  if (shape.type === "circle") return shape.radius >= 2;
+  return false;
+}
+
+function drawingEndPoint(shape: EditorShape): CanvasPoint {
+  if (shape.type === "line") {
+    return { x: shape.x + (shape.points[2] ?? 0), y: shape.y + (shape.points[3] ?? 0) };
+  }
+  if (shape.type === "connector") {
+    return connectorPointToCanvasPoint(shape, connectorEnd(shape));
+  }
+  if (shape.type === "path" || shape.type === "rect" || shape.type === "image" || shape.type === "math") {
+    return { x: shape.x + shape.width, y: shape.y + shape.height };
+  }
+  if (shape.type === "baseTenBlock") {
+    const depth = naturalBaseTenDepth(shape);
+    return { x: shape.x + shape.width + depth, y: shape.y + shape.height + depth };
+  }
+  return { x: shape.x, y: shape.y };
+}
+
+function naturalBaseTenDepth(shape: Extract<EditorShape, { type: "baseTenBlock" }>): number {
+  const grid = baseTenGridSpec(shape.kind);
+  const cellWidth = shape.width / grid.cols;
+  const cellHeight = shape.height / grid.rows;
+  return Math.max(0, (Math.min(cellWidth, cellHeight) / Math.SQRT2) * grid.depthSegments);
+}
+
+function baseTenGridSpec(kind: BaseTenBlockKind): { rows: number; cols: number; depthSegments: number } {
+  switch (kind) {
+    case "thousand":
+      return { rows: 10, cols: 10, depthSegments: 10 };
+    case "hundred":
+      return { rows: 10, cols: 10, depthSegments: 1 };
+    case "ten":
+      return { rows: 10, cols: 1, depthSegments: 1 };
+    case "one":
+      return { rows: 1, cols: 1, depthSegments: 1 };
+  }
+}
+
+function LineEndpointHandles({
+  line,
+  onDragMove,
+  onDragEnd,
+}: {
+  line: LineShape;
+  onDragMove: (endpoint: "start" | "end", event: Konva.KonvaEventObject<DragEvent>) => void;
+  onDragEnd: (endpoint: "start" | "end", event: Konva.KonvaEventObject<DragEvent>) => void;
+}) {
+  if (line.points.length < 4) return null;
+  const start = localLinePointToCanvasPoint(line, { x: line.points[0], y: line.points[1] });
+  const end = localLinePointToCanvasPoint(line, {
+    x: line.points[line.points.length - 2],
+    y: line.points[line.points.length - 1],
+  });
+
+  return (
+    <>
+      <Circle
+        x={start.x}
+        y={start.y}
+        radius={5}
+        fill="#ffffff"
+        stroke="#6b7280"
+        strokeWidth={2}
+        draggable
+        onMouseDown={(event) => {
+          event.cancelBubble = true;
+        }}
+        onTouchStart={(event) => {
+          event.cancelBubble = true;
+        }}
+        onDragMove={(event) => onDragMove("start", event)}
+        onDragEnd={(event) => onDragEnd("start", event)}
+      />
+      <Circle
+        x={end.x}
+        y={end.y}
+        radius={5}
+        fill="#ffffff"
+        stroke="#6b7280"
+        strokeWidth={2}
+        draggable
+        onMouseDown={(event) => {
+          event.cancelBubble = true;
+        }}
+        onTouchStart={(event) => {
+          event.cancelBubble = true;
+        }}
+        onDragMove={(event) => onDragMove("end", event)}
+        onDragEnd={(event) => onDragEnd("end", event)}
+      />
+    </>
+  );
+}
+
+function ConnectorHandles({
+  connector,
+  onEndpointDrag,
+  onControlDrag,
+}: {
+  connector: ConnectorShape;
+  onEndpointDrag: (endpoint: "start" | "end", event: Konva.KonvaEventObject<DragEvent>) => void;
+  onControlDrag: (event: Konva.KonvaEventObject<DragEvent>) => void;
+}) {
+  const start = connectorPointToCanvasPoint(connector, connectorStart(connector));
+  const end = connectorPointToCanvasPoint(connector, connectorEnd(connector));
+  const control = connector.kind === "straight" ? null : connectorPointToCanvasPoint(connector, connectorControl(connector));
+  return (
+    <>
+      <Circle
+        x={start.x}
+        y={start.y}
+        radius={5}
+        fill="#ffffff"
+        stroke="#6b7280"
+        strokeWidth={2}
+        draggable
+        onMouseDown={(event) => {
+          event.cancelBubble = true;
+        }}
+        onTouchStart={(event) => {
+          event.cancelBubble = true;
+        }}
+        onDragMove={(event) => onEndpointDrag("start", event)}
+        onDragEnd={(event) => onEndpointDrag("start", event)}
+      />
+      <Circle
+        x={end.x}
+        y={end.y}
+        radius={5}
+        fill="#ffffff"
+        stroke="#6b7280"
+        strokeWidth={2}
+        draggable
+        onMouseDown={(event) => {
+          event.cancelBubble = true;
+        }}
+        onTouchStart={(event) => {
+          event.cancelBubble = true;
+        }}
+        onDragMove={(event) => onEndpointDrag("end", event)}
+        onDragEnd={(event) => onEndpointDrag("end", event)}
+      />
+      {control ? (
+        <Circle
+          x={control.x}
+          y={control.y}
+          radius={6}
+          fill="#facc15"
+          stroke="#6b7280"
+          strokeWidth={2}
+          draggable
+          onMouseDown={(event) => {
+            event.cancelBubble = true;
+          }}
+          onTouchStart={(event) => {
+            event.cancelBubble = true;
+          }}
+          onDragMove={onControlDrag}
+          onDragEnd={onControlDrag}
+        />
+      ) : null}
+    </>
+  );
+}
+
+function PathAdjustmentHandle({
+  shape,
+  onDragMove,
+  onDragEnd,
+}: {
+  shape: Extract<EditorShape, { type: "path" }>;
+  onDragMove: (event: Konva.KonvaEventObject<DragEvent>) => void;
+  onDragEnd: (event: Konva.KonvaEventObject<DragEvent>) => void;
+}) {
+  const point = adjustableShapePoint(shape);
+  if (!point) return null;
+  const canvasPoint = localPathPointToCanvasPoint(shape, point);
+  return (
+    <Circle
+      x={canvasPoint.x}
+      y={canvasPoint.y}
+      radius={6}
+      fill="#facc15"
+      stroke="#6b7280"
+      strokeWidth={2}
+      draggable
+      onMouseDown={(event) => {
+        event.cancelBubble = true;
+      }}
+      onTouchStart={(event) => {
+        event.cancelBubble = true;
+      }}
+      onDragMove={onDragMove}
+      onDragEnd={onDragEnd}
+    />
+  );
+}
+
+function localPathPointToCanvasPoint(shape: Extract<EditorShape, { type: "path" }>, point: { x: number; y: number }): { x: number; y: number } {
+  const rotation = degreesToRadians(shape.rotation ?? 0);
+  const localX = point.x - (shape.offsetX ?? 0);
+  const localY = point.y - (shape.offsetY ?? 0);
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  return {
+    x: shape.x + localX * cos - localY * sin,
+    y: shape.y + localX * sin + localY * cos,
+  };
+}
+
+function canvasPointToLocalPathPoint(shape: Extract<EditorShape, { type: "path" }>, point: { x: number; y: number }): { x: number; y: number } {
+  const rotation = degreesToRadians(-(shape.rotation ?? 0));
+  const dx = point.x - shape.x;
+  const dy = point.y - shape.y;
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  return {
+    x: dx * cos - dy * sin + (shape.offsetX ?? 0),
+    y: dx * sin + dy * cos + (shape.offsetY ?? 0),
+  };
+}
+
+function connectorPointToCanvasPoint(connector: ConnectorShape, point: { x: number; y: number }): { x: number; y: number } {
+  const rotation = degreesToRadians(connector.rotation ?? 0);
+  const localX = point.x - (connector.offsetX ?? 0);
+  const localY = point.y - (connector.offsetY ?? 0);
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  return {
+    x: connector.x + localX * cos - localY * sin,
+    y: connector.y + localX * sin + localY * cos,
+  };
+}
+
+function localLinePointToCanvasPoint(line: LineShape, point: { x: number; y: number }): { x: number; y: number } {
+  const rotation = degreesToRadians(line.rotation ?? 0);
+  const localX = point.x - (line.offsetX ?? 0);
+  const localY = point.y - (line.offsetY ?? 0);
+  const cos = Math.cos(rotation);
+  const sin = Math.sin(rotation);
+  return {
+    x: line.x + localX * cos - localY * sin,
+    y: line.y + localX * sin + localY * cos,
+  };
+}
+
+function degreesToRadians(degrees: number): number {
+  return (degrees * Math.PI) / 180;
+}
+
+function roundStageNumber(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function shapeFromNode(shape: EditorShape, node: Konva.Node): EditorShape {
+  const scaleX = node.scaleX();
+  const scaleY = node.scaleY();
+  node.scaleX(1);
+  node.scaleY(1);
+
+  if (shape.type === "rect") {
+    const size = scaledNodeSize(shape.width, shape.height, scaleX, scaleY, 6, 6);
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      width: size.width,
+      height: size.height,
+    };
+  }
+  if (shape.type === "image") {
+    const size = scaledNodeSize(shape.width, shape.height, scaleX, scaleY, 6, 6);
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      width: size.width,
+      height: size.height,
+    };
+  }
+  if (shape.type === "text") {
+    const width = roundStageNumber(Math.max(24, (shape.width ?? node.width()) * Math.abs(scaleX)));
+    const baseHeight = shape.height ?? node.height();
+    const isHeightScaled = Math.abs(Math.abs(scaleY) - 1) > 0.01;
+    const minFittedHeight = fittedTextHeight(shape.text, shape.fontSize, width, shape.lineHeight ?? 1.25, shape.fontFamily);
+    const scaledHeight = isHeightScaled ? roundStageNumber(Math.max(12, baseHeight * Math.abs(scaleY))) : (typeof shape.height === "number" ? Math.max(shape.height, minFittedHeight) : undefined);
+
+    return {
+      ...shape,
+      x: roundStageNumber(node.x()),
+      y: roundStageNumber(node.y()),
+      rotation: roundStageNumber(node.rotation()),
+      width,
+      height: normalizedTextBoxHeight(shape.text, shape.fontSize, width, scaledHeight, shape.lineHeight ?? 1.25, shape.fontFamily, Boolean(shape.interaction)),
+      sourceKind: "text_box",
+    };
+  }
+  if (shape.type === "math") {
+    const size = scaledNodeSize(shape.width, shape.height, scaleX, scaleY, 24, 16);
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      width: size.width,
+      height: size.height,
+    };
+  }
+  if (shape.type === "baseTenBlock") {
+    const depthScale = (Math.abs(scaleX) + Math.abs(scaleY)) / 2;
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      width: Math.max(6, shape.width * Math.abs(scaleX)),
+      height: Math.max(6, shape.height * Math.abs(scaleY)),
+      depth: Math.max(0, shape.depth * depthScale),
+    };
+  }
+  if (shape.type === "path") {
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      d: scalePathData(shape.d, scaleX, scaleY),
+      width: Math.max(1, shape.width * Math.abs(scaleX)),
+      height: Math.max(1, shape.height * Math.abs(scaleY)),
+      adjustment: shape.adjustment ? { x: shape.adjustment.x * scaleX, y: shape.adjustment.y * scaleY } : undefined,
+    };
+  }
+  if (shape.type === "circle") {
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      radius: Math.max(4, shape.radius * ((Math.abs(scaleX) + Math.abs(scaleY)) / 2)),
+    };
+  }
+  if (shape.type === "line") {
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      points: shape.points.map((point, index) => point * (index % 2 === 0 ? scaleX : scaleY)),
+    };
+  }
+  if (shape.type === "connector") {
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      start: { x: shape.start.x * scaleX, y: shape.start.y * scaleY },
+      end: { x: shape.end.x * scaleX, y: shape.end.y * scaleY },
+      control: shape.control ? { x: shape.control.x * scaleX, y: shape.control.y * scaleY } : undefined,
+    };
+  }
+  return shape;
+}
+
+function scaledNodeSize(width: number, height: number, scaleX: number, scaleY: number, minWidth: number, minHeight: number): { width: number; height: number } {
+  return {
+    width: roundStageNumber(Math.max(minWidth, width * Math.abs(scaleX))),
+    height: roundStageNumber(Math.max(minHeight, height * Math.abs(scaleY))),
+  };
+}
+

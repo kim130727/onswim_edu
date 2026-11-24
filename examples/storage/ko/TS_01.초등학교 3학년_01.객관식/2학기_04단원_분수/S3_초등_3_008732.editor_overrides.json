@@ -1,0 +1,71 @@
+{
+  "slots": {
+    "slot.math.fraction": {
+      "x": 254,
+      "y": 217,
+      "font_size": 36,
+      "fill": "#111827",
+      "width": 43,
+      "height": 70,
+      "align": "left"
+    },
+    "slot.math.fraction_1": {
+      "x": 401,
+      "y": 217,
+      "font_size": 36,
+      "fill": "#111827",
+      "width": 49,
+      "height": 70,
+      "align": "left"
+    },
+    "slot.math.fraction_2": {
+      "x": 555,
+      "y": 217,
+      "font_size": 36,
+      "fill": "#111827",
+      "width": 43,
+      "height": 70,
+      "align": "left"
+    },
+    "slot.q10": {
+      "x": 385,
+      "y": 203
+    },
+    "slot.q2": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.q27": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.q28": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.q29": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.q30": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.q31": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.q32": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,117 @@
+{
+  "schema": "modu.layout.v1",
+  "problem_id": "S3_초등_3_009136",
+  "title": "18 ÷ 3의 몫을 구하는 데 필요한 곱셈식 선택하기",
+  "canvas": {
+    "width": 886,
+    "height": 230,
+    "coordinate_mode": "logical",
+    "background": "#FFFFFF"
+  },
+  "regions": [
+    {
+      "id": "region.stem",
+      "role": "stem",
+      "flow": "absolute",
+      "slot_ids": [
+        "slot.stem.question"
+      ]
+    },
+    {
+      "id": "region.diagram",
+      "role": "diagram",
+      "flow": "absolute",
+      "slot_ids": [
+        "slot.diagram.item_ga",
+        "slot.diagram.item_na",
+        "slot.diagram.item_da"
+      ]
+    },
+    {
+      "id": "region.choices",
+      "role": "choices",
+      "flow": "absolute",
+      "slot_ids": []
+    }
+  ],
+  "slots": [
+    {
+      "id": "slot.stem.question",
+      "kind": "text_box",
+      "prompt": "",
+      "content": {
+        "text": "18 ÷ 3의 몫을 구하려고 합니다. 필요한 곱셈식을 찾아 기호를 선택하세요.",
+        "style_role": "body",
+        "x": 36.85,
+        "y": 21.21,
+        "width": 668,
+        "height": 33,
+        "align": "left",
+        "valign": "top",
+        "font_size": 22,
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "line_height": 1.5,
+        "fill": "#202124",
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
+      }
+    },
+    {
+      "id": "slot.diagram.item_ga",
+      "kind": "text",
+      "prompt": "",
+      "content": {
+        "text": "㉠ 3 × 4 = 12",
+        "style_role": "body",
+        "x": 121.06,
+        "y": 132.05,
+        "font_size": 22,
+        "align": "center",
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "fill": "#111827"
+      }
+    },
+    {
+      "id": "slot.diagram.item_na",
+      "kind": "text",
+      "prompt": "",
+      "content": {
+        "text": "㉡ 3 × 5 = 15",
+        "style_role": "body",
+        "x": 281.27,
+        "y": 133.26,
+        "font_size": 22,
+        "align": "center",
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "fill": "#111827"
+      }
+    },
+    {
+      "id": "slot.diagram.item_da",
+      "kind": "text",
+      "prompt": "",
+      "content": {
+        "text": "㉢ 3 × 6 = 18",
+        "style_role": "body",
+        "x": 438.44,
+        "y": 135.08,
+        "font_size": 22,
+        "align": "center",
+        "font_family": "\"Noto Sans KR\", sans-serif",
+        "fill": "#111827"
+      }
+    }
+  ],
+  "groups": [],
+  "constraints": [],
+  "diagrams": [],
+  "reading_order": [
+    "region.stem",
+    "slot.stem.question",
+    "region.diagram",
+    "slot.diagram.item_ga",
+    "slot.diagram.item_na",
+    "slot.diagram.item_da",
+    "region.choices"
+  ]
+}

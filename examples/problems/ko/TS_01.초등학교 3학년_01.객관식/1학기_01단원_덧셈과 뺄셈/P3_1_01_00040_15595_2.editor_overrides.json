@@ -1,0 +1,44 @@
+{
+  "canvas": {
+    "width": 300,
+    "height": 260
+  },
+  "version": 1,
+  "slots": {
+    "konva_1785806283023_paste_529430_0": {
+      "x": 113.802,
+      "y": 175.53,
+      "width": 79.1
+    },
+    "slot.calculation.2.line": {
+      "x1": 72.705,
+      "y1": 155.426,
+      "x2": 214.915,
+      "y2": 155.266
+    },
+    "slot.calculation.2.top": {
+      "x": 160.931,
+      "y": 99.426,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.calculation.2.plus": {
+      "x": 104.23,
+      "y": 141.426,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.calculation.2.bottom": {
+      "x": 160.931,
+      "y": 141.426,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.instruction": {
+      "y": 37.6,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    }
+  },
+  "deleted_slots": [
+    "slot.calculation.2.label"
+  ]
+}

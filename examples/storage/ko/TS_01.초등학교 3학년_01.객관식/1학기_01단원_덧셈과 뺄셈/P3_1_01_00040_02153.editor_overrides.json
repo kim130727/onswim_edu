@@ -1,0 +1,237 @@
+{
+  "canvas": {
+    "width": 600,
+    "height": 210
+  },
+  "version": 1,
+  "deleted_slots": [
+    "slot.step_1_carry_tens",
+    "slot.step_1_answer_ones",
+    "slot.step_2_carry_hundreds",
+    "slot.step_2_carry_tens",
+    "slot.step_2_answer_tens",
+    "slot.step_2_answer_ones",
+    "slot.step_3_answer_thousands",
+    "slot.step_3_answer_hundreds",
+    "slot.step_3_answer_tens",
+    "slot.step_3_answer_ones",
+    "konva_1785114366752_paste_173109_2",
+    "konva_1785114366752_paste_173109_3",
+    "konva_1785114366752_paste_182386_1",
+    "konva_1785114366752_paste_182386_2",
+    "konva_1785114366752_paste_182386_3"
+  ],
+  "slots": {
+    "slot.instruction": {
+      "text": "□ 안에 알맞은 수를 써넣으시오.",
+      "x": 19.258,
+      "y": 12.869,
+      "font_size": 23,
+      "fill": "#202124",
+      "width": 364.88,
+      "height": 37,
+      "align": "left",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.step_1_first_addend": {
+      "x": 55,
+      "y": 82,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 112,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_1_plus_sign": {
+      "text": "+",
+      "x": 35,
+      "y": 114,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 26,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_1_second_addend": {
+      "x": 55,
+      "y": 114,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 112,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_1_line": {
+      "text": "────────",
+      "x": 38,
+      "y": 141,
+      "font_size": 19,
+      "fill": "#111111",
+      "width": 132,
+      "height": 32,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.arrow_1": {
+      "text": "⇒",
+      "x": 158,
+      "y": 114,
+      "font_size": 31,
+      "fill": "#333333",
+      "width": 54,
+      "height": 47,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_2_first_addend": {
+      "x": 231,
+      "y": 82,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 112,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_2_plus_sign": {
+      "text": "+",
+      "x": 211,
+      "y": 114,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 26,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_2_second_addend": {
+      "x": 231,
+      "y": 114,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 112,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_2_line": {
+      "text": "────────",
+      "x": 214,
+      "y": 141,
+      "font_size": 19,
+      "fill": "#111111",
+      "width": 132,
+      "height": 32,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.arrow_2": {
+      "text": "⇒",
+      "x": 344,
+      "y": 114,
+      "font_size": 31,
+      "fill": "#333333",
+      "width": 54,
+      "height": 47,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_3_first_addend": {
+      "x": 434,
+      "y": 82,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 112,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_3_plus_sign": {
+      "text": "+",
+      "x": 414,
+      "y": 114,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 26,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_3_second_addend": {
+      "x": 434,
+      "y": 114,
+      "font_size": 25,
+      "fill": "#202124",
+      "width": 112,
+      "height": 40,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.step_3_line": {
+      "text": "────────",
+      "x": 417,
+      "y": 141,
+      "font_size": 19,
+      "fill": "#111111",
+      "width": 131,
+      "height": 32,
+      "align": "center",
+      "line_height": 1.25,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "konva_1785114366752_paste_115892_1": {
+      "y": 162.711,
+      "x": 481.745
+    },
+    "konva_1786191666134_paste_51010_0": {
+      "x": 506.794,
+      "y": 163.072
+    },
+    "konva_1786191666134_paste_62698_0": {
+      "x": 457.859,
+      "y": 162.973
+    },
+    "konva_1786191666134_paste_71002_0": {
+      "x": 435.581,
+      "y": 162.875
+    },
+    "konva_1786191666134_paste_92850_0": {
+      "x": 278.745,
+      "y": 164.137
+    },
+    "konva_1786191666134_paste_92850_1": {
+      "x": 304.794,
+      "y": 164.514
+    },
+    "konva_1786191666134_paste_99106_1": {
+      "x": 128.04,
+      "y": 165.924
+    },
+    "konva_1786191666134_paste_149825_0": {
+      "x": 254.728
+    },
+    "konva_1786191666134_paste_149825_1": {
+      "x": 278.777,
+      "y": 62.99
+    }
+  }
+}

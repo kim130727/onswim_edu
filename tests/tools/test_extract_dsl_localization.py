@@ -1,0 +1,193 @@
+from __future__ import annotations
+
+import json
+from hashlib import sha256
+from pathlib import Path
+
+import pytest
+
+from tools.extract_dsl_localization import main
+
+
+def _write_dsl(path: Path, *, slot_text: str = "Add the numbers.") -> None:
+    path.write_text(
+        f'''
+from modu_math.dsl import BlankSlot, Canvas, ProblemTemplate, Region, TextSlot
+
+PROBLEM_ID = "p_localize"
+
+PROBLEM_TEMPLATE = ProblemTemplate(
+    id=PROBLEM_ID,
+    title="Addition",
+    canvas=Canvas(width=300, height=120),
+    regions=(Region(id="region.stem", role="stem", slot_ids=("slot.question", "slot.expr", "slot.answer")),),
+    slots=(
+        TextSlot(id="slot.question", text="{slot_text}", font_family="Noto Sans KR"),
+        TextSlot(id="slot.expr", text="2 + 3 = 5"),
+        BlankSlot(id="slot.answer", prompt="Answer", placeholder="units", answer_key="5"),
+    ),
+)
+
+SEMANTIC_OVERRIDE = {{
+    "problem_id": PROBLEM_ID,
+    "problem_type": "addition",
+    "metadata": {{
+        "subject": "Math",
+        "topic": "Addition",
+        "question": "Which number belongs in the box?",
+        "instruction": "Choose one answer.",
+    }},
+    "domain": {{
+        "objects": [
+            {{"id": "object.apple", "type": "countable_object", "label": "apple", "name": "Apple", "content": "A red apple", "unit": "piece"}},
+        ],
+    }},
+    "answer": {{"value": 5, "unit": "piece"}},
+}}
+
+SOLVABLE = {{
+    "schema": "modu.solvable.v1.2",
+    "problem_id": PROBLEM_ID,
+    "problem_type": "addition",
+    "inputs": {{"conditions": ["There are 2 apples.", "There are 3 more apples."]}},
+    "steps": [{{"id": "step.add", "goal": "Find the total.", "expr": "2 + 3", "value": 5}}],
+    "answer": {{"value": 5, "unit": "piece"}},
+}}
+'''.lstrip(),
+        encoding="utf-8",
+    )
+
+
+def test_extract_uses_stable_keys_and_skips_non_translatable_fields(tmp_path: Path) -> None:
+    dsl_path = tmp_path / "problem.dsl.py"
+    out_path = tmp_path / "p_localize.locale.json"
+    _write_dsl(dsl_path)
+
+    assert main(["--dsl", str(dsl_path), "--locale", "uk-UA", "--out", str(out_path)]) == 0
+
+    data = json.loads(out_path.read_text(encoding="utf-8"))
+    assert data["template.slots.slot.question.text"]["source"] == "Add the numbers."
+    assert data["template.slots.slot.question.text"] == {
+        "source": "Add the numbers.",
+        "translation": "",
+    }
+    assert data["semantic.domain.objects.object.apple.label"]["source"] == "apple"
+    assert data["semantic.domain.objects.object.apple.name"]["source"] == "Apple"
+    assert data["semantic.domain.objects.object.apple.content"]["source"] == "A red apple"
+    assert data["semantic.metadata.question"]["source"] == "Which number belongs in the box?"
+    assert data["semantic.metadata.instruction"]["source"] == "Choose one answer."
+    assert data["solvable.steps.step.add.goal"]["source"] == "Find the total."
+    assert data["solvable.inputs.conditions.0"]["source"] == "There are 2 apples."
+    assert "template.slots.0.text" not in data
+    assert "template.slots.slot.expr.text" not in data
+    assert all(not key.startswith(("semantic.answer.", "solvable.answer.")) for key in data)
+    assert all(not key.endswith(".font_family") for key in data)
+
+
+def test_extract_skips_korean_choice_and_symbol_markers(tmp_path: Path) -> None:
+    dsl_path = tmp_path / "problem.dsl.py"
+    dsl_path.write_text(
+        '''
+from modu_math.dsl import Canvas, ProblemTemplate, Region, TextSlot
+
+PROBLEM_ID = "p_symbol_locale"
+PROBLEM_TEMPLATE = ProblemTemplate(
+    id=PROBLEM_ID,
+    title="Symbol Locale",
+    canvas=Canvas(width=300, height=120),
+    regions=(Region(id="region.body", role="body", slot_ids=("slot.choice", "slot.symbol", "slot.circled", "slot.parenthesized", "slot.name")),),
+    slots=(
+        TextSlot(id="slot.choice", text="(\\uac00)", style_role="choice"),
+        TextSlot(id="slot.symbol", text="\\u3131", semantic_role="symbol_label"),
+        TextSlot(id="slot.circled", text="\\u3260\\u3261\\u3262"),
+        TextSlot(id="slot.parenthesized", text="\\u3200\\u3201\\u3202"),
+        TextSlot(id="slot.name", text="\\uc2b9\\uc544"),
+    ),
+)
+'''.lstrip(),
+        encoding="utf-8",
+    )
+    out_path = tmp_path / "p_symbol_locale.locale.json"
+
+    assert main(["--dsl", str(dsl_path), "--locale", "uk-UA", "--out", str(out_path)]) == 0
+
+    data = json.loads(out_path.read_text(encoding="utf-8"))
+    assert "template.slots.slot.choice.text" not in data
+    assert "template.slots.slot.symbol.text" not in data
+    assert "template.slots.slot.circled.text" not in data
+    assert "template.slots.slot.parenthesized.text" not in data
+    assert data["template.slots.slot.name.text"]["source"] == "\uc2b9\uc544"
+
+
+def test_extract_drops_stale_translation_and_obsolete_entries(tmp_path: Path) -> None:
+    dsl_path = tmp_path / "problem.dsl.py"
+    out_path = tmp_path / "p_localize.locale.json"
+    _write_dsl(dsl_path)
+    assert main(["--dsl", str(dsl_path), "--locale", "uk-UA", "--out", str(out_path)]) == 0
+
+    data = json.loads(out_path.read_text(encoding="utf-8"))
+    data["template.slots.slot.question.text"]["translation"] = "Addiere die Zahlen."
+    data["old.key"] = {
+        "source": "gone",
+        "source_hash": sha256(b"gone").hexdigest(),
+        "translation": "weg",
+    }
+    out_path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    _write_dsl(dsl_path, slot_text="Add all numbers.")
+    assert main(["--dsl", str(dsl_path), "--locale", "uk-UA", "--out", str(out_path)]) == 0
+
+    updated = json.loads(out_path.read_text(encoding="utf-8"))
+    question = updated["template.slots.slot.question.text"]
+    assert question == {"source": "Add all numbers.", "translation": ""}
+    assert "old.key" not in updated
+    assert all("source_hash" not in entry and "status" not in entry for entry in updated.values())
+
+
+def test_extract_does_not_modify_existing_dsl(tmp_path: Path) -> None:
+    dsl_path = tmp_path / "problem.dsl.py"
+    _write_dsl(dsl_path)
+    before = sha256(dsl_path.read_bytes()).hexdigest()
+
+    assert (
+        main(
+            [
+                "--dsl",
+                str(dsl_path),
+                "--locale",
+                "uk-UA",
+                "--out",
+                str(tmp_path / "representative.locale.json"),
+            ]
+        )
+        == 0
+    )
+
+    assert sha256(dsl_path.read_bytes()).hexdigest() == before
+
+
+def test_extract_requires_explicit_output_for_standalone_dsl(tmp_path: Path) -> None:
+    dsl_path = tmp_path / "problem.dsl.py"
+    _write_dsl(dsl_path)
+
+    with pytest.raises(ValueError, match="Pass --out"):
+        main(["--dsl", str(dsl_path), "--locale", "uk"])
+
+    assert not (Path("locales") / "uk" / "p_localize.locale.json").exists()
+
+
+def test_extract_rejects_unsupported_language(tmp_path: Path) -> None:
+    dsl_path = tmp_path / "problem.dsl.py"
+    _write_dsl(dsl_path)
+
+    with pytest.raises(ValueError, match="supported languages: ko, uk"):
+        main(
+            [
+                "--dsl",
+                str(dsl_path),
+                "--locale",
+                "en",
+                "--out",
+                str(tmp_path / "en.locale.json"),
+            ]
+        )

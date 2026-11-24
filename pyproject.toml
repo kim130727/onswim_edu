@@ -1,0 +1,66 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "modu-math"
+version = "0.1.0"
+description = "Python DSL library that compiles math problems into semantic, layout, renderer JSON contracts and SVG"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "black>=24.0.0",
+    "dj-database-url>=2.2.0,<3.0",
+    "django>=4.2.30,<5.0",
+    "django-cors-headers>=4.4.0,<5.0",
+    "djangorestframework>=3.15.0,<4.0",
+    "fonttools>=4.0.0",
+    "gunicorn>=23.0.0,<24.0",
+    "jsonschema>=4.0.0",
+    "libcst>=1.4.0",
+    "openai>=1.0.0",
+    "psycopg[binary]>=3.2.0,<4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=24.0.0",
+    "pytest>=8.0.0",
+    "pytest-django>=4.8.0",
+    "jsonschema>=4.0.0",
+]
+llm = [
+    "openai>=1.0.0",
+    "python-dotenv>=1.0.0",
+]
+web = [
+    "black>=24.0.0",
+    "django>=4.0,<5.0",
+    "jsonschema>=4.0.0",
+    "libcst>=1.4.0",
+]
+
+[project.scripts]
+modu = "modu_math.cli:main"
+modu-math = "modu_math.cli:main"
+modu-web = "modu_math_web.__main__:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.package-data]
+"modu_math.renderer" = ["assets/*.ttf"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-q"
+DJANGO_SETTINGS_MODULE = "modu_math_web.settings"
+django_debug_mode = true
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+]

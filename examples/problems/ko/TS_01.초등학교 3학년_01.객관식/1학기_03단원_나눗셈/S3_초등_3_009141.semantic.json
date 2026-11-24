@@ -1,0 +1,105 @@
+{
+  "problem_id": "S3_초등_3_009141",
+  "problem_type": "multiple_choice_division_via_multiplication",
+  "metadata": {
+    "title": "24 ÷ 4의 몫을 구할 때 필요한 곱셈식 선택하기",
+    "tags": [],
+    "question": "24 ÷ 4의 몫을 구할 때 필요한 곱셈식을 찾아 선택하세요.",
+    "required_layout_ids": [
+      "slot.diagram.frame"
+    ],
+    "extraction_confidence": 1.0,
+    "grade": 3,
+    "semester": 1,
+    "subject": "수학",
+    "chapter": "03단원_나눗셈",
+    "language": "ko-KR",
+    "presentation_sources": {
+      "question": [
+        "slot.stem.question"
+      ],
+      "instruction": [],
+      "choice": [
+        "slot.choice.option_0",
+        "slot.choice.option_1",
+        "slot.choice.option_2"
+      ],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "24 ÷ 4의 몫을 구할 때 필요한 곱셈식을 찾아 선택하세요."
+  },
+  "domain": {
+    "objects": [
+      {
+        "id": "expr.division",
+        "type": "division",
+        "dividend": 24,
+        "divisor": 4
+      },
+      {
+        "id": "expr.ga",
+        "type": "multiplication",
+        "label": "㉠",
+        "equation": "3 × 8 = 24"
+      },
+      {
+        "id": "expr.na",
+        "type": "multiplication",
+        "label": "㉡",
+        "equation": "4 × 6 = 24"
+      },
+      {
+        "id": "expr.da",
+        "type": "multiplication",
+        "label": "㉢",
+        "equation": "4 × 7 = 28"
+      }
+    ],
+    "relations": [
+      {
+        "id": "relation.inverse_multiplication",
+        "type": "solves_division",
+        "from_id": "expr.na",
+        "to_id": "expr.division"
+      }
+    ],
+    "confidence": 1.0
+  },
+  "answer": {
+    "blanks": [],
+    "choices": [
+      {
+        "id": "slot.choice.option_0",
+        "slot_id": "slot.choice.option_0",
+        "text": "㉠ 3 × 8 = 24",
+        "value": "㉠"
+      },
+      {
+        "id": "slot.choice.option_1",
+        "slot_id": "slot.choice.option_1",
+        "text": "㉡ 4 × 6 = 24",
+        "value": "㉡"
+      },
+      {
+        "id": "slot.choice.option_2",
+        "slot_id": "slot.choice.option_2",
+        "text": "㉢ 4 × 7 = 28",
+        "value": "㉢"
+      }
+    ],
+    "answer_key": [
+      {
+        "slot_id": "slot.choice.option_1",
+        "value": "㉡ 4 × 6 = 24"
+      }
+    ],
+    "confidence": 1.0,
+    "type": "choice",
+    "value": "㉡ 4 × 6 = 24",
+    "unit": "",
+    "answer_index": 1,
+    "values": [
+      "㉡ 4 × 6 = 24"
+    ]
+  }
+}

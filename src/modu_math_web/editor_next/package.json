@@ -1,0 +1,46 @@
+{
+  "name": "modu-math-editor-konva",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "test:editor-browser": "node scripts/editor-workspace.browser.mjs",
+    "test:editor-preview": "node scripts/editor-student-preview.browser.mjs",
+    "test:editor-parity": "node scripts/editor-student-parity.browser.mjs",
+    "test:answer-capacity": "node scripts/editor-answer-capacity.browser.mjs",
+    "test:carry-input": "node scripts/editor-carry-input.browser.mjs",
+    "test:teacher": "node --test scripts/teacher-api.test.mjs",
+    "test:teacher-browser": "node --test scripts/teacher-browser.test.mjs",
+    "test:student-browser": "node --test --test-concurrency=1 scripts/student-browser.test.mjs scripts/student-live-update.test.mjs",
+    "check:text": "node scripts/check-text-encoding.mjs",
+    "test:text": "node --test scripts/check-text-encoding.test.mjs",
+    "test:anchors": "node --test scripts/text-anchor.test.mjs",
+    "test:review": "node --test scripts/answer-review.test.mjs",
+    "test:avatars": "node --test scripts/avatar-colors.test.mjs scripts/watercolor-avatars.test.mjs",
+    "preview:avatars": "node scripts/watercolor-preview.mjs",
+    "prebuild": "npm run check:text",
+    "predev": "npm run check:text",
+    "pretypecheck": "npm run check:text",
+    "build": "vite build",
+    "build:student": "python ../../../apps/mobile/scripts/build_student_web.py",
+    "postbuild": "node scripts/check-text-encoding.mjs static/editor_next/konva_assets",
+    "dev": "vite --host 127.0.0.1 --port 5174",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "konva": "^10.3.0",
+    "mathjax": "^4.1.3",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "react-konva": "^19.2.5"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "1.0.9",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "playwright": "^1.64.1",
+    "typescript": "^5.7.3",
+    "vite": "^6.4.3"
+  }
+}

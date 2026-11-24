@@ -1,0 +1,828 @@
+import { useEffect, useState, type ReactNode } from "react";
+import { normalizedAnswer, type AnswerChoiceReview, type AnswerReviewSettings } from "./answerReview";
+
+export function AnswerReviewPanel({
+  settings,
+  answerPrompt,
+  onEditAnswerPrompt,
+  unit,
+  onChange,
+  onSave,
+  onSelect,
+  onEditLayout,
+  busy,
+  feedback,
+  syncPanel,
+  authoring = false,
+  onAddBlank,
+  onAddSelectedAsCanvasChoice,
+  hasCanvasSelection = false,
+  onHighlightAnswer,
+  canvasChoiceCandidates = [],
+}: {
+  settings: AnswerReviewSettings;
+  answerPrompt?: string;
+  onEditAnswerPrompt?: () => void;
+  unit?: string;
+  onChange: (settings: AnswerReviewSettings) => void;
+  onSave: (override?: AnswerReviewSettings) => void;
+  onSelect: (ids: string[]) => void;
+  onEditLayout: () => void;
+  busy: boolean;
+  feedback?: string;
+  syncPanel?: ReactNode;
+  authoring?: boolean;
+  onAddBlank?: () => void;
+  onAddSelectedAsCanvasChoice?: () => void;
+  hasCanvasSelection?: boolean;
+  onHighlightAnswer?: (index: number | null) => void;
+  canvasChoiceCandidates?: AnswerChoiceReview[];
+}) {
+  const [editing, setEditing] = useState(authoring);
+  const [responses, setResponses] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [result, setResult] = useState<string | null>(null);
+  const [customInputAnswer, setCustomInputAnswer] = useState("");
+  const [showInputEdit, setShowInputEdit] = useState(false);
+
+  useEffect(() => {
+    setResponses([]);
+    setSelected([]);
+    setResult(null);
+    setCustomInputAnswer("");
+    setShowInputEdit(false);
+  }, [settings]);
+
+  const update = (patch: Partial<AnswerReviewSettings>) => onChange({ ...settings, ...patch });
+
+  const choiceMode = settings.mode === "choice" || settings.mode === "canvas_select";
+  const canvasSelectMode = settings.mode === "canvas_select";
+  const groupMode = settings.mode === "grouped_choice";
+  const oxMode = settings.mode === "ox";
+  const groups = settings.groups ?? [];
+  const inputAnswers = settings.answers.length ? settings.answers : [{ value: "", unit: "" }];
+  const expected = settings.choices.filter((choice) => choice.correct).map((choice) => choice.id);
+
+  const hasAnswers = groupMode
+    ? groups.length > 0 &&
+      groups.every(
+        (group) => group.choices.length >= 2 && group.correct_index >= 0 && group.correct_index < group.choices.length,
+      )
+    : choiceMode
+      ? expected.length > 0 && settings.choices.length >= 2 && settings.choices.every((choice) => choice.text.trim())
+      : settings.answers.length > 0 &&
+        settings.answers.every((answer) => (oxMode ? /^[OX]$/.test(answer.value) : answer.value.trim().length > 0));
+
+  const check = () => {
+    const correct = groupMode
+      ? groups.every((group, index) => responses[index] === String(group.correct_index))
+      : choiceMode
+        ? expected.length === selected.length && expected.every((id) => selected.includes(id))
+        : settings.answers.every((answer, index) => normalizedAnswer(responses[index] ?? "") === normalizedAnswer(answer.value));
+    setResult(correct ? "✓ 정답입니다! (채점 일치)" : "✕ 정답과 다릅니다. 입력 내용과 등록된 정답을 확인하세요.");
+  };
+
+  const setChoiceAsCorrectAndSave = (choiceId: string) => {
+    const next: AnswerReviewSettings = {
+      ...settings,
+      status: "verified",
+      choices: settings.choices.map((c) => ({ ...c, correct: c.id === choiceId })),
+    };
+    onChange(next);
+    onSave(next);
+  };
+
+  const setSelectedChoicesAsCorrectAndSave = () => {
+    if (!selected.length) return;
+    const next: AnswerReviewSettings = {
+      ...settings,
+      status: "verified",
+      choices: settings.choices.map((c) => ({ ...c, correct: selected.includes(c.id) })),
+    };
+    onChange(next);
+    onSave(next);
+  };
+
+  const registerDirectInputAnswerAndSave = (valueText: string) => {
+    if (busy) return;
+    const trimmed = valueText.trim();
+    if (!trimmed) return;
+    const existingRef = settings.answers.length === 1 ? settings.answers[0].ref : undefined;
+    const next: AnswerReviewSettings = {
+      ...settings,
+      status: "verified",
+      answers: [{ ...(settings.answers.length === 1 ? settings.answers[0] : {}), value: trimmed, ref: existingRef || "answer.value" }],
+    };
+    onChange(next);
+    onSave(next);
+  };
+
+  const registerOxAnswersAndSave = () => {
+    const valid = responses.length > 0 && responses.every((r) => /^[OX]$/.test(r));
+    if (!valid) return;
+    const next: AnswerReviewSettings = {
+      ...settings,
+      status: "verified",
+      answers: responses.map((r) => ({ value: r })),
+    };
+    onChange(next);
+    onSave(next);
+  };
+
+  const registerGroupChoicesAndSave = () => {
+    const valid = groups.length > 0 && groups.every((_, i) => responses[i] !== undefined && responses[i] !== "");
+    if (!valid) return;
+    const next: AnswerReviewSettings = {
+      ...settings,
+      status: "verified",
+      groups: groups.map((g, i) => ({ ...g, correct_index: Number(responses[i]) })),
+    };
+    onChange(next);
+    onSave(next);
+  };
+
+  const registeredAnswerSummary = () => {
+    if (groupMode) {
+      return groups.map((g) => `${g.label}: ${g.choices[g.correct_index] ?? "미등록"}`).join(" | ");
+    }
+    if (choiceMode) {
+      const correctChoices = settings.choices.filter((c) => c.correct);
+      return correctChoices.length
+        ? correctChoices.map((c) => `${c.label} ${c.text}`).join(", ")
+        : "미등록";
+    }
+    if (oxMode || settings.mode === "panel_input" || settings.mode === "canvas_slots") {
+      return settings.answers.length
+        ? settings.answers.map((a) => {
+          const suffix = settings.answers.some(answer => answer.unit !== undefined) ? a.unit : unit;
+          return `${a.value}${suffix ? ` ${suffix}` : ""}`;
+        }).join(", ")
+        : "미등록";
+    }
+    return "미등록";
+  };
+
+  return (
+    <aside className={`answer-review-panel${authoring ? " answer-authoring-panel" : ""}`} aria-label={authoring ? "정답 작성" : "정답 검수"}>
+      {authoring ? <div className="answer-authoring-heading"><strong>정답 만들기</strong><p>응답 방식을 고르고 정답을 입력한 뒤 저장하세요.</p></div> : null}
+      {!authoring ? <div className="review-tabs review-mode-tabs">
+        <button type="button" aria-pressed={!editing} onClick={() => setEditing(false)}>
+          <span>풀어보기 및 빠른</span>{" "}<span>정답 지정</span>
+        </button>
+        <button type="button" aria-pressed={editing} onClick={() => setEditing(true)}>
+          상세 설정
+        </button>
+      </div> : null}
+
+      <div className="review-status-header">
+        <span className={`review-status-badge ${settings.status}`}>
+          {{ pending: "미검수", needs_changes: "수정 필요", verified: "검수 완료" }[settings.status]}
+        </span>
+        {feedback ? <span className="review-feedback">{feedback}</span> : null}
+      </div>
+
+      {!hasAnswers && (
+        <div className="review-alert-unverified">
+          <strong>⚠️ 정답 미확인</strong>
+          <p>등록된 정답이 없습니다. 아래에서 정답을 바로 입력하거나 지정하여 저장하세요.</p>
+        </div>
+      )}
+
+      {editing ? (
+        <>
+          <h3 className="answer-step-heading"><span>1</span> 학생은 어떻게 답하나요?</h3>
+          <label>
+            응답 방식
+            <select
+              aria-label="응답 방식"
+              value={settings.mode}
+              onChange={(event) => {
+                const mode = event.target.value as AnswerReviewSettings["mode"];
+                update({ mode, ...(mode === "canvas_slots" || mode === "canvas_select" ? { show_canvas: true } : {}) });
+              }}
+            >
+              <optgroup label="직접 입력 (주관식 / 빈칸 채우기)">
+                <option value="canvas_slots">문제 속 빈칸 채우기 (캔버스 빈칸 직접 입력)</option>
+                <option value="panel_input">단답형 직접 입력 (하단 입력창 / 키패드)</option>
+              </optgroup>
+              <optgroup label="보기 선택 (객관식 / OX 판정)">
+                <option value="canvas_select">캔버스에서 직접 클릭 선택 (카드·도형·글자 클릭)</option>
+                <option value="choice">객관식 (하단 보기에서 선택)</option>
+                <option value="ox">OX 판정 (참 / 거짓 선택)</option>
+                <option value="grouped_choice">세트형 객관식 (소문항별 보기 선택)</option>
+              </optgroup>
+            </select>
+          </label>
+          {settings.mode === "canvas_slots" && onAddBlank ? <button type="button" className="answer-add-blank" onClick={onAddBlank}>＋ 문제에 정답 빈칸 추가</button> : null}
+          {canvasSelectMode && onAddSelectedAsCanvasChoice ? (
+            <button
+              type="button"
+              className="answer-add-blank"
+              disabled={!hasCanvasSelection}
+              title={hasCanvasSelection ? "캔버스에서 선택한 카드·도형·글자를 클릭 보기로 추가합니다." : "먼저 캔버스에서 클릭할 카드, 도형 또는 글자를 선택하세요."}
+              onClick={onAddSelectedAsCanvasChoice}
+            >
+              ＋ 선택한 요소를 클릭 보기로 추가
+            </button>
+          ) : null}
+          {canvasSelectMode && canvasChoiceCandidates.length >= 2 ? (
+            <div className="review-quick-choices">
+              <button
+                type="button"
+                className="review-secondary-action"
+                onClick={() => update({ mode: "canvas_select", show_canvas: true, choices: canvasChoiceCandidates })}
+              >
+                캔버스 보기 자동 연결 ({canvasChoiceCandidates.length}개)
+              </button>
+            </div>
+          ) : null}
+          {settings.mode === "panel_input" || settings.mode === "choice" ? (
+            <div className="review-quick-choices">
+              {canvasChoiceCandidates.length >= 2 ? (
+                <button
+                  type="button"
+                  className="review-secondary-action"
+                  onClick={() => update({ mode: "choice", choices: canvasChoiceCandidates })}
+                >
+                  캔버스 보기 가져오기 ({canvasChoiceCandidates.length}개)
+                </button>
+              ) : null}
+              <button
+                type="button"
+                className="review-secondary-action"
+                onClick={() => {
+                  const firstAnswer = settings.answers[0]?.value?.trim() ?? "";
+                  const selectedNumber = /^[①-④]$/.test(firstAnswer)
+                    ? firstAnswer.charCodeAt(0) - "①".charCodeAt(0) + 1
+                    : Number(firstAnswer);
+                  const labels = ["①", "②", "③", "④"];
+                  update({
+                    mode: "choice",
+                    choices: labels.map((label, index) => ({
+                      id: `choice.num.${index + 1}`,
+                      label,
+                      text: label,
+                      correct: selectedNumber === index + 1,
+                    })),
+                  });
+                }}
+              >
+                ①~④ 번호 보기 만들기
+              </button>
+            </div>
+          ) : null}
+          {settings.mode === "canvas_slots" && authoring ? <p className="review-help">정답 항목을 삭제하면 이 기능으로 만든 연결 빈칸도 함께 삭제됩니다.</p> : null}
+          <p className="review-help">{{ canvas_slots: "문제의 빈칸에 직접 답을 입력합니다. 빈칸 추가 버튼으로 정답과 연결된 입력칸을 만들 수 있습니다.", canvas_select: "캔버스에서 카드·도형·글자를 선택한 뒤 '선택한 요소를 클릭 보기로 추가'를 누르고 정답에 체크하세요. 학생이 캔버스 요소를 직접 클릭해 답합니다.", panel_input: "학생이 문제 아래의 입력창에 답을 씁니다. 여러 정답은 항목을 나누어 입력하세요.", choice: "보기를 작성하고 맞는 보기에 정답을 체크하세요. 복수 정답도 지정할 수 있습니다.", ox: "각 항목의 정답을 O 또는 X로 선택하세요.", grouped_choice: "소문항별 질문과 보기를 입력하고 정답을 선택하세요." }[settings.mode]}</p>
+
+          <h3 className="answer-step-heading"><span>2</span> {choiceMode ? "보기를 쓰고 정답을 체크하세요" : groupMode ? "소문항과 정답을 입력하세요" : "정답을 입력하세요"}</h3>
+
+          {groupMode ? (
+            <>
+              {groups.map((group, index) => (
+                <fieldset key={group.id}>
+                  <legend>소문항 {index + 1}</legend>
+                  <input
+                    aria-label={`소문항 ${index + 1} 질문`}
+                    value={group.label}
+                    onChange={(event) =>
+                      update({
+                        groups: groups.map((g, i) => (i === index ? { ...g, label: event.target.value } : g)),
+                      })
+                    }
+                  />
+                  <label>
+                    선택지 (한 줄에 하나)
+                    <textarea
+                      value={group.choices.join("\n")}
+                      onChange={(event) =>
+                        update({
+                          groups: groups.map((g, i) =>
+                            i === index ? { ...g, choices: event.target.value.split("\n"), correct_index: -1 } : g,
+                          ),
+                        })
+                      }
+                    />
+                  </label>
+                  <label>
+                    정답
+                    <select
+                      value={group.correct_index}
+                      onChange={(event) =>
+                        update({
+                          groups: groups.map((g, i) =>
+                            i === index ? { ...g, correct_index: Number(event.target.value) } : g,
+                          ),
+                        })
+                      }
+                    >
+                      <option value={-1}>정답 선택</option>
+                      {group.choices.map((text, i) => (
+                        <option key={i} value={i}>
+                          {text}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <button type="button" onClick={() => update({ groups: groups.filter((_, i) => i !== index) })}>
+                    소문항 삭제
+                  </button>
+                </fieldset>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  update({
+                    groups: [
+                      ...groups,
+                      { id: `group.${crypto.randomUUID()}`, label: `문항 ${groups.length + 1}`, choices: ["", ""], correct_index: -1 },
+                    ],
+                  })
+                }
+              >
+                소문항 추가
+              </button>
+            </>
+          ) : choiceMode ? (
+            <>
+              {settings.choices.map((choice, index) => (
+                <fieldset key={choice.id} className={`review-choice-editor${choice.correct ? " is-correct" : ""}`}>
+                  <legend>선택지 {index + 1}{choice.correct ? " · 정답" : ""}</legend>
+                  <div className="review-choice-main">
+                  <label className="checkbox-label review-choice-correct">
+                    <input
+                      aria-label={`선택지 ${index + 1} 정답`}
+                      type="checkbox"
+                      checked={choice.correct}
+                      onChange={(event) => update({ choices: settings.choices.map((item, i) => i === index ? { ...item, correct: event.target.checked } : item) })}
+                    />
+                    정답
+                  </label>
+                  <textarea
+                    rows={1}
+                    placeholder="보기 내용"
+                    aria-label={`선택지 ${index + 1} 내용`}
+                    value={choice.text}
+                    onChange={(event) => update({ choices: settings.choices.map((item, i) => i === index ? { ...item, text: event.target.value } : item) })}
+                  />
+                  <button type="button" className="review-secondary-action" aria-label={`선택지 ${index + 1} 삭제`}
+                    onClick={() => update({ choices: settings.choices.filter((_, i) => i !== index) })}>삭제</button>
+                  </div>
+                  <details className="review-choice-details"><summary>번호·원본 설정 <span>{choice.label}</span></summary>
+                  <label>보기 번호
+                  <input
+                    aria-label={`선택지 ${index + 1} 번호`}
+                    value={choice.label}
+                    onChange={(event) =>
+                      update({
+                        choices: settings.choices.map((item, i) =>
+                          i === index ? { ...item, label: event.target.value } : item,
+                        ),
+                      })
+                    }
+                  />
+                  </label>
+                    <button
+                      type="button"
+                      className="review-secondary-action"
+                      disabled={!choice.sourceRefs?.length}
+                      onClick={() => onSelect(choice.sourceRefs ?? [])}
+                    >
+                      원본 선택
+                    </button>
+                  </details>
+                </fieldset>
+              ))}
+              <button
+                type="button"
+                onClick={() =>
+                  update({
+                    choices: [
+                      ...settings.choices,
+                      { id: `choice.review.${crypto.randomUUID()}`, label: String(settings.choices.length + 1), text: "", correct: false },
+                    ],
+                  })
+                }
+              >
+                선택지 추가
+              </button>
+              {expected.length > 1 && <p>복수 선택 문항입니다. 선택한 정답을 모두 골라야 정답으로 처리합니다.</p>}
+            </>
+          ) : (
+            <>
+              {inputAnswers.map((answer, index) => (
+                <div
+                  className="review-answer-row"
+                  key={index}
+                  onMouseEnter={() => onHighlightAnswer?.(index)}
+                  onMouseLeave={() => onHighlightAnswer?.(null)}
+                  onFocus={() => onHighlightAnswer?.(index)}
+                  onBlur={() => onHighlightAnswer?.(null)}
+                >
+                  <label>
+                    답 {index + 1}
+                    {settings.mode === "ox" ? (
+                      <select
+                        aria-label={`답 ${index + 1}`}
+                        value={answer.value}
+                        onChange={(event) =>
+                          update({
+                            answers: inputAnswers.map((item, i) =>
+                              i === index ? { ...item, value: event.target.value } : item,
+                            ),
+                          })
+                        }
+                      >
+                        <option value="">선택</option>
+                        <option value="O">O</option>
+                        <option value="X">X</option>
+                      </select>
+                    ) : (
+                      <input
+                        aria-label={`답 ${index + 1}`}
+                        placeholder="예: 12, 3/4, 사과"
+                        value={answer.value}
+                        onChange={(event) =>
+                          update({
+                            answers: inputAnswers.map((item, i) =>
+                              i === index ? { ...item, value: event.target.value } : item,
+                            ),
+                          })
+                        }
+                      />
+                    )}
+                  </label>
+                  {settings.mode !== "ox" ? <label className="review-answer-unit">단위 (선택)<input aria-label={`답 ${index + 1} 단위`} placeholder="예: cm" value={answer.unit ?? ""} maxLength={100} onChange={event => update({ answers: inputAnswers.map((item, i) => i === index ? { ...item, unit: event.target.value } : item) })} /></label> : null}
+                  <button type="button" onClick={() => update({ answers: settings.answers.filter((_, i) => i !== index) })}>
+                    삭제
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => update({ answers: [...inputAnswers, { value: settings.mode === "ox" ? "O" : "" }] })}
+              >
+                ＋ 정답 추가
+              </button>
+            </>
+          )}
+
+          <details className="review-display-settings"><summary>문제 그림 표시 설정</summary>
+          <label className="review-canvas-visibility-option">
+            <input
+              type="checkbox"
+              checked={settings.mode === "canvas_slots" || settings.mode === "canvas_select" || settings.show_canvas !== false}
+              disabled={settings.mode === "canvas_slots" || settings.mode === "canvas_select"}
+              onChange={(event) => update({ show_canvas: event.target.checked })}
+            />
+            학습 화면에 문제 캔버스(그림) 표시
+          </label>
+          <p className="review-help">
+            체크를 해제하면 문제 그림 영역을 숨기고 하단 정답 패널과 힌트만 보여줍니다. (빈칸 채우기 방식에서는 숨길 수 없습니다.)
+          </p>
+          </details>
+
+          <details className="review-advanced-settings"><summary>검수 상태·메모 및 화면 편집</summary>
+          <label>
+            검수 상태
+            <select
+              value={settings.status}
+              onChange={(event) => update({ status: event.target.value as AnswerReviewSettings["status"] })}
+            >
+              <option value="pending">미검수</option>
+              <option value="needs_changes">수정 필요</option>
+              <option value="verified">검수 완료</option>
+            </select>
+          </label>
+          <label>
+            검수 메모
+            <textarea
+              value={settings.note}
+              onChange={(event) => update({ note: event.target.value })}
+              placeholder="문항의 모호함, 정답 오류, 그림 수정 사항"
+            />
+          </label>
+          <button type="button" onClick={onEditLayout}>
+            지문·그림·여백 편집
+          </button>
+          </details>
+          <div className="answer-save-bar">
+          <div className="answer-save-summary" role="status">
+            <strong>{hasAnswers ? "정답 입력 완료" : "정답 입력을 확인하세요"}</strong>
+            <span>{hasAnswers ? registeredAnswerSummary() : choiceMode ? "보기 2개 이상을 작성하고 정답을 체크하세요." : groupMode ? "각 소문항에 보기 2개 이상과 정답이 필요합니다." : "모든 정답 항목을 입력하세요."}</span>
+          </div>
+          <button
+            type="button"
+            className="btn-primary-register"
+            disabled={busy || !hasAnswers}
+            onClick={() => onSave()}
+          >
+            {busy ? "저장 중…" : "정답 저장하고 화면 반영"}
+          </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {hasAnswers && (
+            <div className="registered-answer-card">
+              <div className="registered-answer-row">
+                <span className="registered-label">현재 등록 정답:</span>
+                <strong className="registered-value">{registeredAnswerSummary()}</strong>
+              </div>
+            </div>
+          )}
+
+          <div className="solve-section">
+            {answerPrompt ? (
+              <button type="button" className="presentation-prompt-item" style={{ whiteSpace: "pre-wrap" }} onClick={onEditAnswerPrompt} title="정답 영역 지문 편집">
+                {answerPrompt}
+              </button>
+            ) : null}
+            <strong className="solve-prompt">
+              {groupMode
+                ? "각 소문항의 답을 선택하세요"
+                : choiceMode
+                  ? expected.length > 1
+                    ? "맞는 답을 모두 선택하세요"
+                    : "알맞은 답을 선택하세요"
+                  : oxMode
+                    ? "각 항목의 O 또는 X를 선택하세요"
+                    : "정답을 입력하세요"}
+            </strong>
+
+            {groupMode ? (
+              <>
+                {groups.map((group, index) => (
+                  <fieldset key={group.id} className="review-group-box">
+                    <legend>{group.label}</legend>
+                    {group.choices.map((text, i) => (
+                      <label className="answer-review-choice" key={i}>
+                        <input
+                          type="radio"
+                          name={`review-group-${index}`}
+                          checked={responses[index] === String(i)}
+                          onChange={() => {
+                            setResult(null);
+                            setResponses((values) => groups.map((_, n) => (n === index ? String(i) : values[n] ?? "")));
+                          }}
+                        />
+                        <span>{text}</span>
+                        {group.correct_index === i ? <span className="choice-correct-badge">✓ 등록 정답</span> : null}
+                      </label>
+                    ))}
+                  </fieldset>
+                ))}
+                <div className="review-actions-column">
+                  <button
+                    type="button"
+                    className="btn-register-action"
+                    disabled={busy || groups.some((_, i) => responses[i] === undefined || responses[i] === "")}
+                    onClick={registerGroupChoicesAndSave}
+                  >
+                    선택한 보기를 정답으로 등록 및 저장
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!hasAnswers || groups.some((_, i) => !responses[i]?.trim())}
+                    onClick={check}
+                  >
+                    정답 확인 (채점 테스트)
+                  </button>
+                </div>
+              </>
+            ) : choiceMode ? (
+              <>
+                <div className="answer-review-choices-list">
+                  {settings.choices.map((choice) => (
+                    <div key={choice.id} className={`review-choice-item${choice.correct ? " is-correct" : ""}`}>
+                      <label className="answer-review-choice">
+                        <input
+                          type={expected.length > 1 ? "checkbox" : "radio"}
+                          name="review-choice"
+                          checked={selected.includes(choice.id)}
+                          onChange={() => {
+                            setResult(null);
+                            setSelected(
+                              expected.length > 1
+                                ? selected.includes(choice.id)
+                                  ? selected.filter((id) => id !== choice.id)
+                                  : [...selected, choice.id]
+                                : [choice.id],
+                            );
+                          }}
+                        />
+                        <span className="choice-marker">{choice.label}</span>
+                        <span className="choice-text">{choice.text}</span>
+                      </label>
+                      <div className="choice-actions">
+                        {choice.correct ? (
+                          <span className="choice-correct-badge">✓ 정답</span>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn-set-answer-quick"
+                            disabled={busy}
+                            onClick={() => setChoiceAsCorrectAndSave(choice.id)}
+                            title="이 보기를 정답으로 지정하고 즉시 저장 및 Build합니다"
+                          >
+                            정답으로 지정
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="review-actions-column">
+                  {selected.length > 0 && (
+                    <button
+                      type="button"
+                      className="btn-register-action"
+                      disabled={busy}
+                      onClick={setSelectedChoicesAsCorrectAndSave}
+                    >
+                      선택한 보기 ({selected.map((id) => settings.choices.find((c) => c.id === id)?.label).join(", ")})를 정답으로 등록 및 저장
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    disabled={!hasAnswers || !selected.length}
+                    onClick={check}
+                  >
+                    정답 확인 (채점 테스트)
+                  </button>
+                </div>
+              </>
+            ) : oxMode ? (
+              <>
+                <div className="ox-inputs-list">
+                  {settings.answers.length > 0
+                    ? settings.answers.map((_, index) => (
+                        <label key={index} className="ox-input-item">
+                          항목 {index + 1}
+                          <select
+                            value={responses[index] ?? ""}
+                            onChange={(event) => {
+                              setResult(null);
+                              setResponses((values) =>
+                                settings.answers.map((_, i) => (i === index ? event.target.value : values[i] ?? "")),
+                              );
+                            }}
+                          >
+                            <option value="">선택</option>
+                            <option value="O">O</option>
+                            <option value="X">X</option>
+                          </select>
+                        </label>
+                      ))
+                    : [0, 1, 2].map((index) => (
+                        <label key={index} className="ox-input-item">
+                          항목 {index + 1}
+                          <select
+                            value={responses[index] ?? ""}
+                            onChange={(event) => {
+                              setResult(null);
+                              const copy = [...responses];
+                              copy[index] = event.target.value;
+                              setResponses(copy);
+                            }}
+                          >
+                            <option value="">선택</option>
+                            <option value="O">O</option>
+                            <option value="X">X</option>
+                          </select>
+                        </label>
+                      ))}
+                </div>
+
+                <div className="review-actions-column">
+                  <button
+                    type="button"
+                    className="btn-register-action"
+                    disabled={busy || responses.length === 0 || responses.some((r) => !/^[OX]$/.test(r))}
+                    onClick={registerOxAnswersAndSave}
+                  >
+                    선택한 O/X를 정답으로 등록 및 저장
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!hasAnswers || responses.length === 0 || responses.some((r) => !r)}
+                    onClick={check}
+                  >
+                    정답 확인 (채점 테스트)
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* panel_input or canvas_slots */}
+                {settings.answers.length > 1 ? <button type="button" onClick={() => setEditing(true)}>여러 정답을 항목별로 수정하기</button> : !hasAnswers ? (
+                  <div className="direct-answer-input-box">
+                    <label>
+                      새 정답 값 입력:
+                      <input
+                        type="text"
+                        placeholder="정답 입력 (예: 25)"
+                        value={customInputAnswer}
+                        onChange={(e) => setCustomInputAnswer(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && customInputAnswer.trim()) {
+                            registerDirectInputAnswerAndSave(customInputAnswer);
+                          }
+                        }}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      className="btn-register-action"
+                      disabled={busy || !customInputAnswer.trim()}
+                      onClick={() => registerDirectInputAnswerAndSave(customInputAnswer)}
+                    >
+                      입력한 값을 정답으로 등록 및 저장
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="edit-answer-toggle-row">
+                      <button
+                        type="button"
+                        className="btn-link"
+                        onClick={() => setShowInputEdit(!showInputEdit)}
+                      >
+                        {showInputEdit ? "정답 수정 닫기" : "다른 정답으로 직접 변경하기"}
+                      </button>
+                    </div>
+                    {showInputEdit && (
+                      <div className="direct-answer-input-box">
+                        <label>
+                          새 정답 값:
+                          <input
+                            type="text"
+                            placeholder="새 정답 입력"
+                            value={customInputAnswer}
+                            onChange={(e) => setCustomInputAnswer(e.target.value)}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          className="btn-register-action"
+                          disabled={busy || !customInputAnswer.trim()}
+                          onClick={() => registerDirectInputAnswerAndSave(customInputAnswer)}
+                        >
+                          새 정답으로 수정 및 저장
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                <div className="test-solve-box">
+                  {inputAnswers.map((answer, index) => <label key={index}>
+                    학생 답안 {index + 1}
+                    <span className="review-answer-input-with-unit">
+                      <input
+                        aria-label={`학생 답안 ${index + 1}`}
+                        value={responses[index] ?? ""}
+                        placeholder="답안을 입력해 보세요"
+                        onChange={(event) => {
+                          setResult(null);
+                          setResponses(values => inputAnswers.map((_, i) => i === index ? event.target.value : values[i] ?? ""));
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && hasAnswers && settings.answers.every((_, i) => responses[i]?.trim())) {
+                            check();
+                          }
+                        }}
+                        autoComplete="off"
+                      />
+                      {answer.unit ? <b>{answer.unit}</b> : null}
+                    </span>
+                  </label>)}
+                  <button
+                    type="button"
+                    disabled={!hasAnswers || !settings.answers.every((_, index) => responses[index]?.trim())}
+                    onClick={check}
+                  >
+                    정답 확인
+                  </button>
+                </div>
+              </>
+            )}
+
+            {result && (
+              <p
+                role="status"
+                className={`review-result-msg ${result.startsWith("✓") ? "success" : "failure"}`}
+              >
+                {result}
+              </p>
+            )}
+            <p className="review-help">
+              등록된 정답과 비교하는 검수용 채점입니다. 문항과 풀이의 타당성도 함께 확인해 주세요.
+            </p>
+          </div>
+        </>
+      )}
+      {syncPanel}
+    </aside>
+  );
+}

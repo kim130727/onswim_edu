@@ -1,0 +1,247 @@
+/* ==========================================================================
+   ModuMath 3-Tier Design Tokens (Primitive -> Semantic -> Component)
+   Shared by: Student Web (/student/), Capacitor App, and Konva Web Editor
+   ========================================================================== */
+
+:root {
+  /* Tier 1: Primitives */
+  --mm-p-white: #ffffff;
+  --mm-p-paper-50: #faf9f6;
+  --mm-p-paper-100: #f3f1ec;
+  --mm-p-slate-50: #f7f8fa;
+  --mm-p-slate-100: #edf0f5;
+  --mm-p-slate-200: #dce2ec;
+  --mm-p-slate-300: #c2ccdc;
+  --mm-p-slate-400: #8c98ab;
+  --mm-p-slate-500: #5b677b;
+  --mm-p-slate-700: #334155;
+  --mm-p-slate-900: #162032;
+
+  --mm-p-cobalt-50: #edf4ff;
+  --mm-p-cobalt-100: #d8e7ff;
+  --mm-p-cobalt-500: #2563eb;
+  --mm-p-cobalt-600: #1d4ed8;
+  --mm-p-cobalt-700: #1e40af;
+
+  --mm-p-teal-50: #ecfeff;
+  --mm-p-teal-100: #ccfbf1;
+  --mm-p-teal-600: #0f766e;
+  --mm-p-teal-700: #115e59;
+
+  --mm-p-emerald-50: #ecfdf5;
+  --mm-p-emerald-200: #a7f3d0;
+  --mm-p-emerald-600: #059669;
+  --mm-p-emerald-800: #065f46;
+
+  --mm-p-amber-50: #fffbeb;
+  --mm-p-amber-200: #fde68a;
+  --mm-p-amber-600: #d97706;
+  --mm-p-amber-800: #92400e;
+
+  --mm-p-red-50: #fef2f2;
+  --mm-p-red-200: #fecaca;
+  --mm-p-red-600: #dc2626;
+  --mm-p-red-800: #991b1b;
+
+  --mm-p-font-sans: "Noto Sans KR", "Noto Sans", "Pretendard", "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mm-p-font-mono: ui-monospace, "Cascadia Mono", "Consolas", monospace;
+
+  --mm-p-space-1: 4px;
+  --mm-p-space-2: 8px;
+  --mm-p-space-3: 12px;
+  --mm-p-space-4: 16px;
+  --mm-p-space-5: 20px;
+  --mm-p-space-6: 24px;
+  --mm-p-space-8: 32px;
+
+  --mm-p-radius-xs: 6px;
+  --mm-p-radius-sm: 10px;
+  --mm-p-radius-md: 14px;
+  --mm-p-radius-lg: 18px;
+  --mm-p-radius-pill: 9999px;
+
+  --mm-p-shadow-sm: 0 1px 2px rgba(22, 32, 50, 0.06);
+  --mm-p-shadow-md: 0 4px 14px rgba(22, 32, 50, 0.08);
+  --mm-p-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Tier 2: Semantic Tokens (default = Student App: warm paper & scholarly clarity) */
+  --mm-color-bg-app: var(--mm-p-paper-50);
+  --mm-color-bg-surface: var(--mm-p-white);
+  --mm-color-bg-subtle: var(--mm-p-paper-100);
+  --mm-color-bg-canvas-surround: var(--mm-p-slate-100);
+
+  --mm-color-text-primary: var(--mm-p-slate-900);
+  --mm-color-text-secondary: var(--mm-p-slate-700);
+  --mm-color-text-muted: var(--mm-p-slate-500);
+  --mm-color-text-on-primary: var(--mm-p-white);
+
+  --mm-color-border-subtle: var(--mm-p-slate-200);
+  --mm-color-border-strong: var(--mm-p-slate-300);
+  --mm-color-border-focus: var(--mm-p-cobalt-500);
+
+  --mm-color-primary: var(--mm-p-cobalt-600);
+  --mm-color-primary-hover: var(--mm-p-cobalt-700);
+  --mm-color-primary-soft: var(--mm-p-cobalt-50);
+  --mm-color-primary-border: var(--mm-p-cobalt-100);
+
+  --mm-color-accent: var(--mm-p-teal-600);
+  --mm-color-accent-hover: var(--mm-p-teal-700);
+  --mm-color-accent-soft: var(--mm-p-teal-50);
+
+  --mm-color-success: var(--mm-p-emerald-600);
+  --mm-color-success-bg: var(--mm-p-emerald-50);
+  --mm-color-success-border: var(--mm-p-emerald-200);
+  --mm-color-success-text: var(--mm-p-emerald-800);
+
+  --mm-color-warning: var(--mm-p-amber-600);
+  --mm-color-warning-bg: var(--mm-p-amber-50);
+  --mm-color-warning-border: var(--mm-p-amber-200);
+  --mm-color-warning-text: var(--mm-p-amber-800);
+
+  --mm-color-danger: var(--mm-p-red-600);
+  --mm-color-danger-bg: var(--mm-p-red-50);
+  --mm-color-danger-border: var(--mm-p-red-200);
+  --mm-color-danger-text: var(--mm-p-red-800);
+
+  --mm-color-disabled-bg: var(--mm-p-slate-100);
+  --mm-color-disabled-text: var(--mm-p-slate-400);
+
+  --mm-focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.28);
+  --mm-motion-fast: 120ms;
+  --mm-motion-base: 180ms;
+
+  /* Tier 3: Component Tokens */
+  --mm-touch-min: 48px;
+  --mm-card-bg: var(--mm-color-bg-surface);
+  --mm-card-border: var(--mm-color-border-subtle);
+  --mm-card-radius: var(--mm-p-radius-md);
+  --mm-card-shadow: var(--mm-p-shadow-sm);
+
+  --mm-btn-radius: var(--mm-p-radius-sm);
+  --mm-btn-primary-bg: var(--mm-color-primary);
+  --mm-btn-primary-bg-hover: var(--mm-color-primary-hover);
+  --mm-btn-primary-text: var(--mm-color-text-on-primary);
+
+  --mm-input-bg: var(--mm-color-bg-surface);
+  --mm-input-border: var(--mm-color-border-strong);
+  --mm-input-radius: var(--mm-p-radius-sm);
+
+  --mm-choice-bg: var(--mm-color-primary-soft);
+  --mm-choice-bg-selected: var(--mm-color-primary);
+  --mm-choice-border: var(--mm-color-primary-border);
+  --mm-choice-border-selected: var(--mm-color-primary);
+  --mm-choice-text: var(--mm-color-text-primary);
+  --mm-choice-text-selected: var(--mm-color-text-on-primary);
+
+  --mm-canvas-choice-border: rgba(37, 99, 235, 0.38);
+  --mm-canvas-choice-border-selected: var(--mm-color-primary);
+  --mm-canvas-choice-bg: rgba(37, 99, 235, 0.03);
+  --mm-canvas-choice-bg-selected: rgba(29, 78, 216, 0.12);
+}
+
+/* Editor surface overrides: VISUAL_DENSITY=8, MOTION_INTENSITY=2, low-fatigue precision */
+[data-mm-surface="editor"] {
+  --mm-color-bg-app: var(--mm-p-slate-100);
+  --mm-color-bg-subtle: var(--mm-p-slate-50);
+  --mm-touch-min: 34px;
+  --mm-motion-fast: 90ms;
+  --mm-motion-base: 130ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-mm-surface="editor"] {
+    --mm-motion-fast: 0ms;
+    --mm-motion-base: 0ms;
+  }
+}
+
+/* Accessible focus rings across interactive controls */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--mm-color-border-focus);
+  outline-offset: 2px;
+}
+
+
+/* Dark Mode Semantic Token Overrides (Editor Studio & Optional Student Dark) */
+[data-theme="dark"] {
+  --mm-color-bg-app: #0f172a;
+  --mm-color-bg-surface: #1e293b;
+  --mm-color-bg-subtle: #162033;
+  --mm-color-bg-canvas-surround: #0b1120;
+
+  --mm-color-text-primary: #f1f5f9;
+  --mm-color-text-secondary: #cbd5e1;
+  --mm-color-text-muted: #94a3b8;
+  --mm-color-text-on-primary: #ffffff;
+
+  --mm-color-border-subtle: #2b384e;
+  --mm-color-border-strong: #3f506b;
+  --mm-color-border-focus: #60a5fa;
+
+  --mm-color-primary: #3b82f6;
+  --mm-color-primary-hover: #60a5fa;
+  --mm-color-primary-soft: rgba(59, 130, 246, 0.16);
+  --mm-color-primary-border: rgba(96, 165, 250, 0.35);
+
+  --mm-color-accent: #14b8a6;
+  --mm-color-accent-hover: #2dd4bf;
+  --mm-color-accent-soft: rgba(20, 184, 166, 0.16);
+
+  --mm-color-success: #10b981;
+  --mm-color-success-bg: rgba(16, 185, 129, 0.14);
+  --mm-color-success-border: rgba(52, 211, 153, 0.35);
+  --mm-color-success-text: #6ee7b7;
+
+  --mm-color-warning: #f59e0b;
+  --mm-color-warning-bg: rgba(245, 158, 11, 0.14);
+  --mm-color-warning-border: rgba(251, 191, 36, 0.35);
+  --mm-color-warning-text: #fcd34d;
+
+  --mm-color-danger: #ef4444;
+  --mm-color-danger-bg: rgba(239, 68, 68, 0.16);
+  --mm-color-danger-border: rgba(248, 113, 113, 0.38);
+  --mm-color-danger-text: #fca5a5;
+
+  --mm-color-disabled-bg: #172133;
+  --mm-color-disabled-text: #64748b;
+
+  --mm-p-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --mm-p-shadow-md: 0 6px 18px rgba(0, 0, 0, 0.42);
+}
+
+[data-mm-surface="editor"][data-theme="dark"] {
+  --mm-color-bg-app: #0f172a;
+  --mm-color-bg-subtle: #162033;
+}
+
+@keyframes mm-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.mm-skeleton {
+  border-radius: var(--mm-p-radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--mm-color-bg-subtle) 25%,
+    var(--mm-color-border-subtle) 50%,
+    var(--mm-color-bg-subtle) 75%
+  );
+  background-size: 200% 100%;
+  animation: mm-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm-skeleton {
+    animation: none;
+  }
+}

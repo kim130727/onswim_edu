@@ -1,0 +1,2338 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ProblemList, problemLanguages, type ProblemLanguage } from "../components/ProblemList";
+import {
+  applyLayoutPatches,
+  buildProblem,
+  createProblem,
+  loadProblem,
+  problemDetailToCanonicalProblem,
+  saveTutorFlow,
+  saveAnswerReview,
+  type ProblemDetailResponse,
+  type TutorRendererStep,
+  type TutorRendererOverlay,
+} from "../api/editorApi";
+import { problemJsonToLayoutPatches } from "../utils/problemJsonToLayoutPatches";
+import type { BaseTenBlockKind, EditorShape, EditorShapeDocument, InputInteraction, InputStyle } from "../types/editorShape";
+import type { ProblemJson } from "../types/problem";
+import { scalePathData } from "../utils/pathData";
+import sampleProblem from "../samples/sample_problem.json";
+import { connectorArrowForPreset, connectorKindForPreset } from "./connectorGeometry";
+import { editorDocumentToProblemJson, estimateTextWidth, fittedTextHeight, normalizedTextBoxHeight, normalizedTextBoxWidth, problemJsonToEditorDocument } from "./converters";
+import { KONVA_PREVIEW_FONT_FAMILY } from "./fonts";
+import { JsonImportExport } from "./JsonImportExport";
+import { KonvaStage, type CanvasPoint } from "./KonvaStage";
+import { KonvaToolbar, type ShapePreset } from "./KonvaToolbar";
+import { KidAvatarMakerModal } from "./avatar/KidAvatarMakerModal";
+import type { AvatarConfig } from "./avatar/avatarParts";
+import { avatarTargets, replaceAvatarShapes } from "./avatar/avatarReplacement";
+import { PropertyPanel } from "./PropertyPanel";
+import { PlacementSyncPanel } from "./PlacementSyncPanel";
+import { answerChoicesFromArtifacts, inferAnswerPresentationMode, reviewSettings, sortChoicesByLabel, type AnswerChoiceReview, type AnswerReviewSettings, type AnswerBindingOption } from "./answerReview";
+import { AnswerReviewPanel } from "./AnswerReviewPanel";
+import { AnswerReviewSyncPanel } from "./AnswerReviewSyncPanel";
+import { TutorFlowPanel } from "./TutorFlowPanel";
+import { EditorPublication } from "./EditorPublication";
+import { ReactStudentPreview } from "./ReactStudentPreview";
+
+const initialProblem = sampleProblem as ProblemJson;
+type SidePanelTab = "properties" | "answers" | "flow" | "json";
+type SaveStatus = "saved" | "saving" | "unsaved" | "building" | "built" | "error";
+type CachedProblemRequest = { expiresAt: number; promise: Promise<ProblemDetailResponse> };
+
+export function EditorKonva() {
+  const [baseProblemJson, setBaseProblemJson] = useState<ProblemJson>(initialProblem);
+  const [document, setDocument] = useState<EditorShapeDocument>(() => problemJsonToEditorDocument(initialProblem));
+  const builtDocumentRef = useRef<EditorShapeDocument | null>(null);
+  const [previewArtifacts, setPreviewArtifacts] = useState<{
+    semantic: Record<string, unknown> | null;
+    solvable: Record<string, unknown> | null;
+    layout: import("../api/editorApi").LayoutDocument | null;
+    renderer: import("../api/editorApi").RendererDocument | null;
+    canvas_presentation?: import("../api/editorApi").CanvasPresentation | null;
+  }>({ semantic: null, solvable: null, layout: null, renderer: null });
+  const [selectedShapeIds, setSelectedShapeIds] = useState<string[]>([]);
+  const [selectedProblemId, setSelectedProblemId] = useState(initialProblem.id);
+  const [openingProblemId, setOpeningProblemId] = useState<string | null>(null);
+  const problemRequestSequenceRef = useRef(0);
+  const problemLoadCacheRef = useRef<Map<string, CachedProblemRequest>>(new Map());
+  const [activeProblemLanguage, setActiveProblemLanguage] = useState<ProblemLanguage>("ko");
+  const [message, setMessage] = useState("Loaded sample problem in Konva editor.");
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>("saved");
+  const [drawingPreset, setDrawingPreset] = useState<ShapePreset | null>(null);
+  const [answerReviewMode, setAnswerReviewMode] = useState(false);
+  const [studentPreviewOpen, setStudentPreviewOpen] = useState(false);
+  const [explorerWidth, setExplorerWidth] = useState<number>(() => {
+    try {
+      const saved = Number(window.localStorage.getItem("modu_math_explorer_width_v1"));
+      if (Number.isFinite(saved) && saved >= 180 && saved <= 560) return saved;
+    } catch {
+      // Ignore storage errors.
+    }
+    return 240;
+  });
+  const [resizingExplorer, setResizingExplorer] = useState(false);
+
+  const startExplorerResize = (event: React.PointerEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const startX = event.clientX;
+    const startWidth = explorerWidth;
+    setResizingExplorer(true);
+    const onMove = (moveEvent: PointerEvent) => {
+      const next = Math.max(180, Math.min(560, Math.round(startWidth + (moveEvent.clientX - startX))));
+      setExplorerWidth(next);
+    };
+    const onUp = (upEvent: PointerEvent) => {
+      const finalWidth = Math.max(180, Math.min(560, Math.round(startWidth + (upEvent.clientX - startX))));
+      setExplorerWidth(finalWidth);
+      setResizingExplorer(false);
+      try {
+        window.localStorage.setItem("modu_math_explorer_width_v1", String(finalWidth));
+      } catch {
+        // Ignore storage errors.
+      }
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+  const [editorTheme, setEditorTheme] = useState<"light" | "dark">(() => {
+    try {
+      return window.localStorage.getItem("modu_math_editor_theme_v1") === "dark" ? "dark" : "light";
+    } catch {
+      return "light";
+    }
+  });
+  const toggleEditorTheme = () => {
+    setEditorTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      try {
+        window.localStorage.setItem("modu_math_editor_theme_v1", next);
+      } catch {
+        // Ignore storage errors.
+      }
+      return next;
+    });
+  };
+  const [highlightedAnswerIndex, setHighlightedAnswerIndex] = useState<number | null>(null);
+  const [draftReview, setDraftReview] = useState<AnswerReviewSettings | null>(null);
+  const [problemListVersion, setProblemListVersion] = useState(0);
+  const [activeSidePanel, setActiveSidePanel] = useState<SidePanelTab>("properties");
+  const [explorerOpen, setExplorerOpen] = useState(true);
+  const [inspectorOpen, setInspectorOpen] = useState(true);
+  const [isAvatarModalOpen, setAvatarModalOpen] = useState(false);
+  const [avatarTargetId, setAvatarTargetId] = useState("");
+  const avatarReplacementTargets = useMemo(() => avatarTargets(document.shapes), [document.shapes]);
+  const [activeTutorStepId, setActiveTutorStepId] = useState<string | null>(null);
+  const [activeTutorFrameIndex, setActiveTutorFrameIndex] = useState(0);
+  const [activeTutorOverlayIndex, setActiveTutorOverlayIndex] = useState<number | null>(null);
+  const [draftTutorFlow, setDraftTutorFlow] = useState<TutorRendererStep[] | null>(null);
+  const clipboardRef = useRef<EditorShape[]>([]);
+  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
+  const idPrefix = useMemo(() => `konva_${Date.now()}`, []);
+
+  const selectedShape = selectedShapeIds.length === 1 ? document.shapes.find((shape) => shape.id === selectedShapeIds[0]) ?? null : null;
+  const selectedShapes = useMemo(() => {
+    const selected = new Set(selectedShapeIds);
+    return document.shapes.filter((shape) => selected.has(shape.id));
+  }, [document.shapes, selectedShapeIds]);
+  const selectedAnswerSlotShapeIds = useMemo(() => {
+    const selected = new Set(selectedShapeIds);
+    return document.shapes.filter((shape) => selected.has(shape.id) && isAnswerSlotShape(shape)).map((shape) => shape.id);
+  }, [document.shapes, selectedShapeIds]);
+  const answerBindingOptions = useMemo(
+    () => {
+      const saved = answerOptionsFromArtifacts(previewArtifacts.solvable, previewArtifacts.semantic);
+      if (!draftReview || draftReview.mode === "choice" || draftReview.mode === "grouped_choice") return saved;
+      return draftReview.answers.map((answer, index) => ({ index, value: answer.value, ref: answer.ref, unit: answer.unit,
+        label: `답 ${index + 1}: ${answer.value || "미입력"}${answer.unit ? ` ${answer.unit}` : ""}` }));
+    },
+    [draftReview, previewArtifacts.semantic, previewArtifacts.solvable],
+  );
+  const answerPresentationMode = useMemo(
+    () => inferAnswerPresentationMode(document.shapes, previewArtifacts.semantic, previewArtifacts.solvable),
+    [document.shapes, previewArtifacts.semantic, previewArtifacts.solvable],
+  );
+  const answerChoiceReviews = useMemo(
+    () => {
+      const existing = answerChoicesFromArtifacts(previewArtifacts.semantic, previewArtifacts.solvable, answerBindingOptions);
+      const choices = document.shapes.filter((shape) => shape.type === "text" && shape.semanticRole === "choice");
+      return existing.length ? existing : choices.length ? choices.map((shape, index) => ({
+        id: shape.id, label: existing[index]?.label ?? String(index + 1),
+        text: shape.type === "text" ? shape.text : "", correct: existing[index]?.correct ?? false,
+      })) : existing;
+    },
+    [document.shapes, answerBindingOptions, previewArtifacts.semantic, previewArtifacts.solvable],
+  );
+  const diagramRegionIds = useMemo(() => new Set(
+    (previewArtifacts.layout?.regions ?? [])
+      .filter((region) => region.role === "diagram" || region.role === "canvas")
+      .map((region) => region.id),
+  ), [previewArtifacts.layout]);
+  const effectiveTutorFlow = draftTutorFlow ?? previewArtifacts.renderer?.tutor_flow ?? [];
+  const activeReview = useMemo(() => draftReview ?? reviewSettings(previewArtifacts.semantic, answerBindingOptions, answerChoiceReviews, answerPresentationMode), [draftReview, previewArtifacts.semantic, answerBindingOptions, answerChoiceReviews, answerPresentationMode]);
+  const canvasChoiceCandidates = useMemo(
+    () => detectCanvasChoiceCandidates(document.shapes, activeReview.answers),
+    [document.shapes, activeReview.answers],
+  );
+  const activeTutorFrames = useMemo(() => {
+    if (!activeTutorStepId) return [];
+    const step = effectiveTutorFlow.find((item) => item.step_id === activeTutorStepId);
+    if (!step) return [];
+    return step.frames?.length ? step.frames : [{ id: `${activeTutorStepId}.frame.1`, overlays: step.overlays ?? [] }];
+  }, [activeTutorStepId, effectiveTutorFlow]);
+  const activeTutorOverlays = activeTutorFrames[activeTutorFrameIndex]?.overlays ?? [];
+  const selectTutorFrame = useCallback((stepId: string, frameIndex: number) => {
+    setActiveTutorStepId(stepId);
+    setActiveTutorFrameIndex(Math.max(0, frameIndex));
+    setActiveTutorOverlayIndex(null);
+  }, []);
+  const selectTutorOverlay = useCallback((overlayIndex: number | null) => {
+    setActiveTutorOverlayIndex(overlayIndex);
+    if (overlayIndex !== null) setActiveSidePanel("flow");
+  }, []);
+
+  const changeAnswerReviewMode = useCallback((reviewing: boolean) => {
+    if (reviewing) {
+      setSelectedShapeIds([]);
+      setDrawingPreset(null);
+      setActiveTutorOverlayIndex(null);
+    }
+    setAnswerReviewMode(reviewing);
+  }, []);
+
+  const setProblem = useCallback((problem: ProblemJson, nextMessage: string, artifacts = previewArtifacts) => {
+    setBaseProblemJson(problem);
+    setPreviewArtifacts(artifacts);
+    const nextDocument = problemJsonToEditorDocument(problem);
+    builtDocumentRef.current = nextDocument;
+    setDocument(nextDocument);
+    setSelectedProblemId(problem.id);
+    setOpeningProblemId(null);
+    setSelectedShapeIds([]);
+    setActiveTutorStepId(null);
+    setActiveTutorOverlayIndex(null);
+    setDraftTutorFlow(null);
+    setDraftReview(null);
+    setMessage(nextMessage);
+    setSaveStatus("saved");
+  }, [previewArtifacts]);
+
+  const loadProblemFast = useCallback((problemId: string) => {
+    const now = Date.now();
+    const cached = problemLoadCacheRef.current.get(problemId);
+    if (cached && cached.expiresAt > now) return cached.promise;
+    const promise = loadProblem(problemId).catch((error) => {
+      problemLoadCacheRef.current.delete(problemId);
+      throw error;
+    });
+    problemLoadCacheRef.current.set(problemId, { promise, expiresAt: now + 3000 });
+    return promise;
+  }, []);
+
+  const prefetchProblem = useCallback((problemId: string) => {
+    if (problemId === selectedProblemId) return;
+    void loadProblemFast(problemId).catch(() => undefined);
+  }, [loadProblemFast, selectedProblemId]);
+
+  const openProblem = useCallback(
+    async (problemId: string) => {
+      if (draftReview && saveStatus === "unsaved" && !window.confirm("저장하지 않은 검수 수정이 있습니다. 수정 내용을 버리고 다른 문제를 열까요?")) return;
+      if (problemId === selectedProblemId && openingProblemId === null) return;
+      const requestSequence = ++problemRequestSequenceRef.current;
+      setOpeningProblemId(problemId);
+      setMessage(`Loading ${problemId}...`);
+      try {
+        const detail = await loadProblemFast(problemId);
+        if (requestSequence !== problemRequestSequenceRef.current) return;
+        const reviewCount = detail.translation_review_paths?.length ?? 0;
+        const loadedMessage = detail.dsl_storage === "locale_delta"
+          ? `한국어 원본을 공유하는 번역 문제입니다. 이 언어에서 수정한 내용은 이 언어에만 저장됩니다.${reviewCount ? ` 원본 변경으로 번역 ${reviewCount}곳의 검토가 필요합니다.` : ""}`
+          : `Loaded ${problemId}.`;
+        setProblem(problemDetailToCanonicalProblem(detail), loadedMessage, {
+          semantic: detail.semantic,
+          solvable: detail.solvable,
+          layout: detail.layout,
+          renderer: detail.renderer,
+          canvas_presentation: detail.canvas_presentation,
+        });
+        const problemLanguage = problemLanguageFromId(detail.problem_id);
+        if (problemLanguage) setActiveProblemLanguage(problemLanguage);
+      } catch (error) {
+        if (requestSequence !== problemRequestSequenceRef.current) return;
+        setOpeningProblemId(null);
+        setMessage(`Could not load ${problemId}: ${String(error)}`);
+      }
+    },
+    [setProblem, draftReview, loadProblemFast, openingProblemId, saveStatus, selectedProblemId],
+  );
+
+  const initialLinkOpened = useRef(false);
+  useEffect(() => {
+    if (initialLinkOpened.current) return;
+    initialLinkOpened.current = true;
+    const requested = new URLSearchParams(window.location.search).get("problem");
+    if (requested) void openProblem(requested);
+  }, [openProblem]);
+
+  const createNewProblem = useCallback(async () => {
+    const rawName = window.prompt("새 문제 이름 또는 경로", defaultNewProblemId());
+    if (rawName === null) return;
+    const problemId = normalizeNewProblemId(rawName);
+    if (!problemId) {
+      setMessage("새 문제 이름을 입력해 주세요.");
+      return;
+    }
+
+    setMessage(`Creating ${problemId}...`);
+    try {
+      const detail = await createProblem(problemId, fileTitleFromProblemId(problemId));
+      setProblem(problemDetailToCanonicalProblem(detail), `Created ${detail.problem_id}. Start filling slots, then save/build when ready.`, {
+        semantic: detail.semantic,
+        solvable: detail.solvable,
+        layout: detail.layout,
+        renderer: detail.renderer,
+      });
+      setProblemListVersion((version) => version + 1);
+    } catch (error) {
+      setMessage(`Could not create ${problemId}: ${String(error)}`);
+    }
+  }, [setProblem]);
+
+  const updateShape = useCallback((nextShape: EditorShape) => {
+    setSaveStatus("unsaved");
+    setDocument((current) => ({
+      ...current,
+      shapes: current.shapes.map((shape) => (shape.id === nextShape.id ? nextShape : shape)),
+    }));
+  }, []);
+
+  const updateShapes = useCallback((nextShapes: EditorShape[]) => {
+    const nextShapeById = new Map(nextShapes.map((shape) => [shape.id, shape]));
+    if (nextShapeById.size) setSaveStatus("unsaved");
+    setDocument((current) => ({
+      ...current,
+      shapes: current.shapes.map((shape) => nextShapeById.get(shape.id) ?? shape),
+    }));
+  }, []);
+
+  const patchSelectedShape = useCallback(
+    (patch: Partial<EditorShape>) => {
+      if (!selectedShape) return;
+      updateShape(applyAutoSizing({ ...selectedShape, ...patch } as EditorShape, selectedShape));
+    },
+    [selectedShape, updateShape],
+  );
+
+  const scaleSelectedShapes = useCallback(
+    (scalePercent: number) => {
+      if (!selectedShapes.length) return;
+      const scale = Math.max(1, Number.isFinite(scalePercent) ? scalePercent : 100) / 100;
+      const bounds = selectionBounds(selectedShapes);
+      updateShapes(selectedShapes.map((shape) => scaleShapeAround(shape, bounds.x, bounds.y, scale)));
+    },
+    [selectedShapes, updateShapes],
+  );
+
+  const setSelectedTextRole = useCallback((role: string) => {
+    updateShapes(selectedShapes.filter((shape) => shape.type === "text").map((shape) => ({
+      ...shape,
+      semanticRole: role === "top" ? (shape.semanticRole === "instruction" ? "instruction" : "question") : role,
+      semanticRoleSource: role ? "explicit" : "inferred",
+    })));
+  }, [selectedShapes, updateShapes]);
+
+  const addShape = useCallback(
+    (shape: EditorShape) => {
+      setSaveStatus("unsaved");
+      setDocument((current) => ({ ...current, shapes: [...current.shapes, shape] }));
+      setSelectedShapeIds([shape.id]);
+    },
+    [],
+  );
+
+  const addShapes = useCallback((shapes: EditorShape[]) => {
+    if (!shapes.length) return;
+    setSaveStatus("unsaved");
+    setDocument((current) => ({ ...current, shapes: [...current.shapes, ...shapes] }));
+    setSelectedShapeIds(shapes.map((shape) => shape.id));
+  }, []);
+
+  const nextId = useCallback((kind: string) => `${idPrefix}_${kind}_${Math.round(performance.now())}`, [idPrefix]);
+  const fitInsertBox = useCallback(
+    (width: number, height: number, minWidth = 24, minHeight = 24) => {
+      const pad = 10;
+      const maxWidth = Math.max(minWidth, document.canvas.width - pad * 2);
+      const maxHeight = Math.max(minHeight, document.canvas.height - pad * 2);
+      const fittedWidth = Math.max(minWidth, Math.min(width, maxWidth));
+      const fittedHeight = Math.max(minHeight, Math.min(height, maxHeight));
+      return {
+        x: clampNumber((document.canvas.width - fittedWidth) / 2, pad, Math.max(pad, document.canvas.width - fittedWidth - pad)),
+        y: clampNumber((document.canvas.height - fittedHeight) / 2, pad, Math.max(pad, document.canvas.height - fittedHeight - pad)),
+        width: fittedWidth,
+        height: fittedHeight,
+      };
+    },
+    [document.canvas.height, document.canvas.width],
+  );
+
+  const insertShape = useCallback(
+    (preset: ShapePreset) => {
+      if (isDragDrawPreset(preset)) {
+        setDrawingPreset(preset);
+        setMessage(`${shapePresetLabel(preset)}: 캔버스에서 드래그해서 그리세요.`);
+        return;
+      }
+      addShape(createShapeFromPreset(preset, nextId(preset)));
+    },
+    [addShape, nextId],
+  );
+
+  const setAnswerSlotState = useCallback(
+    (shapeIds: string[], enabled: boolean) => {
+      const ids = new Set(shapeIds);
+      const targets = document.shapes.filter((shape) => ids.has(shape.id) && isAnswerSlotShape(shape));
+      if (!targets.length) return;
+      const startOrder = nextAnswerOrder(document.shapes);
+      updateShapes(
+        targets.map((shape, index) =>
+          enabled
+            ? ({
+                ...shape,
+                interaction: shape.interaction ?? defaultInteractionForShape(shape, startOrder + index, answerBindingOptions),
+                input_style: shape.input_style ?? defaultInputStyle(),
+              } as EditorShape)
+            : ({ ...shape, interaction: undefined, input_style: undefined } as EditorShape),
+        ),
+      );
+    },
+    [answerBindingOptions, document.shapes, updateShapes],
+  );
+
+  const markSelectedAsAnswerSlot = useCallback(() => {
+    if (!selectedAnswerSlotShapeIds.length) {
+      setMessage("Select a rectangle, circle, path, or text shape first.");
+      return;
+    }
+    setAnswerSlotState(selectedAnswerSlotShapeIds, true);
+    setMessage(`Marked ${selectedAnswerSlotShapeIds.length} shape(s) as AnswerSlot.`);
+  }, [selectedAnswerSlotShapeIds, setAnswerSlotState]);
+
+  const addDrawnShape = useCallback(
+    (preset: ShapePreset, start: CanvasPoint, end: CanvasPoint, points?: CanvasPoint[]) => {
+      addShape(createShapeFromDrag(preset, nextId(preset), start, end, points));
+    },
+    [addShape, nextId],
+  );
+
+  const addText = useCallback(() => {
+    const text = "Text";
+    const fontSize = 30;
+    const desiredWidth = autoTextWidth(text, fontSize);
+    const box = fitInsertBox(desiredWidth, fittedTextHeight(text, fontSize, desiredWidth), 24, 24);
+    addShape({
+      id: nextId("text"),
+      type: "text",
+      x: box.x,
+      y: box.y,
+      text,
+      fontSize,
+      fontFamily: KONVA_PREVIEW_FONT_FAMILY,
+      fill: "#111827",
+      width: box.width,
+      height: box.height,
+      lineHeight: 1.25,
+      sourceKind: "text",
+    });
+  }, [addShape, fitInsertBox, nextId]);
+
+  const addMathShape = useCallback(
+    (latex: string, width?: number, height?: number) => {
+      const fontSize = 30;
+      const fracSize = fractionMathSize(latex, fontSize);
+      const targetWidth = width ?? (fracSize ? fracSize.width : 260);
+      const targetHeight = height ?? (fracSize ? fracSize.height : 72);
+      const box = fitInsertBox(targetWidth, targetHeight, 48, 32);
+      addShape({
+        id: nextId("math"),
+        type: "math",
+        x: box.x,
+        y: box.y,
+        latex,
+        width: box.width,
+        height: box.height,
+        fontSize,
+      });
+    },
+    [addShape, fitInsertBox, nextId],
+  );
+
+  const addMath = useCallback(() => {
+    const latex = window.prompt("LaTeX", "x + 1 = 5");
+    if (latex === null) return;
+    addMathShape(latex || "x + 1 = 5");
+  }, [addMathShape]);
+
+  const addProperFraction = useCallback(() => {
+    addMathShape("\\frac{1}{2}");
+  }, [addMathShape]);
+
+  const addMixedFraction = useCallback(() => {
+    addMathShape("1\\frac{1}{2}");
+  }, [addMathShape]);
+
+  const addImage = useCallback(() => {
+    imageFileInputRef.current?.click();
+  }, []);
+
+  const importLocalImage = useCallback(
+    async (file: File) => {
+      if (!file.type.startsWith("image/")) {
+        setMessage(`Unsupported image file: ${file.name}`);
+        return;
+      }
+
+      try {
+        const src = await readFileAsDataUrl(file);
+        const size = await loadImageSize(src);
+        const maxBox = fitInsertBox(360, 260, 24, 24);
+        const fit = fitImageSize(size.width, size.height, maxBox.width, maxBox.height);
+        const box = fitInsertBox(fit.width, fit.height, 24, 24);
+        addShape({
+          id: nextId("image"),
+          type: "image",
+          x: box.x,
+          y: box.y,
+          src,
+          width: fit.width,
+          height: fit.height,
+          preserveAspectRatio: "xMidYMid meet",
+        });
+        setMessage(`Inserted local image: ${file.name}`);
+      } catch (error) {
+        setMessage(`Could not insert image ${file.name}: ${String(error)}`);
+      }
+    },
+    [addShape, fitInsertBox, nextId],
+  );
+
+  const handleInsertAvatar = useCallback(
+    (avatarConfig: AvatarConfig, imageDataUrl: string) => {
+      const target = avatarReplacementTargets.find((item) => item.id === avatarTargetId);
+      const box = target ? selectionBounds(target.shapes) : fitInsertBox(140, 150, 24, 24);
+      const targetWidth = box.width;
+      const targetHeight = box.height;
+      const avatarId = nextId("avatar");
+
+      const newShapes: EditorShape[] = [
+        {
+          id: avatarId,
+          type: "image",
+          x: box.x,
+          y: box.y,
+          src: imageDataUrl,
+          width: targetWidth,
+          height: targetHeight,
+          preserveAspectRatio: "xMidYMid meet",
+          sourceRegionId: target?.shapes[0].sourceRegionId,
+        },
+      ];
+
+      if (avatarConfig.hasSpeechBubble && avatarConfig.speechText) {
+        const text = avatarConfig.speechText;
+        const fontSize = 15;
+        const bubbleWidth = Math.max(130, autoTextWidth(text, fontSize) + 36);
+        const bubbleHeight = 58;
+
+        let bubbleX = box.x + targetWidth + 10;
+        let bubbleY = box.y + 10;
+        if (avatarConfig.bubblePosition === "top-left") {
+          bubbleX = Math.max(20, box.x - bubbleWidth - 10);
+          bubbleY = Math.max(20, box.y - 15);
+        } else if (avatarConfig.bubblePosition === "top-right") {
+          bubbleX = box.x + targetWidth - 10;
+          bubbleY = Math.max(20, box.y - 25);
+        }
+
+        const calloutId = nextId("bubble");
+        const textId = nextId("text");
+
+        newShapes.push({
+          id: calloutId,
+          type: "path",
+          shapePreset: "calloutRound",
+          x: bubbleX,
+          y: bubbleY,
+          width: bubbleWidth,
+          height: bubbleHeight,
+          fill: "#ffffff",
+          stroke: "#1e293b",
+          strokeWidth: 2,
+          d: pathForShapePreset("calloutRound"),
+        });
+
+        newShapes.push({
+          id: textId,
+          type: "text",
+          x: bubbleX + 10,
+          y: bubbleY + 10,
+          width: bubbleWidth - 20,
+          height: bubbleHeight - 20,
+          text,
+          fontSize,
+          fontFamily: KONVA_PREVIEW_FONT_FAMILY,
+          fill: "#1e293b",
+          align: "center",
+          lineHeight: 1.25,
+          sourceKind: "text",
+        });
+      }
+
+      setDocument((prev) => ({
+        ...prev,
+        shapes: replaceAvatarShapes(prev.shapes, target, newShapes),
+      }));
+      setSelectedShapeIds([avatarId]);
+      const framingLabel = avatarConfig.framing === "upper" ? "상반신" : "전신";
+      setMessage(target ? `기존 캐릭터를 새 ${framingLabel} 캐릭터로 교체했습니다. 저장 후 미리보기에도 반영됩니다.` : `어린이 캐릭터(${avatarConfig.gender === "boy" ? "남아" : "여아"}, ${framingLabel})를 캔버스에 삽입했습니다.`);
+    },
+    [fitInsertBox, nextId, avatarReplacementTargets, avatarTargetId],
+  );
+
+  const addTable = useCallback(() => {
+    const rows = promptInteger("Rows", 3, 1, 20);
+    if (rows === null) return;
+    const cols = promptInteger("Columns", 3, 1, 20);
+    if (cols === null) return;
+
+    const desiredCellWidth = 120;
+    const desiredCellHeight = 56;
+    const box = fitInsertBox(cols * desiredCellWidth, rows * desiredCellHeight, cols * 12, rows * 12);
+    const x = box.x;
+    const y = box.y;
+    const cellWidth = box.width / cols;
+    const cellHeight = box.height / rows;
+    const width = box.width;
+    const height = box.height;
+    const base = nextId("table");
+    const shapes: EditorShape[] = [
+      {
+        id: `${base}_outer`,
+        type: "rect",
+        x,
+        y,
+        width,
+        height,
+        fill: "#ffffff",
+        stroke: "#111827",
+        strokeWidth: 1,
+      },
+    ];
+
+    for (let col = 1; col < cols; col += 1) {
+      shapes.push({
+        id: `${base}_v${col}`,
+        type: "line",
+        x: x + col * cellWidth,
+        y,
+        points: [0, 0, 0, height],
+        stroke: "#111827",
+        strokeWidth: 1,
+      });
+    }
+
+    for (let row = 1; row < rows; row += 1) {
+      shapes.push({
+        id: `${base}_h${row}`,
+        type: "line",
+        x,
+        y: y + row * cellHeight,
+        points: [0, 0, width, 0],
+        stroke: "#111827",
+        strokeWidth: 1,
+      });
+    }
+
+    for (let row = 0; row < rows; row += 1) {
+      for (let col = 0; col < cols; col += 1) {
+        shapes.push({
+          id: `${base}_r${row + 1}c${col + 1}`,
+          type: "text",
+          x: x + col * cellWidth,
+          y: y + row * cellHeight + 12,
+        text: "",
+        fontSize: 24,
+        fill: "#111827",
+        width: cellWidth,
+        height: fittedTextHeight("", 24, cellWidth),
+        align: "center",
+        lineHeight: 1.25,
+        sourceKind: "text_box",
+      });
+      }
+    }
+
+    addShapes(shapes);
+  }, [addShapes, fitInsertBox, nextId]);
+
+  const addGraphPaper = useCallback(() => {
+    const rows = promptInteger("Rows", 8, 1, 40);
+    if (rows === null) return;
+    const cols = promptInteger("Columns", 10, 1, 40);
+    if (cols === null) return;
+
+    const box = fitInsertBox(cols * 25, rows * 25, cols * 4, rows * 4);
+    const cellSize = Math.min(box.width / cols, box.height / rows);
+    const width = cols * cellSize;
+    const height = rows * cellSize;
+    const x = box.x;
+    const y = box.y;
+    const stroke = "#2563eb";
+    const strokeWidth = 1;
+    const base = nextId("graphpaper");
+    const shapes: EditorShape[] = [];
+
+    for (let col = 0; col <= cols; col += 1) {
+      shapes.push({
+        id: `${base}_v${col}`,
+        type: "line",
+        x: x + col * cellSize,
+        y,
+        points: [0, 0, 0, height],
+        stroke,
+        strokeWidth,
+      });
+    }
+
+    for (let row = 0; row <= rows; row += 1) {
+      shapes.push({
+        id: `${base}_h${row}`,
+        type: "line",
+        x,
+        y: y + row * cellSize,
+        points: [0, 0, width, 0],
+        stroke,
+        strokeWidth,
+      });
+    }
+
+    addShapes(shapes);
+  }, [addShapes, fitInsertBox, nextId]);
+
+  const addBaseTenModel = useCallback(
+    (kind: BaseTenBlockKind) => {
+      addShape(createBaseTenBlockShape(kind, nextId(`base_ten_${kind}`), fitInsertBox));
+    },
+    [addShape, fitInsertBox, nextId],
+  );
+
+  const deleteSelected = useCallback(() => {
+    if (!selectedShapeIds.length) return;
+    const selected = new Set(selectedShapeIds);
+    setSaveStatus("unsaved");
+    setDocument((current) => ({
+      ...current,
+      shapes: current.shapes.filter((shape) => !selected.has(shape.id)),
+    }));
+    setSelectedShapeIds([]);
+  }, [selectedShapeIds]);
+
+  const copySelected = useCallback(() => {
+    const selected = new Set(selectedShapeIds);
+    clipboardRef.current = document.shapes.filter((shape) => selected.has(shape.id)).map(cloneShape);
+    if (clipboardRef.current.length) setMessage(`Copied ${clipboardRef.current.length} shape(s).`);
+  }, [document.shapes, selectedShapeIds]);
+
+  const pasteClipboard = useCallback(() => {
+    if (!clipboardRef.current.length) return;
+    const stamp = Math.round(performance.now());
+    const pasted = clipboardRef.current.map((shape, index) => ({
+      ...cloneShape(shape),
+      id: `${idPrefix}_paste_${stamp}_${index}`,
+      x: shape.x + 24,
+      y: shape.y + 24,
+    })) as EditorShape[];
+    setSaveStatus("unsaved");
+    setDocument((current) => ({ ...current, shapes: [...current.shapes, ...pasted] }));
+    setSelectedShapeIds(pasted.map((shape) => shape.id));
+    clipboardRef.current = pasted.map(cloneShape);
+    setMessage(`Pasted ${pasted.length} shape(s).`);
+  }, [idPrefix]);
+
+  const duplicateSelected = useCallback(() => {
+    const selected = new Set(selectedShapeIds);
+    const source = document.shapes.filter((shape) => selected.has(shape.id));
+    if (!source.length) return;
+    const stamp = Math.round(performance.now());
+    const duplicated = source.map((shape, index) => ({
+      ...cloneShape(shape),
+      id: `${idPrefix}_duplicate_${stamp}_${index}`,
+      x: shape.x + 24,
+      y: shape.y + 24,
+    })) as EditorShape[];
+    setSaveStatus("unsaved");
+    setDocument((current) => ({ ...current, shapes: [...current.shapes, ...duplicated] }));
+    setSelectedShapeIds(duplicated.map((shape) => shape.id));
+    clipboardRef.current = duplicated.map(cloneShape);
+    setMessage(`Duplicated ${duplicated.length} shape(s).`);
+  }, [document.shapes, idPrefix, selectedShapeIds]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (studentPreviewOpen) return;
+      if (isEditableTarget(event.target)) return;
+      const key = event.key.toLowerCase();
+      const commandKey = event.ctrlKey || event.metaKey;
+      if (event.key === "Escape") {
+        setDrawingPreset(null);
+        return;
+      }
+
+      if (isArrowKey(event.key) && selectedShapeIds.length) {
+        event.preventDefault();
+        const distance = event.shiftKey ? 10 : 1;
+        const delta = arrowKeyDelta(event.key, distance);
+        const selected = new Set(selectedShapeIds);
+        updateShapes(
+          document.shapes
+            .filter((shape) => selected.has(shape.id) && !shape.locked)
+            .map((shape) => ({ ...shape, x: shape.x + delta.dx, y: shape.y + delta.dy }) as EditorShape),
+        );
+        return;
+      }
+
+      if (event.key === "Delete" || event.key === "Backspace") {
+        if (!selectedShapeIds.length) return;
+        event.preventDefault();
+        deleteSelected();
+        return;
+      }
+
+      if (!commandKey) return;
+      if (key === "c") {
+        event.preventDefault();
+        copySelected();
+      } else if (key === "v") {
+        event.preventDefault();
+        pasteClipboard();
+      } else if (key === "d") {
+        event.preventDefault();
+        duplicateSelected();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [copySelected, deleteSelected, document.shapes, duplicateSelected, pasteClipboard, selectedShapeIds, updateShapes, studentPreviewOpen]);
+
+  const refreshJson = useCallback(() => {
+    setDocument((current) => ({ ...current }));
+    setMessage("Shape JSON refreshed.");
+  }, []);
+
+  const importDocument = useCallback((nextDocument: EditorShapeDocument) => {
+    if (!Array.isArray(nextDocument.shapes) || !nextDocument.canvas) return;
+    setSaveStatus("unsaved");
+    setDocument(nextDocument);
+    setSelectedProblemId(nextDocument.id);
+    setSelectedShapeIds([]);
+    setMessage("Imported shape JSON.");
+  }, []);
+
+  const saveJson = useCallback(async (reviewOverride?: AnswerReviewSettings) => {
+    const nextProblem = editorDocumentToProblemJson(document, baseProblemJson);
+    if (selectedProblemId === initialProblem.id) {
+      setMessage("Sample problem is local only. Open a real problem before saving to DSL.");
+      setSaveStatus("error");
+      return false;
+    }
+
+    const patches = problemJsonToLayoutPatches(baseProblemJson, nextProblem);
+    const reviewToSave = reviewOverride ?? draftReview;
+    if (!patches.length && !draftTutorFlow && !reviewToSave) {
+      setMessage(`No DSL changes to save for ${selectedProblemId}.`);
+      setSaveStatus("saved");
+      return true;
+    }
+
+    setSaveStatus("saving");
+    setMessage(`Saving ${selectedProblemId}...`);
+    try {
+      const savedParts: string[] = [];
+      // Save layout first so answer propagation can resolve newly edited slot
+      // identities and translated source text from the effective layout.
+      if (patches.length) {
+        const response = await applyLayoutPatches(selectedProblemId, patches, { format: false, fast: true });
+        setBaseProblemJson(nextProblem);
+        savedParts.push(`${response.applied.length} layout patch(es)`);
+      }
+      if (reviewToSave) {
+        const response = await saveAnswerReview(selectedProblemId, reviewToSave);
+        savedParts.push("정답 검수");
+        const synced = response.sync_results?.filter((result) => result.status === "success").length ?? 0;
+        const failed = response.sync_results?.filter((result) => result.status !== "success").length ?? 0;
+        if (synced) savedParts.push(`번역 ${synced}개 정답`);
+        if (failed) savedParts.push(`번역 ${failed}개 확인 필요`);
+      }
+      if (draftTutorFlow) {
+        const response = await saveTutorFlow(selectedProblemId, draftTutorFlow, { format: false, build: false });
+        setDraftTutorFlow(response.tutor_flow);
+        savedParts.push("tutor flow");
+      }
+      setSaveStatus("saved");
+      setMessage(`Saved ${savedParts.join(" and ")} for ${selectedProblemId}. Build to refresh artifacts.`);
+      return true;
+    } catch (error) {
+      setSaveStatus("error");
+      setMessage(`Could not save ${selectedProblemId}: ${String(error)}`);
+      return false;
+    }
+  }, [baseProblemJson, document, draftTutorFlow, draftReview, selectedProblemId]);
+
+  const saveCurrentTutorFlow = useCallback(
+    async (tutorFlow: TutorRendererStep[]) => {
+      if (selectedProblemId === initialProblem.id) {
+        setMessage("실제 문제를 열어 힌트를 저장해 주세요.");
+        setSaveStatus("error");
+        throw new Error("실제 문제를 열어 힌트를 저장해 주세요.");
+      }
+
+      setSaveStatus("saving");
+      setMessage("힌트를 저장하고 학생용 데이터를 빌드합니다…");
+      try {
+        const nextProblem = editorDocumentToProblemJson(document, baseProblemJson);
+        const patches = problemJsonToLayoutPatches(baseProblemJson, nextProblem);
+        if (patches.length) {
+          await applyLayoutPatches(selectedProblemId, patches, { format: false, fast: true });
+          setBaseProblemJson(nextProblem);
+        }
+        const response = await saveTutorFlow(selectedProblemId, tutorFlow, { format: false, build: true });
+        if (!response.built) throw new Error("힌트는 저장됐지만 빌드에 실패했습니다.");
+        setPreviewArtifacts((current) => ({
+          semantic: response.artifacts.semantic ?? current.semantic,
+          solvable: response.artifacts.solvable ?? current.solvable,
+          layout: response.artifacts.layout ?? current.layout,
+          renderer: response.artifacts.renderer ?? current.renderer,
+        }));
+        setDraftTutorFlow(response.tutor_flow);
+        setActiveTutorFrameIndex(0);
+        setSaveStatus("saved");
+        setMessage("힌트 저장과 빌드를 완료했습니다.");
+      } catch (error) {
+        setSaveStatus("error");
+        setMessage(`Could not save tutor flow for ${selectedProblemId}: ${String(error)}`);
+        throw error;
+      }
+    },
+    [selectedProblemId, document, baseProblemJson],
+  );
+
+  const patchTutorOverlay = useCallback(
+    (overlayIndex: number, patch: Partial<TutorRendererOverlay>, nextMessage?: string) => {
+      if (!activeTutorStepId) return;
+      const nextFlow = effectiveTutorFlow.map((step) => {
+        if (step.step_id !== activeTutorStepId) return step;
+        const frames = (step.frames?.length ? step.frames : [{ id: `${step.step_id}.frame.1`, overlays: step.overlays ?? [] }]).map(
+          (frame, frameIndex) => {
+            if (frameIndex !== activeTutorFrameIndex) return frame;
+            return {
+              ...frame,
+              overlays: frame.overlays.map((overlay, index) => (index === overlayIndex ? { ...overlay, ...patch } : overlay)),
+            };
+          },
+        );
+        return { ...step, frames };
+      });
+      setSaveStatus("unsaved");
+      setDraftTutorFlow(nextFlow);
+      setActiveTutorOverlayIndex(overlayIndex);
+      if (nextMessage) setMessage(nextMessage);
+    },
+    [activeTutorFrameIndex, activeTutorStepId, effectiveTutorFlow],
+  );
+
+  const moveActiveTutorOverlay = useCallback(
+    (overlayIndex: number, x: number, y: number) => {
+      patchTutorOverlay(overlayIndex, { x, y }, `Moved tutor overlay ${overlayIndex + 1}. Save to persist it.`);
+    },
+    [patchTutorOverlay],
+  );
+
+  const changeActiveTutorOverlay = useCallback(
+    (overlayIndex: number, patch: Partial<TutorRendererOverlay>) => {
+      patchTutorOverlay(overlayIndex, patch);
+    },
+    [patchTutorOverlay],
+  );
+
+  const buildSavedProblem = useCallback(async () => {
+    if (selectedProblemId === initialProblem.id) {
+      setMessage("Sample problem is local only. Open a real problem before building.");
+      setSaveStatus("error");
+      return false;
+    }
+
+    setSaveStatus("building");
+    setMessage(`Building ${selectedProblemId}...`);
+    try {
+      if (draftTutorFlow) {
+        setSaveStatus("saving");
+        setMessage(`Saving tutor flow for ${selectedProblemId} before build...`);
+        await saveTutorFlow(selectedProblemId, draftTutorFlow, { format: false, build: false });
+        setSaveStatus("building");
+      }
+      const response = await buildProblem(selectedProblemId);
+      if (!response.ok) throw new Error(response.stderr || "Build에 실패했습니다. 저장된 내용과 오류를 확인하세요.");
+      const detail = [response.stdout, response.stderr].filter(Boolean).join("\n").trim();
+      const builtArtifacts = {
+        semantic: (response.artifacts.semantic as Record<string, unknown> | null | undefined) ?? null,
+        solvable: (response.artifacts.solvable as Record<string, unknown> | null | undefined) ?? null,
+        layout: (response.artifacts.layout as import("../api/editorApi").LayoutDocument | null | undefined) ?? null,
+        renderer: (response.artifacts.renderer as import("../api/editorApi").RendererDocument | null | undefined) ?? null,
+        canvas_presentation: response.canvas_presentation,
+      };
+      const builtProblem = problemDetailToCanonicalProblem({
+        problem_id: response.problem_id,
+        base_dir: "",
+        dsl: "",
+        svg: null,
+        ...builtArtifacts,
+      });
+      setPreviewArtifacts({
+        ...builtArtifacts,
+      });
+      setBaseProblemJson(builtProblem);
+      const nextDocument = problemJsonToEditorDocument(builtProblem);
+      builtDocumentRef.current = nextDocument;
+      setDocument(nextDocument);
+      setSelectedShapeIds([]);
+      setDraftTutorFlow(null);
+      setDraftReview(null);
+      setSaveStatus("built");
+      setMessage(detail ? `Build complete for ${selectedProblemId}.\n${detail}` : `Build complete for ${selectedProblemId}.`);
+      return true;
+    } catch (error) {
+      setSaveStatus("error");
+      setMessage(`Could not build ${selectedProblemId}: ${String(error)}`);
+      return false;
+    }
+  }, [draftTutorFlow, selectedProblemId]);
+
+  const buildCurrentProblem = useCallback(async (reviewOverride?: AnswerReviewSettings) => {
+    const saved = await saveJson(reviewOverride);
+    if (!saved) return false;
+    return buildSavedProblem();
+  }, [buildSavedProblem, saveJson]);
+
+  const saveAndBuildCurrentProblem = useCallback(async () => {
+    await buildCurrentProblem();
+  }, [buildCurrentProblem]);
+
+  const changeAnswerSettings = (settings: AnswerReviewSettings) => {
+    // Keep created blanks attached to the same answer when another row is removed.
+    if (settings.mode !== "choice" && settings.mode !== "grouped_choice") {
+      setDocument(current => ({ ...current, shapes: current.shapes.flatMap(shape => {
+        const interaction = shape.interaction;
+        if (!interaction?.answer_ref || interaction.role !== "answer") return shape;
+        const index = settings.answers.findIndex(answer => answer.ref === interaction.answer_ref);
+        if (index < 0 && !activeReview.answers.some(answer => answer.ref === interaction.answer_ref)) return shape;
+        if (index < 0 && shape.id.includes("_answer_blank_")) return [];
+        return { ...shape, interaction: { ...interaction, answer_key_index: index < 0 ? undefined : index, ...(index < 0 ? {} : { order: index }) } } as EditorShape;
+      }) }));
+    }
+    setDraftReview(settings);
+    setSaveStatus("unsaved");
+  };
+
+  const addAnswerBlank = () => {
+    const unused = activeReview.answers.findIndex((answer, index) => !document.shapes.some(shape => shape.interaction?.role === "answer" &&
+      (shape.interaction.answer_key_index === index || (answer.ref && shape.interaction.answer_ref === answer.ref) || shape.interaction.order === index)));
+    const index = unused < 0 ? activeReview.answers.length : unused;
+    const id = `slot.${nextId("answer_blank")}`;
+    const ref = id;
+    const sourceRegionId = document.shapes.find(shape => shape.sourceRegionId?.includes("diagram"))?.sourceRegionId
+      ?? document.shapes.find(shape => shape.sourceRegionId)?.sourceRegionId;
+    const shape: EditorShape = { id, type: "rect", sourceRegionId, ...fitInsertBox(100, 56), fill: "#ffffff", stroke: "#6366f1", strokeWidth: 2,
+      interaction: { type: "input", role: "answer", value_type: "text", keyboard: "text", max_length: 100, order: index, answer_key_index: index, answer_ref: ref, include_in_submission: true },
+      input_style: defaultInputStyle() };
+    addShape(shape);
+    const answers = [...activeReview.answers];
+    answers[index] = { ...answers[index], value: answers[index]?.value ?? "", ref };
+    setDraftReview({ ...activeReview, mode: "canvas_slots", show_canvas: true, status: "pending", answers });
+    setAnswerReviewMode(false);
+    setActiveSidePanel("answers");
+    setMessage(`정답 빈칸 ${index + 1}을 추가했습니다. 오른쪽에서 정답을 입력하고 빈칸을 원하는 위치로 옮기세요.`);
+  };
+
+  const addSelectedAsCanvasChoice = () => {
+    if (!selectedShapes.length) return;
+    const refs = selectedShapes.map((shape) => shape.id);
+    const nextNumber = activeReview.choices.length + 1;
+    const textShape = selectedShapes.find((shape): shape is Extract<EditorShape, { type: "text" }> => shape.type === "text" && shape.text.trim().length > 0);
+    let labelText = textShape?.text.trim() ?? "";
+    if (!labelText) {
+      const rectShape = selectedShapes.find((shape) => shape.type === "rect");
+      if (rectShape && rectShape.type === "rect") {
+        const innerTexts = document.shapes
+          .filter((candidate): candidate is Extract<EditorShape, { type: "text" }> => {
+            if (candidate.type !== "text" || !candidate.text.trim()) return false;
+            return (
+              candidate.x >= rectShape.x - 4 &&
+              candidate.x <= rectShape.x + rectShape.width + 4 &&
+              candidate.y >= rectShape.y - 4 &&
+              candidate.y <= rectShape.y + rectShape.height + 4
+            );
+          })
+          .map((candidate) => candidate.text.trim());
+        labelText = innerTexts.join(" ").trim();
+      }
+    }
+    const text = labelText || `보기 ${nextNumber}`;
+    const choice: AnswerChoiceReview = {
+      id: `choice.canvas.${nextId("select")}`,
+      label: String(nextNumber),
+      text,
+      correct: false,
+      sourceRefs: refs,
+    };
+    setDraftReview({
+      ...activeReview,
+      mode: "canvas_select",
+      show_canvas: true,
+      status: "pending",
+      choices: [...activeReview.choices, choice],
+    });
+    setSaveStatus("unsaved");
+    setMessage(`'${text}' 요소를 캔버스 클릭 보기로 추가했습니다. 정답인 보기에 체크한 뒤 저장하세요.`);
+  };
+
+  const editorPanel = (
+    <div className={`konva-side-panel${activeSidePanel === "answers" ? " answer-authoring-dock" : ""}`}>
+      <div className="konva-side-tabs" role="tablist" aria-label="Editor side panels">
+        <SidePanelButton
+          active={activeSidePanel === "properties"}
+          label="요소 설정"
+          onClick={() => setActiveSidePanel("properties")}
+          icon="properties"
+        />
+        <SidePanelButton
+          active={activeSidePanel === "answers"}
+          label="정답"
+          onClick={() => setActiveSidePanel("answers")}
+          icon="answers"
+        />
+        <SidePanelButton
+          active={activeSidePanel === "flow"}
+          label="힌트 편집"
+          onClick={() => setActiveSidePanel("flow")}
+          icon="flow"
+        />
+        <SidePanelButton
+          active={activeSidePanel === "json"}
+          label="JSON"
+          onClick={() => setActiveSidePanel("json")}
+          icon="json"
+        />
+      </div>
+      <div className="konva-side-content">
+        {activeSidePanel === "answers" ? <AnswerReviewPanel key={selectedProblemId} authoring settings={activeReview}
+          onAddBlank={addAnswerBlank}
+          onAddSelectedAsCanvasChoice={addSelectedAsCanvasChoice}
+          hasCanvasSelection={selectedShapeIds.length > 0}
+          onChange={changeAnswerSettings}
+          onSave={override => { void buildCurrentProblem(override); }}
+          busy={saveStatus === "saving" || saveStatus === "building"}
+          feedback={saveStatus === "error" ? message : saveStatus === "unsaved" ? "저장하지 않은 변경" : ""}
+          onSelect={ids => { setSelectedShapeIds(ids); setActiveSidePanel("properties"); }}
+          onEditLayout={() => setActiveSidePanel("properties")}
+          onHighlightAnswer={setHighlightedAnswerIndex}
+          canvasChoiceCandidates={canvasChoiceCandidates} /> : null}
+        {activeSidePanel === "properties" ? (
+          <PropertyPanel
+            syncPanel={<PlacementSyncPanel key={selectedProblemId} problemId={selectedProblemId} shapes={document.shapes} selectedIds={selectedShapeIds} onSave={buildCurrentProblem} />}
+            shape={selectedShape}
+            selectedShapes={selectedShapes}
+            answerOptions={answerBindingOptions}
+            saveStatus={saveStatus}
+            onChange={patchSelectedShape}
+            onScaleSelection={scaleSelectedShapes}
+            onTextRoleChange={setSelectedTextRole}
+          />
+        ) : null}
+        {activeSidePanel === "flow" ? (
+          <TutorFlowPanel
+            studentHints={previewArtifacts.solvable?.student_hints}
+            problemId={selectedProblemId}
+            tutorFlow={effectiveTutorFlow}
+            message={message}
+            activeStepId={activeTutorStepId}
+            activeFrameIndex={activeTutorFrameIndex}
+            activeOverlayIndex={activeTutorOverlayIndex}
+            selectedShapeIds={selectedShapeIds}
+            onDraftChange={(flow) => {
+              setDraftTutorFlow(flow);
+              setSaveStatus("unsaved");
+            }}
+            onSelectFrame={selectTutorFrame}
+            onSelectOverlay={selectTutorOverlay}
+            onSave={saveCurrentTutorFlow}
+          />
+        ) : null}
+        {activeSidePanel === "json" ? <JsonImportExport document={document} message={message} onImport={importDocument} /> : null}
+      </div>
+    </div>
+  );
+
+  return (
+    <div
+      className={`math-problem-editor konva-editor${explorerOpen ? "" : " explorer-collapsed"}`}
+      data-mm-surface="editor"
+      data-theme={editorTheme}
+    >
+      <KonvaToolbar
+        workspaceHeader={<>
+          <a className="editor-workspace-brand" href="/teacher/" title="교사 학습관리로 돌아가기"><span className="editor-brand-mark" aria-hidden="true">m.</span><strong>문제 스튜디오</strong></a>
+          <div className="editor-layout-controls" aria-label="작업 영역 배치">
+            <button type="button" aria-pressed={explorerOpen} onClick={() => setExplorerOpen(value => !value)}>문제 탐색</button>
+          </div>
+          <div className="editor-document-name"><strong title={selectedProblemId}>{openingProblemId ? "문제를 여는 중…" : selectedProblemId.split("/").at(-1)?.replace(/\.dsl\.py$/, "")}</strong></div>
+          <EditorPublication sourceId={selectedProblemId} busy={saveStatus === "saving" || saveStatus === "building" || saveStatus === "unsaved"} />
+        </>}
+        headerStatus={
+          <span className={`editor-save-indicator ${saveStatus}`} role="status">{{ saved: "저장됨", saving: "저장 중…", unsaved: "저장하지 않은 변경", building: "화면 생성 중…", built: "화면 반영 완료", error: "저장 상태 확인 필요" }[saveStatus]}</span>
+        }
+        inspectorControl={
+          <div className="editor-layout-controls" aria-label="속성 패널 및 테마 표시">
+            <button
+              type="button"
+              className="editor-theme-toggle"
+              data-testid="editor-theme-toggle"
+              aria-pressed={editorTheme === "dark"}
+              title={editorTheme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"}
+              onClick={toggleEditorTheme}
+            >
+              {editorTheme === "dark" ? "☀ 라이트" : "🌙 다크"}
+            </button>
+            <button type="button" aria-pressed={inspectorOpen} disabled={answerReviewMode || studentPreviewOpen} onClick={() => setInspectorOpen(value => !value)}>속성 패널</button>
+          </div>
+        }
+        onAddAnswerBlank={addAnswerBlank}
+        busy={saveStatus === "saving" || saveStatus === "building"}
+        hasSelection={selectedShapeIds.length > 0}
+        hasAnswerSlotCandidate={selectedAnswerSlotShapeIds.length > 0}
+        answerReviewMode={answerReviewMode}
+        studentPreviewMode={studentPreviewOpen}
+        studentPreviewDisabled={!!openingProblemId || saveStatus === "saving" || saveStatus === "building"}
+        onAnswerReviewModeChange={changeAnswerReviewMode}
+        onStudentPreviewModeChange={(enabled) => {
+          setStudentPreviewOpen(enabled);
+          if (enabled) setDrawingPreset(null);
+        }}
+        onInsertShape={insertShape}
+        onOpenAvatarMaker={() => {
+          const selectedTargets = avatarReplacementTargets.filter((target) => target.shapes.some((shape) => selectedShapeIds.includes(shape.id)));
+          setAvatarTargetId(selectedTargets.length === 1 ? selectedTargets[0].id : "");
+          setAvatarModalOpen(true);
+        }}
+        onAddMath={addMath}
+        onAddProperFraction={addProperFraction}
+        onAddMixedFraction={addMixedFraction}
+        onAddText={addText}
+        onAddImage={addImage}
+        onAddTable={addTable}
+        onAddGraphPaper={addGraphPaper}
+        onAddBaseTenThousand={() => addBaseTenModel("thousand")}
+        onAddBaseTenHundred={() => addBaseTenModel("hundred")}
+        onAddBaseTenTen={() => addBaseTenModel("ten")}
+        onAddBaseTenOne={() => addBaseTenModel("one")}
+        onMarkSelectedAsAnswerSlot={markSelectedAsAnswerSlot}
+        onDeleteSelected={deleteSelected}
+        onRefreshJson={refreshJson}
+        onSave={() => { void saveJson(); }}
+        onSaveAndBuild={saveAndBuildCurrentProblem}
+        onBuild={buildCurrentProblem}
+        onNewFile={createNewProblem}
+      />
+      <KidAvatarMakerModal
+        isOpen={isAvatarModalOpen}
+        onClose={() => setAvatarModalOpen(false)}
+        onInsertAvatar={handleInsertAvatar}
+        replacementTargets={avatarReplacementTargets}
+        replacementTargetId={avatarTargetId}
+        onReplacementTargetChange={setAvatarTargetId}
+      />
+      <input
+        ref={imageFileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          event.target.value = "";
+          if (file) void importLocalImage(file);
+        }}
+      />
+      <div
+        className={`editor-body konva-editor-body${answerReviewMode && !studentPreviewOpen ? " reviewing-answers" : ""}${studentPreviewOpen ? " previewing-student" : ""}${resizingExplorer ? " is-resizing-explorer" : ""}`}
+        style={{ "--explorer-width": `${explorerWidth}px` } as React.CSSProperties}
+      >
+        <ProblemList
+          key={problemListVersion}
+          selectedProblemId={openingProblemId ?? selectedProblemId}
+          language={activeProblemLanguage}
+          onOpenProblem={openProblem}
+          onPrefetchProblem={prefetchProblem}
+          onLanguageChange={setActiveProblemLanguage}
+        />
+        <div
+          className={`explorer-resizer${resizingExplorer ? " active" : ""}`}
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="문제 탐색 패널 너비 조절"
+          aria-valuenow={explorerWidth}
+          aria-valuemin={180}
+          aria-valuemax={560}
+          tabIndex={0}
+          title="좌우로 드래그해 너비를 조절하세요 (더블클릭: 기본/넓게 전환)"
+          data-testid="explorer-resizer"
+          onPointerDown={startExplorerResize}
+          onDoubleClick={() => {
+            const next = explorerWidth < 340 ? 380 : 240;
+            setExplorerWidth(next);
+            try {
+              window.localStorage.setItem("modu_math_explorer_width_v1", String(next));
+            } catch {
+              // Ignore storage errors.
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+              e.preventDefault();
+              const delta = e.key === "ArrowRight" ? 20 : -20;
+              const next = Math.max(180, Math.min(560, explorerWidth + delta));
+              setExplorerWidth(next);
+              try {
+                window.localStorage.setItem("modu_math_explorer_width_v1", String(next));
+              } catch {
+                // Ignore storage errors.
+              }
+            }
+          }}
+        />
+        <div className="konva-main-panel">
+          {studentPreviewOpen ? (
+            <ReactStudentPreview problemId={selectedProblemId} onClose={() => setStudentPreviewOpen(false)} />
+          ) : (
+          <KonvaStage
+            key={selectedProblemId}
+            width={document.canvas.width}
+            height={document.canvas.height}
+            shapes={document.shapes}
+            selectedShapeIds={selectedShapeIds}
+            tutorOverlays={activeTutorOverlays}
+            activeTutorOverlayIndex={activeTutorOverlayIndex}
+            drawingPreset={drawingPreset}
+            answerReviewMode={answerReviewMode}
+            highlightedAnswerIndex={highlightedAnswerIndex}
+            answerOptions={answerBindingOptions}
+            answerChoices={activeReview.mode === "canvas_select" ? activeReview.choices : answerChoiceReviews}
+            canvasPresentation={!draftReview && builtDocumentRef.current === document ? previewArtifacts.canvas_presentation : null}
+            diagramRegionIds={diagramRegionIds}
+            answerPresentationMode={activeReview.mode === "canvas_select" ? "canvas_select" : answerPresentationMode}
+            showAnswerCanvas={activeReview.show_canvas !== false}
+            editorPanel={inspectorOpen ? editorPanel : undefined}
+            reviewPanel={<AnswerReviewPanel settings={activeReview}
+              answerPrompt={document.shapes.filter((shape) => shape.type === "text" && shape.semanticRole === "answer_prompt").map((shape) => shape.type === "text" ? shape.text : "").join("\n")}
+              onEditAnswerPrompt={() => {
+                setAnswerReviewMode(false);
+                setSelectedShapeIds(document.shapes.filter((shape) => shape.semanticRole === "answer_prompt").map((shape) => shape.id));
+                setActiveSidePanel("properties");
+              }}
+              unit={answerBindingOptions.find((option) => option.unit)?.unit}
+              syncPanel={<AnswerReviewSyncPanel key={selectedProblemId} problemId={selectedProblemId} parentBusy={saveStatus === "saving" || saveStatus === "building"} />}
+              onChange={changeAnswerSettings}
+              onSave={(override) => { void buildCurrentProblem(override); }}
+              busy={saveStatus === "saving" || saveStatus === "building"}
+              feedback={saveStatus === "error" ? message : saveStatus === "unsaved" ? "저장하지 않은 수정" : saveStatus === "built" ? "저장 및 Build 완료" : ""}
+              onSelect={(ids) => { setAnswerReviewMode(false); setSelectedShapeIds(ids); setActiveSidePanel("properties"); }}
+              onEditLayout={() => { setAnswerReviewMode(false); setActiveSidePanel("properties"); }}
+              onHighlightAnswer={setHighlightedAnswerIndex}
+              canvasChoiceCandidates={canvasChoiceCandidates} />}
+            onSelectShapes={setSelectedShapeIds}
+            onChangeShapes={updateShapes}
+            onConvertShapesToAnswer={(ids) => setAnswerSlotState(ids, true)}
+            onRestoreShapesFromAnswer={(ids) => setAnswerSlotState(ids, false)}
+            onEditPresentationShape={(id) => {
+              setInspectorOpen(true);
+              setAnswerReviewMode(false);
+              setSelectedShapeIds([id]);
+              setActiveSidePanel("properties");
+            }}
+            onDrawShape={addDrawnShape}
+            onDrawingComplete={() => setDrawingPreset(null)}
+            onTutorOverlaySelect={selectTutorOverlay}
+            onTutorOverlayChange={changeActiveTutorOverlay}
+            onTutorOverlayMove={moveActiveTutorOverlay}
+          />
+          )}
+        </div>
+      </div>
+      <footer className="editor-workspace-footer">
+        <span className="editor-context-help">{studentPreviewOpen ? "학생 앱과 동일한 화면에서 문제를 풀어볼 수 있습니다 · 왼쪽 목록에서 다른 문제로 바로 전환할 수 있습니다." : drawingPreset ? "캔버스를 드래그해 도형을 그리세요 · Esc 취소" : answerReviewMode ? "학생에게 보이는 정답 화면을 확인하고 검수하세요." : "요소 클릭 → 오른쪽에서 설정 · 글자 두 번 클릭 → 바로 편집 · Shift + 클릭 → 여러 요소 선택"}</span>
+        <details className="editor-activity"><summary>작업 메시지</summary><p role="status">{message}</p></details>
+        <span>{selectedShapeIds.length ? `${selectedShapeIds.length}개 선택` : `요소 ${document.shapes.length}개`}</span>
+      </footer>
+    </div>
+  );
+}
+
+function SidePanelButton({
+  active,
+  label,
+  icon,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  icon: SidePanelTab;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-label={label}
+      aria-selected={active}
+      title={label}
+      className={active ? "konva-side-tab active" : "konva-side-tab"}
+      onClick={onClick}
+    >
+      <SidePanelIcon icon={icon} />
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function SidePanelIcon({ icon }: { icon: SidePanelTab }) {
+  if (icon === "answers") return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" /><path d="m8 12 3 3 5-6" /></svg>;
+  if (icon === "properties") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 5h16" />
+        <path d="M4 12h16" />
+        <path d="M4 19h16" />
+        <circle cx="8" cy="5" r="2" />
+        <circle cx="16" cy="12" r="2" />
+        <circle cx="10" cy="19" r="2" />
+      </svg>
+    );
+  }
+  if (icon === "flow") {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6" cy="7" r="2" />
+        <circle cx="18" cy="7" r="2" />
+        <circle cx="12" cy="17" r="2" />
+        <path d="M8 7h8" />
+        <path d="M7.5 8.7 11 15" />
+        <path d="m16.5 8.7-3.5 6.3" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-2" />
+      <path d="m10 9-3 3 3 3" />
+      <path d="m14 9 3 3-3 3" />
+    </svg>
+  );
+}
+
+function problemLanguageFromId(problemId: string): ProblemLanguage | null {
+  const firstPart = problemId.replace(/\\/g, "/").split("/").filter(Boolean)[0];
+  return problemLanguages.includes(firstPart as ProblemLanguage) ? firstPart as ProblemLanguage : null;
+}
+
+function detectCanvasChoiceCandidates(
+  shapes: EditorShape[],
+  answers: Array<{ value: string }>,
+): AnswerChoiceReview[] {
+  const firstAnswer = answers[0]?.value?.trim() ?? "";
+  const selectedNumber = /^[①-⑳]$/.test(firstAnswer)
+    ? firstAnswer.charCodeAt(0) - "①".charCodeAt(0) + 1
+    : Number(firstAnswer);
+  const candidates = shapes
+    .filter((shape): shape is Extract<EditorShape, { type: "text" }> => {
+      if (shape.type !== "text") return false;
+      const text = shape.text.trim();
+      if (!text) return false;
+      return (
+        shape.semanticRole === "choice" ||
+        /(?:^|[._])(?:choice|option|opt)[._]?\d+(?:[._]|$)/i.test(shape.id) ||
+        /^[①-⑳]\s*\S/.test(text)
+      );
+    })
+    .map((shape, index) => {
+      const raw = shape.text.trim();
+      const prefix = raw.match(/^([①-⑳]|\([1-9][0-9]?\)|[1-9][0-9]?[.)])\s*/);
+      const label = prefix?.[1] ?? String(index + 1);
+      const text = prefix ? raw.slice(prefix[0].length) || label : raw;
+      const labelNumber = /^[①-⑳]$/.test(label)
+        ? label.charCodeAt(0) - "①".charCodeAt(0) + 1
+        : Number(label.replace(/[^0-9]/g, ""));
+      const correct = Number.isFinite(selectedNumber) && selectedNumber > 0 && labelNumber === selectedNumber;
+      return {
+        id: shape.id,
+        label,
+        text,
+        correct,
+        sourceRefs: [shape.id],
+      };
+    });
+  return sortChoicesByLabel(candidates);
+}
+
+function normalizeNewProblemId(value: string): string {
+  return value
+    .trim()
+    .replace(/\\/g, "/")
+    .replace(/^\/+/, "")
+    .replace(/\/+/g, "/")
+    .replace(/[<>:"|?*]/g, "_")
+    .replace(/\s+/g, "_")
+    .replace(/\/(?:\.|\.\.)(?=\/|$)/g, "")
+    .replace(/^(?:\.|\.\.)\/?/, "");
+}
+
+function defaultNewProblemId(): string {
+  const now = new Date();
+  const stamp = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0"),
+  ].join("");
+  return `drafts/new_problem_${stamp}`;
+}
+
+function fileTitleFromProblemId(problemId: string): string {
+  const last = problemId.split("/").filter(Boolean).at(-1) ?? "New problem";
+  return last.endsWith(".dsl.py") ? last.slice(0, -lenDslSuffix()) : last;
+}
+
+function lenDslSuffix(): number {
+  return ".dsl.py".length;
+}
+
+function cloneShape<T extends EditorShape>(shape: T): T {
+  return JSON.parse(JSON.stringify(shape)) as T;
+}
+
+function isAnswerSlotShape(shape: EditorShape): boolean {
+  return shape.type === "rect" || shape.type === "circle" || shape.type === "path" || shape.type === "text";
+}
+
+function nextAnswerOrder(shapes: EditorShape[]): number {
+  const orders = shapes
+    .map((shape) => shape.interaction?.order)
+    .filter((order): order is number => typeof order === "number" && Number.isFinite(order));
+  return orders.length ? Math.max(...orders) + 1 : 0;
+}
+
+function defaultInteractionForShape(shape: EditorShape, order: number, answerOptions: AnswerBindingOption[] = []): InputInteraction {
+  const singleAnswer = answerOptions.length === 1 ? answerOptions[0] : null;
+  const orderedAnswer = answerOptions.find((option) => option.index === order) ?? singleAnswer;
+  if (shape.type === "circle" || shape.type === "path") {
+    return {
+      type: "select",
+      role: "choice",
+      value_type: "choice",
+      choice_value: shape.id,
+      include_in_submission: true,
+      order,
+      group_id: "shape_choice",
+      keyboard: "none",
+    };
+  }
+  return {
+    type: "input",
+    role: "answer",
+    value_type: "integer",
+    max_length: 64,
+    include_in_submission: true,
+    order: orderedAnswer?.index ?? order,
+    group_id: "final_answer",
+    answer_key_index: orderedAnswer?.index,
+    answer_ref: orderedAnswer?.ref,
+    auto_advance: false,
+    keyboard: "number",
+  };
+}
+
+function answerOptionsFromArtifacts(
+  solvable: Record<string, unknown> | null,
+  semantic: Record<string, unknown> | null,
+): AnswerBindingOption[] {
+  return dedupeAnswerOptions([...answerOptionsFromArtifact(solvable), ...answerOptionsFromArtifact(semantic)]);
+}
+
+function answerOptionsFromArtifact(artifact: Record<string, unknown> | null): AnswerBindingOption[] {
+  const answer = recordValue(artifact?.answer);
+  if (!answer) return [];
+  const answerUnit = stringValue(answer.unit);
+  const answerKey = Array.isArray(answer.answer_key) ? answer.answer_key : [];
+  const options = answerKey
+    .map((item, index) => answerOptionFromItem(item, index, answerUnit))
+    .filter((option): option is AnswerBindingOption => Boolean(option));
+  if (options.length) return options;
+
+  const blanks = Array.isArray(answer.blanks) ? answer.blanks : [];
+  const blankOptions = blanks
+    .map((item, index) => answerOptionFromItem(item, index, answerUnit))
+    .filter((option): option is AnswerBindingOption => Boolean(option));
+  if (blankOptions.length) return blankOptions;
+
+  const values = Array.isArray(answer.values) ? answer.values : [];
+  const valueOptions = values
+    .map((item, index) => answerOptionFromItem(item, index, answerUnit))
+    .filter((option): option is AnswerBindingOption => Boolean(option));
+  if (valueOptions.length) return valueOptions;
+
+  const value = answerValueText(answer.value);
+  if (!value) return [];
+  const unit = stringValue(answer.unit);
+  return [{ index: 0, value, unit, label: answerOptionLabel(0, value, unit, "최종 정답"), ref: "answer.value" }];
+}
+
+function dedupeAnswerOptions(options: AnswerBindingOption[]): AnswerBindingOption[] {
+  const seen = new Set<string>();
+  return options.filter((option) => {
+    const key = option.ref || `${option.index}:${option.value}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function answerOptionFromItem(item: unknown, index: number, fallbackUnit = ""): AnswerBindingOption | null {
+  if (!item || typeof item !== "object" || Array.isArray(item)) {
+    const value = answerValueText(item);
+    return value ? { index, value, unit: fallbackUnit, label: answerOptionLabel(index, value, fallbackUnit) } : null;
+  }
+  const record = item as Record<string, unknown>;
+  const value = answerValueText(record.value ?? record.expected ?? record.result ?? record.answer);
+  if (!value) return null;
+  const unit = stringValue(record.unit) || fallbackUnit;
+  const ref = stringValue(record.slot_id) || stringValue(record.target_ref) || stringValue(record.ref) || stringValue(record.id) || `answer_key[${index}]`;
+  const labelSource = stringValue(record.label) || stringValue(record.id) || stringValue(record.slot_id) || `답 ${index + 1}`;
+  return { index, value, unit, ref, label: answerOptionLabel(index, value, unit, labelSource) };
+}
+
+function answerOptionLabel(index: number, value: string, unit = "", prefix = `답 ${index + 1}`): string {
+  return `${prefix}: ${value}${unit ? ` ${unit}` : ""}`;
+}
+
+function answerValueText(value: unknown): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return String(value);
+  if (Array.isArray(value)) return value.map(answerValueText).join("");
+  if (typeof value === "object") {
+    const record = value as Record<string, unknown>;
+    for (const key of ["value", "expected", "result", "answer", "count", "text"]) {
+      const text = answerValueText(record[key]);
+      if (text) return text;
+    }
+  }
+  return "";
+}
+
+function recordValue(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === "object" && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
+}
+
+function stringValue(value: unknown): string {
+  return typeof value === "string" && value.trim() ? value : "";
+}
+
+function defaultInputStyle(): InputStyle {
+  return {
+    font_size_mode: "auto",
+    font_size_adjust: 0,
+    min_font_size: 14,
+    max_font_size: 52,
+    font_weight: 700,
+    horizontal_align: "center",
+    vertical_align: "middle",
+    padding: 6,
+    text_color: "#222222",
+  };
+}
+
+function isDragDrawPreset(preset: ShapePreset): boolean {
+  return [
+    "line",
+    "arrow",
+    "doubleArrow",
+    "elbow",
+    "elbowArrow",
+    "elbowDoubleArrow",
+    "curvedConnector",
+    "curvedArrow",
+    "curvedDoubleArrow",
+    "curve",
+    "freeformShape",
+    "freeformScribble",
+  ].includes(preset);
+}
+
+function shapePresetLabel(preset: ShapePreset): string {
+  const labels: Partial<Record<ShapePreset, string>> = {
+    line: "선",
+    arrow: "선 화살표",
+    doubleArrow: "선 화살표: 양방향",
+    elbow: "연결선: 꺾임",
+    elbowArrow: "연결선: 꺾인 화살표",
+    elbowDoubleArrow: "연결선: 꺾인 양쪽 화살표",
+    curvedConnector: "연결선: 구부러짐",
+    curvedArrow: "연결선: 구부러진 화살표",
+    curvedDoubleArrow: "연결선: 구부러진 양쪽 화살표",
+    curve: "곡선",
+    freeformShape: "자유형: 도형",
+    freeformScribble: "자유형: 자유 곡선",
+    point: "점",
+  };
+  return labels[preset] ?? "도형";
+}
+
+function createShapeFromDrag(
+  preset: ShapePreset,
+  id: string,
+  start: CanvasPoint,
+  end: CanvasPoint,
+  points: CanvasPoint[] = [],
+): EditorShape {
+  const stroke = "#111827";
+  const strokeWidth = 1.2;
+  const connectorKind = connectorKindForPreset(preset);
+  if (connectorKind) {
+    return {
+      id,
+      type: "connector",
+      kind: connectorKind,
+      x: roundCanvasNumber(start.x),
+      y: roundCanvasNumber(start.y),
+      start: { x: 0, y: 0 },
+      end: { x: roundCanvasNumber(end.x - start.x), y: roundCanvasNumber(end.y - start.y) },
+      control: defaultConnectorControl(connectorKind, start, end),
+      ...connectorArrowForPreset(preset),
+      stroke,
+      strokeWidth,
+    };
+  }
+  if (preset === "line") {
+    return {
+      id,
+      type: "line",
+      x: roundCanvasNumber(start.x),
+      y: roundCanvasNumber(start.y),
+      points: [0, 0, roundCanvasNumber(end.x - start.x), roundCanvasNumber(end.y - start.y)],
+      stroke,
+      strokeWidth,
+    };
+  }
+  const bounds = normalizeDragBounds(start, end, points);
+  return {
+    id,
+    type: "path",
+    x: roundCanvasNumber(bounds.x),
+    y: roundCanvasNumber(bounds.y),
+    width: roundCanvasNumber(Math.max(1, bounds.width)),
+    height: roundCanvasNumber(Math.max(1, bounds.height)),
+    d: pathForDrawnShape(preset, start, end, points, bounds),
+    fill: preset === "freeformShape" ? "none" : "none",
+    stroke,
+    strokeWidth,
+  };
+}
+
+function createShapeFromPreset(preset: ShapePreset, id: string): EditorShape {
+  const x = 220;
+  const y = 180;
+  const stroke = "#111827";
+  const fill = "#ffffff";
+  const strokeWidth = 1.2;
+
+  switch (preset) {
+    case "line":
+      return { id, type: "line", x, y, points: [0, 0, 220, 0], stroke, strokeWidth };
+    case "arrow":
+    case "doubleArrow":
+    case "elbow":
+    case "elbowArrow":
+    case "elbowDoubleArrow":
+    case "curvedConnector":
+    case "curvedArrow":
+    case "curvedDoubleArrow":
+    case "curve": {
+      const connectorKind = connectorKindForPreset(preset) ?? "straight";
+      const end = { x: 180, y: connectorKind === "straight" ? 0 : 120 };
+      return {
+        id,
+        type: "connector",
+        kind: connectorKind,
+        x,
+        y,
+        start: { x: 0, y: 0 },
+        end,
+        control: defaultConnectorControlFromDelta(connectorKind, end.x, end.y),
+        ...connectorArrowForPreset(preset),
+        stroke,
+        strokeWidth,
+      };
+    }
+    case "rect":
+    case "flowProcess":
+      return { id, type: "rect", x, y, width: 180, height: 96, fill, stroke, strokeWidth };
+    case "roundRect":
+      return { id, type: "rect", x, y, width: 180, height: 96, fill, stroke, strokeWidth, cornerRadius: 14 };
+    case "point":
+      return { id, type: "circle", x: x + 8, y: y + 8, radius: 6, fill: stroke, stroke, strokeWidth: 0 };
+    case "circle":
+      return { id, type: "circle", x: x + 70, y: y + 70, radius: 70, fill, stroke, strokeWidth };
+    case "arc":
+    case "semicircle":
+    case "quarterArc":
+      return {
+        id,
+        type: "path",
+        x: x + 90,
+        y: y + 60,
+        offsetX: 90,
+        offsetY: 60,
+        d: pathForShapePreset(preset),
+        width: 180,
+        height: 120,
+        fill: "none",
+        stroke,
+        strokeWidth,
+      };
+    default:
+      return {
+        id,
+        type: "path",
+        x,
+        y,
+        d: pathForShapePreset(preset),
+        width: 180,
+        height: 120,
+        shapePreset: preset,
+        adjustment: defaultShapeAdjustment(preset, 180, 120),
+        fill: lineLikePreset(preset) ? "none" : fill,
+        stroke,
+        strokeWidth,
+      };
+  }
+}
+
+function createBaseTenBlockShape(
+  kind: BaseTenBlockKind,
+  id: string,
+  fitInsertBox: (width: number, height: number, minWidth?: number, minHeight?: number) => { x: number; y: number; width: number; height: number },
+): EditorShape {
+  const dimensions = baseTenBlockDimensions(kind);
+  const box = fitInsertBox(dimensions.width + dimensions.depth, dimensions.height + dimensions.depth, 12, 12);
+  const scale = Math.min(
+    box.width / (dimensions.width + dimensions.depth),
+    box.height / (dimensions.height + dimensions.depth),
+  );
+  return {
+    id,
+    type: "baseTenBlock",
+    kind,
+    x: box.x,
+    y: box.y,
+    width: roundCanvasNumber(dimensions.width * scale),
+    height: roundCanvasNumber(dimensions.height * scale),
+    depth: roundCanvasNumber(dimensions.depth * scale),
+    fill: "#b9dd9f",
+    topFill: "#d2edbf",
+    sideFill: "#9fcd86",
+    stroke: "#7ea86f",
+    strokeWidth: 0.8,
+  };
+}
+
+function baseTenBlockDimensions(kind: BaseTenBlockKind): { width: number; height: number; depth: number } {
+  switch (kind) {
+      case "thousand":
+        return { width: 120, height: 120, depth: 84.85 };
+      case "hundred":
+        return { width: 120, height: 120, depth: 8.5 };
+      case "ten":
+      return { width: 12, height: 120, depth: 8.5 };
+    case "one":
+      return { width: 24, height: 24, depth: 16.97 };
+  }
+}
+
+function defaultShapeAdjustment(preset: ShapePreset, width: number, height: number): { x: number; y: number } | undefined {
+  if (preset === "triangle") return { x: width / 2, y: 8 };
+  if (preset === "rightTriangle") return { x: width - 12, y: 12 };
+  return undefined;
+}
+
+function defaultConnectorControl(kind: "straight" | "elbow" | "curve", start: CanvasPoint, end: CanvasPoint): { x: number; y: number } | undefined {
+  return defaultConnectorControlFromDelta(kind, roundCanvasNumber(end.x - start.x), roundCanvasNumber(end.y - start.y));
+}
+
+function defaultConnectorControlFromDelta(kind: "straight" | "elbow" | "curve", dx: number, dy: number): { x: number; y: number } | undefined {
+  if (kind === "straight") return undefined;
+  if (kind === "curve") {
+    const lift = Math.max(24, Math.min(90, Math.hypot(dx, dy) * 0.22));
+    return { x: roundCanvasNumber(dx / 2), y: roundCanvasNumber(dy / 2 - lift) };
+  }
+  return { x: roundCanvasNumber(dx / 2), y: roundCanvasNumber(dy / 2) };
+}
+
+function selectionBounds(shapes: EditorShape[]): { x: number; y: number; width: number; height: number } {
+  const bounds = shapes.map(shapeBoundsForScaling);
+  const minX = Math.min(...bounds.map((bound) => bound.x));
+  const minY = Math.min(...bounds.map((bound) => bound.y));
+  const maxX = Math.max(...bounds.map((bound) => bound.x + bound.width));
+  const maxY = Math.max(...bounds.map((bound) => bound.y + bound.height));
+  return { x: minX, y: minY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
+}
+
+function shapeBoundsForScaling(shape: EditorShape): { x: number; y: number; width: number; height: number } {
+  if (shape.type === "circle") {
+    return { x: shape.x - shape.radius, y: shape.y - shape.radius, width: shape.radius * 2, height: shape.radius * 2 };
+  }
+  if (shape.type === "line") {
+    const xs = shape.points.filter((_, index) => index % 2 === 0).map((point) => shape.x + point);
+    const ys = shape.points.filter((_, index) => index % 2 === 1).map((point) => shape.y + point);
+    const minX = Math.min(shape.x, ...xs);
+    const minY = Math.min(shape.y, ...ys);
+    const maxX = Math.max(shape.x, ...xs);
+    const maxY = Math.max(shape.y, ...ys);
+    return { x: minX, y: minY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
+  }
+  if (shape.type === "connector") {
+    const points = [shape.start, shape.end, shape.control].filter(Boolean) as Array<{ x: number; y: number }>;
+    const xs = points.map((point) => shape.x + point.x);
+    const ys = points.map((point) => shape.y + point.y);
+    const minX = Math.min(shape.x, ...xs);
+    const minY = Math.min(shape.y, ...ys);
+    const maxX = Math.max(shape.x, ...xs);
+    const maxY = Math.max(shape.y, ...ys);
+    return { x: minX, y: minY, width: Math.max(1, maxX - minX), height: Math.max(1, maxY - minY) };
+  }
+  if (shape.type === "text") {
+    return {
+      x: shape.x,
+      y: shape.y,
+      width: shape.width ?? estimateTextWidth(shape.text, shape.fontSize),
+      height: normalizedTextBoxHeight(shape.text, shape.fontSize, shape.width ?? estimateTextWidth(shape.text, shape.fontSize), shape.height, shape.lineHeight ?? 1.25, shape.fontFamily, Boolean(shape.interaction)),
+    };
+  }
+  if (shape.type === "baseTenBlock") {
+    const depth = naturalBaseTenDepth(shape);
+    return { x: shape.x, y: shape.y, width: shape.width + depth, height: shape.height + depth };
+  }
+  return { x: shape.x, y: shape.y, width: shape.width, height: shape.height };
+}
+
+function naturalBaseTenDepth(shape: Extract<EditorShape, { type: "baseTenBlock" }>): number {
+  const grid = baseTenGridSpec(shape.kind);
+  const cellWidth = shape.width / grid.cols;
+  const cellHeight = shape.height / grid.rows;
+  return Math.max(0, (Math.min(cellWidth, cellHeight) / Math.SQRT2) * grid.depthSegments);
+}
+
+function baseTenGridSpec(kind: BaseTenBlockKind): { rows: number; cols: number; depthSegments: number } {
+  switch (kind) {
+    case "thousand":
+      return { rows: 10, cols: 10, depthSegments: 10 };
+    case "hundred":
+      return { rows: 10, cols: 10, depthSegments: 1 };
+    case "ten":
+      return { rows: 10, cols: 1, depthSegments: 1 };
+    case "one":
+      return { rows: 1, cols: 1, depthSegments: 1 };
+  }
+}
+
+function scaleShapeAround(shape: EditorShape, originX: number, originY: number, scale: number): EditorShape {
+  const nextX = roundCanvasNumber(originX + (shape.x - originX) * scale);
+  const nextY = roundCanvasNumber(originY + (shape.y - originY) * scale);
+  const commonPatch = { x: nextX, y: nextY, offsetX: scaleOptional(shape.offsetX, scale), offsetY: scaleOptional(shape.offsetY, scale) };
+  if (shape.type === "rect") {
+    return { ...shape, ...commonPatch, width: scaledAtLeast(shape.width, scale, 6), height: scaledAtLeast(shape.height, scale, 6), cornerRadius: scaleOptional(shape.cornerRadius, scale) };
+  }
+  if (shape.type === "image") {
+    return { ...shape, ...commonPatch, width: scaledAtLeast(shape.width, scale, 6), height: scaledAtLeast(shape.height, scale, 6) };
+  }
+  if (shape.type === "math") {
+    return { ...shape, ...commonPatch, width: scaledAtLeast(shape.width, scale, 24), height: scaledAtLeast(shape.height, scale, 16), fontSize: scaleOptional(shape.fontSize, scale) };
+  }
+  if (shape.type === "baseTenBlock") {
+    return { ...shape, ...commonPatch, width: scaledAtLeast(shape.width, scale, 6), height: scaledAtLeast(shape.height, scale, 6), depth: scaledAtLeast(shape.depth, scale, 0) };
+  }
+  if (shape.type === "circle") {
+    return { ...shape, ...commonPatch, radius: scaledAtLeast(shape.radius, scale, 4) };
+  }
+  if (shape.type === "path") {
+    return {
+      ...shape,
+      ...commonPatch,
+      d: scalePathData(shape.d, scale, scale),
+      width: scaledAtLeast(shape.width, scale, 1),
+      height: scaledAtLeast(shape.height, scale, 1),
+      adjustment: shape.adjustment
+        ? { x: roundCanvasNumber(shape.adjustment.x * scale), y: roundCanvasNumber(shape.adjustment.y * scale) }
+        : undefined,
+    };
+  }
+  if (shape.type === "text") {
+    return {
+      ...shape,
+      ...commonPatch,
+      fontSize: scaledAtLeast(shape.fontSize, scale, 4),
+      width: shape.width === undefined ? undefined : scaledAtLeast(shape.width, scale, 8),
+      height: shape.height === undefined ? undefined : scaledAtLeast(shape.height, scale, 8),
+    };
+  }
+  if (shape.type === "line") {
+    return { ...shape, ...commonPatch, points: shape.points.map((point) => roundCanvasNumber(point * scale)), strokeWidth: scaleOptional(shape.strokeWidth, scale) };
+  }
+  if (shape.type === "connector") {
+    return {
+      ...shape,
+      ...commonPatch,
+      start: { x: roundCanvasNumber(shape.start.x * scale), y: roundCanvasNumber(shape.start.y * scale) },
+      end: { x: roundCanvasNumber(shape.end.x * scale), y: roundCanvasNumber(shape.end.y * scale) },
+      control: shape.control ? { x: roundCanvasNumber(shape.control.x * scale), y: roundCanvasNumber(shape.control.y * scale) } : undefined,
+      strokeWidth: scaleOptional(shape.strokeWidth, scale),
+    };
+  }
+  return shape;
+}
+
+function scaledAtLeast(value: number, scale: number, min: number): number {
+  return roundCanvasNumber(Math.max(min, value * scale));
+}
+
+function scaleOptional(value: number | undefined, scale: number): number | undefined {
+  return value === undefined ? undefined : roundCanvasNumber(value * scale);
+}
+
+function lineLikePreset(preset: ShapePreset): boolean {
+  return (
+    preset === "arrow" ||
+    preset === "doubleArrow" ||
+    preset === "elbow" ||
+    preset === "elbowArrow" ||
+    preset === "elbowDoubleArrow" ||
+    preset === "curvedConnector" ||
+    preset === "curvedArrow" ||
+    preset === "curvedDoubleArrow" ||
+    preset === "curve" ||
+    preset === "freeformScribble" ||
+    preset === "arc" ||
+    preset === "semicircle" ||
+    preset === "quarterArc"
+  );
+}
+
+function pathForShapePreset(preset: ShapePreset): string {
+  switch (preset) {
+    case "arrow":
+      return "M0 100 L160 20 M160 20 L112 18 M160 20 L136 62";
+    case "doubleArrow":
+      return "M20 100 L160 20 M20 100 L68 102 M20 100 L44 58 M160 20 L112 18 M160 20 L136 62";
+    case "elbow":
+      return "M20 20 L20 90 L160 90";
+    case "arc":
+      return "M10 82 A80 58 0 0 1 170 82";
+    case "semicircle":
+      return "M10 96 A80 80 0 0 1 170 96";
+    case "quarterArc":
+      return "M24 104 A80 80 0 0 1 104 24";
+    case "triangle":
+      return "M90 8 L172 112 L8 112 Z";
+    case "rightTriangle":
+      return "M20 10 L168 112 L20 112 Z";
+    case "diamond":
+    case "flowDecision":
+      return "M90 6 L174 60 L90 114 L6 60 Z";
+    case "pentagon":
+      return "M90 6 L174 44 L142 114 L38 114 L6 44 Z";
+    case "hexagon":
+      return "M48 8 L132 8 L176 60 L132 112 L48 112 L4 60 Z";
+    case "plus":
+    case "mathPlus":
+      return "M68 8 L112 8 L112 42 L166 42 L166 78 L112 78 L112 112 L68 112 L68 78 L14 78 L14 42 L68 42 Z";
+    case "rightArrow":
+      return "M8 42 L110 42 L110 12 L176 60 L110 108 L110 78 L8 78 Z";
+    case "leftArrow":
+      return "M172 42 L70 42 L70 12 L4 60 L70 108 L70 78 L172 78 Z";
+    case "upArrow":
+      return "M68 112 L68 48 L36 48 L90 8 L144 48 L112 48 L112 112 Z";
+    case "downArrow":
+      return "M68 8 L112 8 L112 72 L144 72 L90 112 L36 72 L68 72 Z";
+    case "leftRightArrow":
+      return "M4 60 L44 20 L44 42 L136 42 L136 20 L176 60 L136 100 L136 78 L44 78 L44 100 Z";
+    case "mathMinus":
+      return "M24 48 L156 48 L156 76 L24 76 Z";
+    case "mathMultiply":
+      return "M50 10 L90 48 L130 10 L164 44 L124 82 L164 120 L130 154 L90 116 L50 154 L16 120 L56 82 L16 44 Z";
+    case "mathDivide":
+      return "M24 50 L156 50 L156 76 L24 76 Z M78 8 A12 12 0 1 0 102 8 A12 12 0 1 0 78 8 M78 118 A12 12 0 1 0 102 118 A12 12 0 1 0 78 118";
+    case "flowDocument":
+      return "M8 12 L172 12 L172 88 C132 126 52 76 8 108 Z";
+    case "flowDatabase":
+      return "M16 28 C16 4 164 4 164 28 L164 92 C164 116 16 116 16 92 Z M16 28 C16 52 164 52 164 28";
+    case "star":
+      return "M90 6 L112 42 L154 42 L120 68 L134 112 L90 86 L46 112 L60 68 L26 42 L68 42 Z";
+    case "burst":
+      return "M90 4 L106 34 L144 14 L136 48 L178 54 L142 74 L166 110 L124 102 L108 132 L90 94 L66 132 L58 100 L16 110 L38 74 L2 54 L44 48 L36 14 L74 34 Z";
+    case "ribbon":
+      return "M10 24 L170 24 L148 60 L170 96 L10 96 L32 60 Z";
+    case "calloutRect":
+      return "M8 12 L172 12 L172 86 L112 86 L86 118 L94 86 L8 86 Z";
+    case "calloutRound":
+      return "M28 12 L152 12 Q172 12 172 32 L172 76 Q172 96 152 96 L112 96 L86 118 L94 96 L28 96 Q8 96 8 76 L8 32 Q8 12 28 12 Z";
+    case "calloutOval":
+      return "M8 52 C8 8 172 8 172 52 C172 96 8 96 8 52 Z M74 92 L52 118 L58 88";
+    case "calloutCloud":
+      return "M42 94 C10 94 6 60 34 52 C28 18 72 8 92 32 C116 4 164 22 154 58 C184 66 172 100 132 96 L104 96 L82 120 L88 96 Z";
+    default:
+      return "M8 12 L172 12 L172 108 L8 108 Z";
+  }
+}
+
+function normalizeDragBounds(start: CanvasPoint, end: CanvasPoint, points: CanvasPoint[] = []): { x: number; y: number; width: number; height: number } {
+  const all = points.length ? points : [start, end];
+  const xs = all.map((point) => point.x).concat([start.x, end.x]);
+  const ys = all.map((point) => point.y).concat([start.y, end.y]);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+}
+
+function pathForDrawnShape(
+  preset: ShapePreset,
+  start: CanvasPoint,
+  end: CanvasPoint,
+  points: CanvasPoint[],
+  bounds: { x: number; y: number; width: number; height: number },
+): string {
+  const a = localPoint(start, bounds);
+  const b = localPoint(end, bounds);
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  if (preset === "elbow" || preset === "elbowArrow" || preset === "elbowDoubleArrow") {
+    const mid = { x: a.x, y: b.y };
+    return withArrowHeads(`M ${a.x} ${a.y} L ${mid.x} ${mid.y} L ${b.x} ${b.y}`, [a, mid, b], arrowMode(preset));
+  }
+  if (preset === "curvedConnector" || preset === "curvedArrow" || preset === "curvedDoubleArrow" || preset === "curve") {
+    const lift = Math.max(20, Math.min(90, Math.hypot(dx, dy) * 0.28));
+    const c1 = { x: a.x + dx * 0.34, y: a.y - lift };
+    const c2 = { x: a.x + dx * 0.66, y: b.y - lift };
+    return withArrowHeads(`M ${a.x} ${a.y} C ${c1.x} ${c1.y}, ${c2.x} ${c2.y}, ${b.x} ${b.y}`, [a, c1, c2, b], arrowMode(preset));
+  }
+  if (preset === "freeformScribble" && points.length > 1) {
+    return points.map((point, index) => `${index === 0 ? "M" : "L"} ${roundCanvasNumber(point.x - bounds.x)} ${roundCanvasNumber(point.y - bounds.y)}`).join(" ");
+  }
+  if (preset === "freeformShape") {
+    const c = { x: a.x + dx * 0.48, y: a.y + dy * 0.18 - 22 };
+    const d = { x: a.x + dx * 0.84, y: a.y + dy * 0.78 };
+    return `M ${a.x} ${a.y} L ${c.x} ${c.y} L ${b.x} ${b.y} L ${d.x} ${d.y} Z`;
+  }
+  return withArrowHeads(`M ${a.x} ${a.y} L ${b.x} ${b.y}`, [a, b], arrowMode(preset));
+}
+
+function localPoint(point: CanvasPoint, bounds: { x: number; y: number }): CanvasPoint {
+  return { x: roundCanvasNumber(point.x - bounds.x), y: roundCanvasNumber(point.y - bounds.y) };
+}
+
+function arrowMode(preset: ShapePreset): "none" | "end" | "both" {
+  if (preset === "doubleArrow" || preset === "elbowDoubleArrow" || preset === "curvedDoubleArrow") return "both";
+  if (preset === "arrow" || preset === "elbowArrow" || preset === "curvedArrow") return "end";
+  return "none";
+}
+
+function withArrowHeads(path: string, points: CanvasPoint[], mode: "none" | "end" | "both"): string {
+  if (mode === "none" || points.length < 2) return path;
+  const parts = [path];
+  if (mode === "end" || mode === "both") parts.push(arrowHeadPath(points[points.length - 2], points[points.length - 1]));
+  if (mode === "both") parts.push(arrowHeadPath(points[1], points[0]));
+  return parts.join(" ");
+}
+
+function arrowHeadPath(from: CanvasPoint, to: CanvasPoint): string {
+  const angle = Math.atan2(to.y - from.y, to.x - from.x);
+  const length = 11;
+  const spread = Math.PI / 7;
+  const left = {
+    x: roundCanvasNumber(to.x - Math.cos(angle - spread) * length),
+    y: roundCanvasNumber(to.y - Math.sin(angle - spread) * length),
+  };
+  const right = {
+    x: roundCanvasNumber(to.x - Math.cos(angle + spread) * length),
+    y: roundCanvasNumber(to.y - Math.sin(angle + spread) * length),
+  };
+  return `M ${to.x} ${to.y} L ${left.x} ${left.y} M ${to.x} ${to.y} L ${right.x} ${right.y}`;
+}
+
+function roundCanvasNumber(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
+function clampNumber(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function applyAutoSizing(nextShape: EditorShape, previousShape: EditorShape): EditorShape {
+  if (nextShape.type === "text" && previousShape.type === "text") return applyAutoTextSizing(nextShape, previousShape);
+  if (nextShape.type === "math" && previousShape.type === "math") return applyAutoMathSizing(nextShape, previousShape);
+  return nextShape;
+}
+
+function applyAutoTextSizing(nextShape: Extract<EditorShape, { type: "text" }>, previousShape: Extract<EditorShape, { type: "text" }>): EditorShape {
+  if (
+    nextShape.text === previousShape.text &&
+    nextShape.fontSize === previousShape.fontSize &&
+    nextShape.fontFamily === previousShape.fontFamily &&
+    nextShape.width === previousShape.width &&
+    nextShape.lineHeight === previousShape.lineHeight
+  ) {
+    return nextShape;
+  }
+  const isTextBox = nextShape.sourceKind === "text_box";
+  if (isTextBox) {
+    const width = normalizedTextBoxWidth(
+      nextShape.text,
+      nextShape.fontSize,
+      nextShape.width ?? autoTextWidth(nextShape.text, nextShape.fontSize),
+      nextShape.align ?? "left",
+    );
+    return {
+      ...nextShape,
+      sourceKind: "text_box",
+      width,
+      height: normalizedTextBoxHeight(nextShape.text, nextShape.fontSize, width, nextShape.height, nextShape.lineHeight ?? 1.25, nextShape.fontFamily, Boolean(nextShape.interaction)),
+    };
+  }
+  return {
+    ...nextShape,
+    width: nextShape.width ?? autoTextWidth(nextShape.text, nextShape.fontSize),
+    height: normalizedTextBoxHeight(nextShape.text, nextShape.fontSize, nextShape.width ?? autoTextWidth(nextShape.text, nextShape.fontSize), nextShape.height, nextShape.lineHeight ?? 1.25, nextShape.fontFamily, Boolean(nextShape.interaction)),
+  };
+}
+
+function applyAutoMathSizing(nextShape: Extract<EditorShape, { type: "math" }>, previousShape: Extract<EditorShape, { type: "math" }>): EditorShape {
+  if (nextShape.latex === previousShape.latex && nextShape.fontSize === previousShape.fontSize) return nextShape;
+  const fontSize = nextShape.fontSize ?? 28;
+  const fractionSize = fractionMathSize(nextShape.latex, fontSize);
+  if (!fractionSize) return nextShape;
+  return {
+    ...nextShape,
+    width: fractionSize.width,
+    height: fractionSize.height,
+  };
+}
+
+function fractionMathSize(latex: string, fontSize: number): { width: number; height: number } | null {
+  const match = latex.trim().match(/^([+-]?\d+)?\s*\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}$/);
+  if (!match) return null;
+  const smallFont = Math.max(16, fontSize * 0.78);
+  const estimateWidth = (text: string, font: number) => {
+    let w = 0;
+    for (const ch of text) {
+      w += (ch === "1" || ch === "l" || ch === "i" || ch === "." || ch === ",") ? font * 0.36 : font * 0.58;
+    }
+    return Math.max(font * 0.36, w);
+  };
+  const wholeText = match[1] || "";
+  const numText = match[2] || "";
+  const denText = match[3] || "";
+  const wholeWidth = wholeText ? estimateWidth(wholeText, fontSize) + Math.max(3, Math.round(fontSize * 0.15)) : 0;
+  const numeratorWidth = estimateWidth(numText, smallFont);
+  const denominatorWidth = estimateWidth(denText, smallFont);
+  const fractionWidth = Math.max(18, Math.max(numeratorWidth, denominatorWidth) + smallFont * 0.35);
+  return {
+    width: Math.ceil(wholeWidth + fractionWidth + 6),
+    height: Math.ceil(smallFont * 2.25 + 6),
+  };
+}
+
+function autoTextWidth(text: string, fontSize: number): number {
+  const longestLine = text.split(/\n/g).reduce((longest, line) => (line.length > longest.length ? line : longest), "");
+  return Math.min(860, Math.ceil(estimateTextWidth(longestLine || text, fontSize) + fontSize * 0.6));
+}
+
+function readFileAsDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") resolve(reader.result);
+      else reject(new Error("Could not read file as data URL."));
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Could not read file."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function loadImageSize(src: string): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const image = new window.Image();
+    image.onload = () => resolve({ width: image.naturalWidth || image.width, height: image.naturalHeight || image.height });
+    image.onerror = () => reject(new Error("Could not load image."));
+    image.src = src;
+  });
+}
+
+function fitImageSize(width: number, height: number, maxWidth: number, maxHeight: number): { width: number; height: number } {
+  if (!width || !height) return { width: 180, height: 120 };
+  const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+  return {
+    width: Math.max(12, Math.round(width * scale)),
+    height: Math.max(12, Math.round(height * scale)),
+  };
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  const tagName = target.tagName.toLowerCase();
+  return tagName === "input" || tagName === "textarea" || tagName === "select" || target.isContentEditable;
+}
+
+function isArrowKey(key: string): boolean {
+  return key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown";
+}
+
+function arrowKeyDelta(key: string, distance: number): { dx: number; dy: number } {
+  switch (key) {
+    case "ArrowLeft":
+      return { dx: -distance, dy: 0 };
+    case "ArrowRight":
+      return { dx: distance, dy: 0 };
+    case "ArrowUp":
+      return { dx: 0, dy: -distance };
+    case "ArrowDown":
+      return { dx: 0, dy: distance };
+    default:
+      return { dx: 0, dy: 0 };
+  }
+}
+
+function promptInteger(label: string, fallback: number, min: number, max: number): number | null {
+  const raw = window.prompt(label, String(fallback));
+  if (raw === null) return null;
+  const value = Math.round(Number(raw));
+  if (!Number.isFinite(value)) return fallback;
+  return Math.max(min, Math.min(max, value));
+}

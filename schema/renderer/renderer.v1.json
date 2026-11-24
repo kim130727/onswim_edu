@@ -1,0 +1,161 @@
+{
+  "type": "object",
+  "properties": {
+    "problem_id": {
+      "type": "string"
+    },
+    "view_box": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "height": {
+          "type": "number"
+        },
+        "background": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ]
+    },
+    "elements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "object"
+          },
+          "text": {
+            "type": "string"
+          },
+          "elements": {
+            "type": "array"
+          },
+          "interaction": {
+            "type": "object"
+          },
+          "input_style": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "attributes"
+        ]
+      }
+    },
+    "tutor_flow": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_id": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "overlays": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "target_ref": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                },
+                "style": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "type"
+              ]
+            }
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "overlays": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string"
+                      },
+                      "target_ref": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "x": {
+                        "type": "number"
+                      },
+                      "y": {
+                        "type": "number"
+                      },
+                      "style": {
+                        "type": "object"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "overlays"
+              ]
+            }
+          }
+        },
+        "required": [
+          "step_id"
+        ]
+      }
+    }
+  },
+  "required": [
+    "problem_id",
+    "view_box",
+    "elements"
+  ]
+}

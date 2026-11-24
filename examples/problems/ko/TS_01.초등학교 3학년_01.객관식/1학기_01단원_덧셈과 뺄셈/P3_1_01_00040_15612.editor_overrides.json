@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "canvas": {
+    "width": 400,
+    "height": 220
+  },
+  "deleted_slots": [
+    "slot.answer",
+    "konva_1786192274303_paste_953794_0"
+  ],
+  "slots": {
+    "slot.question": {
+      "height": 63,
+      "kind": "text_box",
+      "x": 21.608,
+      "y": 17.838,
+      "width": 362.392,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_1.number": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_1.expression": {
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_2.number": {
+      "y": 101.217,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "x": 27,
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_2.expression": {
+      "y": 101.217,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "x": 56,
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_3.number": {
+      "y": 139.824,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "x": 27,
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_3.expression": {
+      "y": 139.824,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "x": 56,
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_4.number": {
+      "height": 28,
+      "kind": "text_box",
+      "x": 183.416,
+      "y": 41.143,
+      "width": 24,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_4.expression": {
+      "height": 28,
+      "kind": "text_box",
+      "x": 212.416,
+      "y": 41.622,
+      "width": 87,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_5.number": {
+      "height": 28,
+      "kind": "text_box",
+      "x": 183.416,
+      "y": 77.36,
+      "width": 24,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    },
+    "slot.choice_5.expression": {
+      "height": 28,
+      "kind": "text_box",
+      "x": 212.416,
+      "y": 77.36,
+      "width": 87,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+      "semantic_role": "canvas",
+      "semantic_role_source": "explicit"
+    }
+  }
+}

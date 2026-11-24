@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "slots": {
+    "konva_1785891230215_rect_6041804": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "answer_key_index": 0,
+        "answer_ref": "answer.value",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "y": 140.48,
+      "x": 440.247
+    },
+    "konva_1785891230215_text_6011436": {
+      "y": 150.803,
+      "x": 603.355,
+      "font_family": "\"Noto Sans KR\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    },
+    "slot.question": {
+      "width": 621.617,
+      "height": 188,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    }
+  },
+  "canvas": {
+    "width": 700,
+    "height": 210
+  }
+}

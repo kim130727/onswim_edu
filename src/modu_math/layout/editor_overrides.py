@@ -1,0 +1,1172 @@
+from __future__ import annotations
+
+import re
+from typing import Any
+
+from modu_math.layout.sanitizer import sanitize_answer_input_content
+
+
+def _normalize_text_slot_override(
+    base_content: dict[str, Any], patch: dict[str, Any]
+) -> tuple[dict[str, Any], bool]:
+    """Normalize overrides targeting a plain TextSlot so text-box metadata does not corrupt text anchors."""
+    if not isinstance(base_content, dict) or not isinstance(patch, dict):
+        return patch, False
+
+    # An explicit kind is an authoring decision, not legacy bounding-box metadata.
+    if patch.get("kind") == "text_box" and isinstance(patch.get("width"), (int, float)) and patch["width"] > 0:
+        return patch, False
+
+    text = patch.get("text", base_content.get("text"))
+    if isinstance(text, str) and "\n" in text:
+        return patch, False
+
+    anchor = base_content.get("anchor")
+    has_box_props = (
+        patch.get("kind") == "text_box"
+        or "width" in patch
+        or "height" in patch
+        or "align" in patch
+        or "valign" in patch
+    )
+    if not has_box_props:
+        return patch, False
+
+    normalized = dict(patch)
+    changed = False
+
+    font_size = float(
+        normalized.get("font_size") or base_content.get("font_size") or 21
+    )
+    x = normalized.get("x")
+    y = normalized.get("y")
+    width = normalized.get("width")
+
+    if anchor in {"middle", "end"}:
+        if isinstance(y, (int, float)) and (
+            "height" in normalized
+            or "width" in normalized
+            or normalized.get("kind") == "text_box"
+        ):
+            normalized["y"] = round(float(y) + font_size, 3)
+            changed = True
+
+        if isinstance(x, (int, float)) and isinstance(width, (int, float)):
+            if anchor == "middle":
+                normalized["x"] = round(float(x) + float(width) / 2, 3)
+            elif anchor == "end":
+                normalized["x"] = round(float(x) + float(width), 3)
+            changed = True
+    elif anchor == "start" or anchor is None:
+        if isinstance(y, (int, float)) and (
+            "height" in normalized or normalized.get("kind") == "text_box"
+        ):
+            normalized["y"] = round(float(y) + font_size, 3)
+            changed = True
+
+    for field in ("kind", "width", "height", "align", "valign", "line_height"):
+        if field in normalized:
+            normalized.pop(field, None)
+            changed = True
+
+    return normalized, changed
+
+
+def _normalize_answer_input_interaction(content: dict[str, Any]) -> None:
+    interaction = content.get("interaction")
+    if not isinstance(interaction, dict):
+        return
+    if interaction.get("type") == "input" and interaction.get("role") == "answer":
+        sanitize_answer_input_content(content)
+    # Resizing a box must preserve its authored digit/segment semantics.
+
+
+def _rect_size_for_text_blank(content: dict[str, Any]) -> float:
+    font_size = content.get("font_size")
+    return float(font_size) * 0.82 if isinstance(font_size, int | float) else 18.0
+
+
+def _prepare_text_blank_rect_override(
+    slot: dict[str, Any],
+    patch: dict[str, Any],
+) -> dict[str, Any]:
+    if slot.get("kind") != "text":
+        return patch
+    content = slot.get("content")
+    if not isinstance(content, dict):
+        return patch
+    text = content.get("text")
+    if not isinstance(text, str) or text.strip() != "□":
+        return patch
+    if "x" not in patch and "y" not in patch:
+        return patch
+    if "width" in patch and "height" in patch:
+        return patch
+    normalized = dict(patch)
+    size = _rect_size_for_text_blank(content)
+    normalized.setdefault("width", round(size, 3))
+    normalized.setdefault("height", round(size, 3))
+    return normalized
+
+
+def _drop_transform_for_absolute_geometry_override(
+    slot_kind: str | None, content: dict[str, Any], patch: dict[str, Any]
+) -> None:
+    """Treat edited absolute geometry as authoritative over a DSL transform."""
+    if "transform" in patch:
+        return
+    if slot_kind == "line" and {"x1", "y1", "x2", "y2"} & set(patch):
+        content.pop("transform", None)
+    elif slot_kind == "path" and "d" in patch:
+        content.pop("transform", None)
+
+
+def _center_dot_y(cy: float, font_size: float) -> float:
+    return round(cy + font_size / 3.0, 3)
+
+
+def _sync_center_dot_text_slots(layout: dict[str, Any]) -> None:
+    slots = layout.get("slots")
+    if not isinstance(slots, list):
+        return
+
+    slots_by_id = {
+        slot.get("id"): slot
+        for slot in slots
+        if isinstance(slot, dict) and isinstance(slot.get("id"), str)
+    }
+    for slot_id, slot in slots_by_id.items():
+        if not isinstance(slot_id, str) or not slot_id.endswith(".center.dot"):
+            continue
+        if slot.get("kind") != "text":
+            continue
+        content = slot.get("content")
+        if not isinstance(content, dict) or content.get("text") != "●":
+            continue
+
+        circle_slot = slots_by_id.get(f"{slot_id[: -len('.center.dot')]}.circle")
+        if not isinstance(circle_slot, dict) or circle_slot.get("kind") != "circle":
+            continue
+        circle_content = circle_slot.get("content")
+        if not isinstance(circle_content, dict):
+            continue
+        cx = circle_content.get("cx")
+        cy = circle_content.get("cy")
+        if not isinstance(cx, (int, float)) or not isinstance(cy, (int, float)):
+            continue
+
+        font_size = content.get("font_size")
+        if not isinstance(font_size, (int, float)) or font_size <= 0:
+            font_size = 12.0
+        content["x"] = round(float(cx), 3)
+        content["y"] = _center_dot_y(float(cy), float(font_size))
+
+
+def _is_answer_slot_id(slot_id: str) -> bool:
+    return (
+        slot_id == "slot.answer" or slot_id.endswith(".answer") or ".answer." in slot_id
+    )
+
+
+def _layout_has_answer_interaction(layout: dict[str, Any], deleted: set[str]) -> bool:
+    for slot in layout.get("slots", []):
+        if not isinstance(slot, dict):
+            continue
+        slot_id = slot.get("id")
+        if not isinstance(slot_id, str) or _deleted_slot_matches(
+            slot_id, deleted, deleted & _layout_slot_ids(layout)
+        ):
+            continue
+        content = slot.get("content")
+        interaction = content.get("interaction") if isinstance(content, dict) else None
+        if isinstance(interaction, dict) and interaction.get("role") == "answer":
+            return True
+    return False
+
+
+def _infer_override_slot_kind(content: dict[str, Any]) -> str:
+    if "d" in content:
+        return "path"
+    if (
+        "width" in content
+        or "height" in content
+        or "align" in content
+        or "valign" in content
+        or "line_height" in content
+    ) and ("text" in content or "font_size" in content):
+        return "text_box"
+    if "text" in content or "font_size" in content or "max_width" in content:
+        return "text"
+    if "x1" in content or "y1" in content or "x2" in content or "y2" in content:
+        return "line"
+    if "cx" in content or "cy" in content or "r" in content:
+        return "circle"
+    if "href" in content or "src" in content:
+        return "image"
+    return "rect"
+
+
+def _slot_prefix_score(slot_id: str, candidate: str) -> int:
+    slot_parts = slot_id.split(".")
+    candidate_parts = candidate.split(".")
+    score = 0
+    for left, right in zip(slot_parts, candidate_parts):
+        if left != right:
+            break
+        score += 1
+    return score
+
+
+def _override_is_answer_slot(slot_id: str, content: dict[str, Any]) -> bool:
+    interaction = content.get("interaction")
+    return (
+        (isinstance(interaction, dict) and interaction.get("role") == "answer")
+        or slot_id.startswith("answer.")
+        or ".answer" in slot_id
+    )
+
+
+EDITOR_INSERTED_SLOT_PATTERN = re.compile(
+    r"^konva_\d+_(?:avatar|image|bubble|text|math|rect|circle|line|path)_\d+$"
+)
+EDITOR_AVATAR_SLOT_PATTERN = re.compile(
+    r"^konva_\d+_avatar_\d+$"
+)
+
+
+def _normalize_inserted_plain_text_override(
+    slot_id: str, patch: dict[str, Any], *, has_explicit_region: bool = False
+) -> tuple[dict[str, Any], bool]:
+    if (
+        not has_explicit_region
+        or not EDITOR_INSERTED_SLOT_PATTERN.match(slot_id)
+        or "_text_" not in slot_id
+        or patch.get("kind") == "text_box"
+    ):
+        return patch, False
+
+    text = patch.get("text")
+    if not isinstance(text, str) or "\n" in text:
+        return patch, False
+    if _override_is_answer_slot(slot_id, patch):
+        return patch, False
+
+    has_box_props = (
+        "width" in patch
+        or "height" in patch
+        or "align" in patch
+        or "valign" in patch
+        or "line_height" in patch
+    )
+    if not has_box_props:
+        return patch, False
+
+    normalized = dict(patch)
+    font_size = normalized.get("font_size")
+    y = normalized.get("y")
+    if isinstance(font_size, (int, float)) and isinstance(y, (int, float)):
+        normalized["y"] = round(float(y) + float(font_size), 3)
+
+    for field in ("width", "height", "align", "valign", "line_height"):
+        normalized.pop(field, None)
+    normalized["kind"] = "text"
+    return normalized, normalized != patch
+
+
+def _default_region_id_for_inserted_slot(layout: dict[str, Any]) -> str | None:
+    first_region_id: str | None = None
+    for region in layout.get("regions", []):
+        if not isinstance(region, dict) or not isinstance(region.get("id"), str):
+            continue
+        region_id = region["id"]
+        if first_region_id is None:
+            first_region_id = region_id
+        if region.get("role") == "diagram" or region_id == "region.diagram":
+            return region_id
+    return first_region_id
+
+
+def _is_editor_inserted_visual_slot(
+    slot_id: str, content: dict[str, Any], layout: dict[str, Any] | None = None
+) -> bool:
+    inferred_kind = _infer_override_slot_kind(content)
+    if inferred_kind in {"image", "path"}:
+        return True
+    return bool(EDITOR_INSERTED_SLOT_PATTERN.match(slot_id))
+
+
+def _infer_region_id_for_slot(
+    layout: dict[str, Any],
+    slot_id: str,
+    content: dict[str, Any] | None = None,
+    explicit_region_id: str | None = None,
+) -> str | None:
+    if explicit_region_id:
+        for region in layout.get("regions", []):
+            if isinstance(region, dict) and region.get("id") == explicit_region_id:
+                return explicit_region_id
+
+    best_region_id: str | None = None
+    best_score = 0
+    for region in layout.get("regions", []):
+        if not isinstance(region, dict) or not isinstance(region.get("slot_ids"), list):
+            continue
+        for existing_id in region["slot_ids"]:
+            if not isinstance(existing_id, str):
+                continue
+            score = _slot_prefix_score(slot_id, existing_id)
+            if score > best_score:
+                best_score = score
+                best_region_id = (
+                    region.get("id") if isinstance(region.get("id"), str) else None
+                )
+    if best_region_id and best_score >= 2:
+        return best_region_id
+    if content is not None and _override_is_answer_slot(slot_id, content):
+        region_ids = [
+            region.get("id")
+            for region in layout.get("regions", [])
+            if isinstance(region, dict) and isinstance(region.get("id"), str)
+        ]
+        if len(region_ids) == 1:
+            return region_ids[0]
+    if content is not None and _is_editor_inserted_visual_slot(
+        slot_id, content, layout=layout
+    ):
+        return _default_region_id_for_inserted_slot(layout)
+    return None
+
+
+FRACTION_LATEX_PATTERN = re.compile(
+    r"^([+-]?\d+)?\s*\\frac\s*\{([^{}]+)\}\s*\{([^{}]+)\}$"
+)
+
+
+def _estimate_math_text_width(text: str, font_size: float) -> float:
+    width = sum(font_size * (0.36 if ch in "1li.,: " else 0.58) for ch in text)
+    return max(font_size * 0.36, width)
+
+
+def _expand_fraction_override_slots(
+    slot_id: str, content: dict[str, Any], layout: dict[str, Any] | None = None
+) -> list[dict[str, Any]] | None:
+    text = content.get("text") or content.get("latex")
+    num_slot = None
+    den_slot = None
+    whole_slot = None
+    bar_slot = None
+
+    if not isinstance(text, str) and layout is not None:
+        slots_by_id = {
+            s.get("id"): s
+            for s in layout.get("slots", [])
+            if isinstance(s, dict) and isinstance(s.get("id"), str)
+        }
+        num_slot = slots_by_id.get(f"{slot_id}.num")
+        den_slot = slots_by_id.get(f"{slot_id}.den")
+        whole_slot = slots_by_id.get(f"{slot_id}.whole")
+        bar_slot = slots_by_id.get(f"{slot_id}.bar")
+        if num_slot and den_slot:
+            num_content = num_slot.get("content", {})
+            den_content = den_slot.get("content", {})
+            num_val = num_content.get("text", "")
+            den_val = den_content.get("text", "")
+            whole_val = (
+                whole_slot.get("content", {}).get("text", "") if whole_slot else ""
+            )
+            text = (
+                f"{whole_val}\\frac{{{num_val}}}{{{den_val}}}"
+                if whole_val
+                else f"\\frac{{{num_val}}}{{{den_val}}}"
+            )
+
+    if not isinstance(text, str):
+        return None
+    match = FRACTION_LATEX_PATTERN.match(text.strip())
+    if not match:
+        return None
+
+    whole = match.group(1)
+    num = match.group(2)
+    den = match.group(3)
+
+    default_font_size = 28
+    if num_slot and isinstance(num_slot.get("content"), dict):
+        default_font_size = num_slot["content"].get("font_size", 28)
+
+    font_size = int(content.get("font_size", default_font_size))
+    fill = content.get("fill") or (
+        num_slot.get("content", {}).get("fill")
+        if num_slot and isinstance(num_slot.get("content"), dict)
+        else "#111827"
+    )
+
+    small_font = max(14, int(round(font_size * 0.78)))
+    num_width = _estimate_math_text_width(num, small_font)
+    den_width = _estimate_math_text_width(den, small_font)
+    bar_width = max(18.0, max(num_width, den_width) + small_font * 0.35)
+    whole_text_width = _estimate_math_text_width(whole, font_size) if whole else 0.0
+    gap = max(3.0, round(font_size * 0.15, 1)) if whole else 0.0
+    whole_width = (whole_text_width + gap) if whole else 0.0
+    total_width = whole_width + bar_width
+
+    box_x = content.get("x")
+    box_y = content.get("y")
+    box_w = float(content.get("width", 50.0))
+    box_h = float(content.get("height", 60.0))
+
+    if box_x is not None and box_y is not None:
+        box_x = float(box_x)
+        box_y = float(box_y)
+        start_x = box_x + max(0.0, (box_w - total_width) / 2.0)
+        fraction_center_x = start_x + whole_width + bar_width / 2.0
+        bar_x1 = start_x + whole_width
+        bar_x2 = start_x + whole_width + bar_width
+        effective_box_h = min(box_h, max(50.0, font_size * 2.4))
+        center_y = box_y + effective_box_h / 2.0
+        bar_y = center_y
+        num_y = center_y - font_size * 0.35
+        den_y = center_y + font_size * 0.95
+        whole_x = start_x + whole_text_width / 2.0
+        whole_y = center_y + font_size * 0.35
+    elif bar_slot and isinstance(bar_slot.get("content"), dict):
+        bar_c = bar_slot["content"]
+        bar_x1 = float(bar_c.get("x1", 0.0))
+        bar_x2 = float(bar_c.get("x2", bar_x1 + bar_width))
+        bar_y = float(bar_c.get("y1", 0.0))
+        fraction_center_x = (bar_x1 + bar_x2) / 2.0
+        num_y = float(num_slot.get("content", {}).get("y", bar_y - font_size * 0.35)) if num_slot else bar_y - font_size * 0.35
+        den_y = float(den_slot.get("content", {}).get("y", bar_y + font_size * 0.95)) if den_slot else bar_y + font_size * 0.95
+        whole_x = float(whole_slot.get("content", {}).get("x", bar_x1 - gap - whole_text_width / 2.0)) if whole_slot else bar_x1 - gap - whole_text_width / 2.0
+        whole_y = float(whole_slot.get("content", {}).get("y", bar_y + font_size * 0.35)) if whole_slot else bar_y + font_size * 0.35
+    else:
+        box_x = float(box_x or 0.0)
+        box_y = float(box_y or 0.0)
+        start_x = box_x + max(0.0, (box_w - total_width) / 2.0)
+        fraction_center_x = start_x + whole_width + bar_width / 2.0
+        bar_x1 = start_x + whole_width
+        bar_x2 = start_x + whole_width + bar_width
+        effective_box_h = min(box_h, max(50.0, font_size * 2.4))
+        center_y = box_y + effective_box_h / 2.0
+        bar_y = center_y
+        num_y = center_y - font_size * 0.35
+        den_y = center_y + font_size * 0.95
+        whole_x = start_x + whole_text_width / 2.0
+        whole_y = center_y + font_size * 0.35
+
+    slots = []
+    if whole:
+        slots.append(
+            {
+                "id": f"{slot_id}.whole",
+                "kind": "text",
+                "prompt": "",
+                "content": {
+                    "text": whole,
+                    "x": round(whole_x, 2),
+                    "y": round(whole_y, 2),
+                    "font_size": font_size,
+                    "anchor": "middle",
+                    "fill": fill,
+                    "style_role": "body",
+                },
+            }
+        )
+
+    slots.append(
+        {
+            "id": f"{slot_id}.num",
+            "kind": "text",
+            "prompt": "",
+            "content": {
+                "text": num,
+                "x": round(fraction_center_x, 2),
+                "y": round(num_y, 2),
+                "font_size": font_size,
+                "anchor": "middle",
+                "fill": fill,
+                "style_role": "body",
+            },
+        }
+    )
+    slots.append(
+        {
+            "id": f"{slot_id}.bar",
+            "kind": "line",
+            "prompt": "",
+            "content": {
+                "x1": round(bar_x1, 2),
+                "y1": round(bar_y, 2),
+                "x2": round(bar_x2, 2),
+                "y2": round(bar_y, 2),
+                "stroke": fill,
+                "stroke_width": 2.2,
+            },
+        }
+    )
+    slots.append(
+        {
+            "id": f"{slot_id}.den",
+            "kind": "text",
+            "prompt": "",
+            "content": {
+                "text": den,
+                "x": round(fraction_center_x, 2),
+                "y": round(den_y, 2),
+                "font_size": font_size,
+                "anchor": "middle",
+                "fill": fill,
+                "style_role": "body",
+            },
+        }
+    )
+    return slots
+
+
+def _add_missing_override_slot(
+    layout: dict[str, Any],
+    slot_id: str,
+    content: dict[str, Any],
+    explicit_region_id: str | None = None,
+) -> None:
+    content, _ = _normalize_inserted_plain_text_override(
+        slot_id, content, has_explicit_region=explicit_region_id is not None
+    )
+    region_id = _infer_region_id_for_slot(
+        layout, slot_id, content, explicit_region_id=explicit_region_id
+    )
+    if region_id is None:
+        return
+
+    slots = layout.setdefault("slots", [])
+    if not isinstance(slots, list):
+        layout["slots"] = []
+        slots = layout["slots"]
+
+    fraction_expanded = _expand_fraction_override_slots(
+        slot_id, content, layout=layout
+    )
+    if fraction_expanded:
+        remove_ids = {
+            s.get("id")
+            for s in layout.get("slots", [])
+            if isinstance(s, dict)
+            and isinstance(s.get("id"), str)
+            and (s.get("id") == slot_id or s.get("id").startswith(f"{slot_id}."))
+        }
+        if remove_ids:
+            _remove_slot_ids_from_layout(layout, remove_ids)
+
+        slots = layout.setdefault("slots", [])
+        if not isinstance(slots, list):
+            layout["slots"] = []
+            slots = layout["slots"]
+
+        for frac_slot in fraction_expanded:
+            slots.append(frac_slot)
+            for region in layout.get("regions", []):
+                if not isinstance(region, dict) or region.get("id") != region_id:
+                    continue
+                slot_ids = region.setdefault("slot_ids", [])
+                if isinstance(slot_ids, list) and frac_slot["id"] not in slot_ids:
+                    slot_ids.append(frac_slot["id"])
+                break
+            reading_order = layout.get("reading_order")
+            if (
+                isinstance(reading_order, list)
+                and frac_slot["id"] not in reading_order
+            ):
+                reading_order.append(frac_slot["id"])
+        return
+
+    normalized_content = dict(content)
+    _normalize_answer_input_interaction(normalized_content)
+    slots.append(
+        {
+            "id": slot_id,
+            "kind": _infer_override_slot_kind(normalized_content),
+            "prompt": "",
+            "content": normalized_content,
+        }
+    )
+
+    for region in layout.get("regions", []):
+        if not isinstance(region, dict) or region.get("id") != region_id:
+            continue
+        slot_ids = region.setdefault("slot_ids", [])
+        if isinstance(slot_ids, list) and slot_id not in slot_ids:
+            slot_ids.append(slot_id)
+        break
+
+    reading_order = layout.get("reading_order")
+    if isinstance(reading_order, list) and slot_id not in reading_order:
+        reading_order.append(slot_id)
+
+
+def _deleted_slot_matches(
+    slot_id: str, deleted: set[str], exact_deleted: set[str]
+) -> bool:
+    if slot_id in deleted:
+        return True
+    for deleted_id in deleted - exact_deleted:
+        if slot_id.startswith(f"{deleted_id}."):
+            suffix = slot_id[len(deleted_id) + 1 :]
+            if suffix in {
+                "num",
+                "den",
+                "bar",
+                "whole",
+                "box",
+                "text",
+                "rect",
+                "line",
+                "circle",
+                "label",
+                "left",
+                "right",
+                "middle",
+                "inner",
+                "outer",
+            }:
+                return True
+    return False
+
+
+def _layout_slot_ids(layout: dict[str, Any]) -> set[str]:
+    return {
+        slot.get("id")
+        for slot in layout.get("slots", [])
+        if isinstance(slot, dict) and isinstance(slot.get("id"), str)
+    }
+
+
+def _layout_slot_kinds(layout: dict[str, Any]) -> dict[str, str]:
+    return {
+        slot["id"]: slot["kind"]
+        for slot in layout.get("slots", [])
+        if isinstance(slot, dict)
+        and isinstance(slot.get("id"), str)
+        and isinstance(slot.get("kind"), str)
+    }
+
+
+def _answer_slot_ids(answer: Any) -> set[str]:
+    if not isinstance(answer, dict):
+        return set()
+    out: set[str] = set()
+    for key in ("blanks", "answer_key"):
+        items = answer.get(key)
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            slot_id = item.get("slot_id") or item.get("id") or item.get("blank_id")
+            if isinstance(slot_id, str) and slot_id.strip():
+                out.add(slot_id)
+    return out
+
+
+def _answer_scalar_value(answer: Any) -> Any:
+    if not isinstance(answer, dict):
+        return None
+    value = answer.get("value")
+    if isinstance(value, str | int | float) and not isinstance(value, bool):
+        return value
+    return None
+
+
+def _answer_value_count(answer: Any) -> int | None:
+    if not isinstance(answer, dict):
+        return None
+    if _answer_scalar_value(answer) is not None:
+        return 1
+    values = answer.get("value")
+    if not isinstance(values, list):
+        values = answer.get("values")
+    if not isinstance(values, list):
+        return None
+    count = 0
+    for value in values:
+        if not isinstance(value, str | int | float) or isinstance(value, bool):
+            return None
+        count += 1
+    return count if count > 0 else None
+
+
+def _submitted_answer_slot_ids(
+    layout: dict[str, Any], deleted: set[str] | None = None
+) -> set[str]:
+    deleted = deleted or set()
+    exact_deleted = deleted & _layout_slot_ids(layout)
+    out: set[str] = set()
+    for slot in layout.get("slots", []):
+        if not isinstance(slot, dict):
+            continue
+        slot_id = slot.get("id")
+        if not isinstance(slot_id, str) or _deleted_slot_matches(
+            slot_id, deleted, exact_deleted
+        ):
+            continue
+        content = slot.get("content")
+        interaction = content.get("interaction") if isinstance(content, dict) else None
+        if (
+            isinstance(interaction, dict)
+            and interaction.get("role") == "answer"
+            and interaction.get("type") == "input"
+            and interaction.get("include_in_submission") is not False
+        ):
+            out.add(slot_id)
+    return out
+
+
+def _remove_slot_ids_from_layout(layout: dict[str, Any], remove_ids: set[str]) -> None:
+    if not remove_ids:
+        return
+    slots = layout.get("slots")
+    if isinstance(slots, list):
+        layout["slots"] = [
+            slot
+            for slot in slots
+            if not (
+                isinstance(slot, dict)
+                and isinstance(slot.get("id"), str)
+                and slot["id"] in remove_ids
+            )
+        ]
+    for region in layout.get("regions", []):
+        if isinstance(region, dict) and isinstance(region.get("slot_ids"), list):
+            region["slot_ids"] = [
+                slot_id for slot_id in region["slot_ids"] if slot_id not in remove_ids
+            ]
+    if isinstance(layout.get("reading_order"), list):
+        layout["reading_order"] = [
+            slot_id for slot_id in layout["reading_order"] if slot_id not in remove_ids
+        ]
+
+
+def prune_legacy_answer_blank_slots(
+    layout: dict[str, Any], answer: Any
+) -> tuple[dict[str, Any], set[str]]:
+    """Remove old BlankSlot answers when a visual input slot now owns submission.
+
+    Older DSL files often kept a `slot.answer` BlankSlot for the semantic answer
+    while editors added a positioned RectSlot with `interaction`. Rendering both
+    creates a duplicate answer box. If exactly one visual answer input is present,
+    answer-like blank slots are legacy scaffolding and should not render.
+    """
+    submitted_slot_ids = _submitted_answer_slot_ids(layout)
+    answer_value_count = _answer_value_count(answer)
+    if answer_value_count is None or len(submitted_slot_ids) != answer_value_count:
+        return layout, set()
+
+    answer_slot_ids = _answer_slot_ids(answer)
+    visual_answer_owns_contract = (
+        not answer_slot_ids or answer_slot_ids == submitted_slot_ids
+    )
+    remove_ids = {
+        slot.get("id")
+        for slot in layout.get("slots", [])
+        if (
+            isinstance(slot, dict)
+            and slot.get("kind") == "blank"
+            and isinstance(slot.get("id"), str)
+            and (
+                _is_answer_slot_id(slot["id"])
+                or slot["id"] in answer_slot_ids
+                or visual_answer_owns_contract
+            )
+        )
+    }
+    remove_ids = {slot_id for slot_id in remove_ids if isinstance(slot_id, str)}
+    _remove_slot_ids_from_layout(layout, remove_ids)
+    return layout, remove_ids
+
+
+def prune_deleted_legacy_answer_slots(
+    layout: dict[str, Any],
+    overrides: dict[str, Any] | None,
+    answer: Any,
+) -> tuple[dict[str, Any] | None, bool]:
+    if not isinstance(overrides, dict):
+        return overrides, False
+    deleted_slots = overrides.get("deleted_slots")
+    if not isinstance(deleted_slots, list):
+        return overrides, False
+
+    has_single_visual_answer = (
+        _answer_scalar_value(answer) is not None
+        and len(_submitted_answer_slot_ids(layout, set(deleted_slots))) == 1
+    )
+    if not has_single_visual_answer:
+        return overrides, False
+
+    slot_kinds = _layout_slot_kinds(layout)
+    cleaned_deleted = [
+        slot_id
+        for slot_id in deleted_slots
+        if not (
+            isinstance(slot_id, str)
+            and slot_kinds.get(slot_id) == "blank"
+            and has_single_visual_answer
+        )
+    ]
+    if cleaned_deleted == deleted_slots:
+        return overrides, False
+
+    cleaned = dict(overrides)
+    if cleaned_deleted:
+        cleaned["deleted_slots"] = cleaned_deleted
+    else:
+        cleaned.pop("deleted_slots", None)
+    cleaned["version"] = 1
+    return cleaned, True
+
+
+def _points_from_polygon_path(d: Any) -> list[list[float]] | None:
+    if not isinstance(d, str) or not d.strip():
+        return None
+    commands = set(re.findall(r"[A-Za-z]", d))
+    if commands - {"M", "m", "L", "l", "Z", "z"}:
+        return None
+    numbers = [
+        float(match.group(0))
+        for match in re.finditer(r"[-+]?(?:\d*\.\d+|\d+)(?:e[-+]?\d+)?", d)
+    ]
+    if len(numbers) < 6 or len(numbers) % 2:
+        return None
+    return [[numbers[index], numbers[index + 1]] for index in range(0, len(numbers), 2)]
+
+
+def _normalize_slot_patch(
+    slot_kind: str | None, patch: dict[str, Any]
+) -> tuple[dict[str, Any], bool]:
+    if slot_kind != "polygon" or "d" not in patch:
+        return patch, False
+    normalized = dict(patch)
+    points = _points_from_polygon_path(normalized.pop("d"))
+    if points is not None and "points" not in normalized:
+        normalized["points"] = points
+    return normalized, normalized != patch
+
+
+def prune_editor_overrides(
+    layout: dict[str, Any], overrides: dict[str, Any] | None
+) -> tuple[dict[str, Any] | None, bool]:
+    if not isinstance(overrides, dict):
+        return overrides, False
+
+    changed = False
+    cleaned: dict[str, Any] = {
+        key: value
+        for key, value in overrides.items()
+        if key not in {"slots", "region_slot_orders", "deleted_slots"}
+    }
+    slot_ids = _layout_slot_ids(layout)
+    slot_kinds = _layout_slot_kinds(layout)
+    deleted_slots = overrides.get("deleted_slots")
+    if isinstance(deleted_slots, list):
+        cleaned_deleted = list(deleted_slots)
+        if cleaned_deleted:
+            cleaned["deleted_slots"] = cleaned_deleted
+        elif deleted_slots:
+            changed = True
+
+    retained_override_slot_ids: set[str] = set()
+    slot_regions = overrides.get("slot_regions")
+    slot_region_map = slot_regions if isinstance(slot_regions, dict) else {}
+    slot_overrides = overrides.get("slots")
+    if isinstance(slot_overrides, dict):
+        cleaned_slots: dict[str, Any] = {}
+        for slot_id, patch in slot_overrides.items():
+            if not isinstance(slot_id, str) or not isinstance(patch, dict):
+                changed = True
+                continue
+            is_localized = bool(overrides.get("layout_source"))
+            patch_kind = patch.get("kind") or slot_kinds.get(slot_id)
+            is_visual = (
+                patch_kind not in {"text", "text_box", "label", "choice", "blank"}
+                or "avatar" in slot_id
+                or "image" in slot_id
+                or "calloutRect" in slot_id
+            )
+            if is_localized and is_visual and slot_id not in slot_ids:
+                changed = True
+                continue
+            if (
+                slot_id in slot_ids
+                or _infer_region_id_for_slot(
+                    layout,
+                    slot_id,
+                    patch,
+                    explicit_region_id=(
+                        slot_region_map.get(slot_id)
+                        if isinstance(slot_region_map.get(slot_id), str)
+                        else None
+                    ),
+                )
+                is not None
+            ):
+                explicit_region_id = slot_region_map.get(slot_id)
+                patch, inserted_text_normalized = (
+                    _normalize_inserted_plain_text_override(
+                        slot_id,
+                        patch,
+                        has_explicit_region=isinstance(explicit_region_id, str),
+                    )
+                )
+                patch, normalized = _normalize_slot_patch(
+                    slot_kinds.get(slot_id), patch
+                )
+                normalized = normalized or inserted_text_normalized
+                base_slot = next(
+                    (
+                        slot
+                        for slot in layout.get("slots", [])
+                        if isinstance(slot, dict) and slot.get("id") == slot_id
+                    ),
+                    None,
+                )
+                base_content = (
+                    base_slot.get("content")
+                    if isinstance(base_slot, dict)
+                    and isinstance(base_slot.get("content"), dict)
+                    else {}
+                )
+                if slot_kinds.get(slot_id) == "text":
+                    patch, text_slot_normalized = _normalize_text_slot_override(
+                        base_content, patch
+                    )
+                    normalized = normalized or text_slot_normalized
+                changed = changed or normalized
+                if patch:
+                    cleaned_slots[slot_id] = patch
+                    retained_override_slot_ids.add(slot_id)
+            else:
+                changed = True
+        if cleaned_slots:
+            cleaned["slots"] = cleaned_slots
+        elif slot_overrides:
+            changed = True
+
+    region_slot_orders = overrides.get("region_slot_orders")
+    if isinstance(region_slot_orders, dict):
+        valid_order_ids = slot_ids | retained_override_slot_ids
+        cleaned_orders: dict[str, list[str]] = {}
+        for region_id, order in region_slot_orders.items():
+            if not isinstance(region_id, str) or not isinstance(order, list):
+                changed = True
+                continue
+            cleaned_order = [
+                slot_id
+                for slot_id in order
+                if isinstance(slot_id, str) and slot_id in valid_order_ids
+            ]
+            if cleaned_order != order:
+                changed = True
+            if cleaned_order:
+                cleaned_orders[region_id] = cleaned_order
+        if cleaned_orders:
+            cleaned["region_slot_orders"] = cleaned_orders
+        elif region_slot_orders:
+            changed = True
+
+    if isinstance(slot_regions, dict):
+        cleaned_regions = {
+            slot_id: region_id
+            for slot_id, region_id in slot_regions.items()
+            if isinstance(slot_id, str)
+            and isinstance(region_id, str)
+            and slot_id in retained_override_slot_ids
+            and _infer_region_id_for_slot(
+                layout, slot_id, {}, explicit_region_id=region_id
+            )
+            is not None
+        }
+        if cleaned_regions:
+            cleaned["slot_regions"] = cleaned_regions
+        elif slot_regions:
+            cleaned.pop("slot_regions", None)
+        if cleaned_regions != slot_regions:
+            changed = True
+
+    if changed:
+        cleaned["version"] = 1
+    elif cleaned != overrides:
+        changed = True
+
+    return cleaned, changed
+
+
+def apply_editor_overrides(
+    layout: dict[str, Any], overrides: dict[str, Any] | None
+) -> dict[str, Any]:
+    if not isinstance(overrides, dict):
+        return layout
+
+    deleted_slots = overrides.get("deleted_slots")
+    deleted = (
+        {slot_id for slot_id in deleted_slots if isinstance(slot_id, str)}
+        if isinstance(deleted_slots, list)
+        else set()
+    )
+    if deleted:
+        slot_ids = {
+            slot.get("id")
+            for slot in layout.get("slots", [])
+            if isinstance(slot, dict) and isinstance(slot.get("id"), str)
+        }
+        exact_deleted = deleted & slot_ids
+
+        def is_deleted(slot_id: Any) -> bool:
+            return isinstance(slot_id, str) and _deleted_slot_matches(
+                slot_id, deleted, exact_deleted
+            )
+
+        remove_ids = {slot_id for slot_id in slot_ids if is_deleted(slot_id)}
+        _remove_slot_ids_from_layout(layout, remove_ids)
+
+    region_slot_orders = overrides.get("region_slot_orders")
+    if isinstance(region_slot_orders, dict):
+        for region in layout.get("regions", []):
+            if not isinstance(region, dict):
+                continue
+            region_id = region.get("id")
+            override_order = (
+                region_slot_orders.get(region_id)
+                if isinstance(region_id, str)
+                else None
+            )
+            current_order = region.get("slot_ids")
+            if not isinstance(override_order, list) or not isinstance(
+                current_order, list
+            ):
+                continue
+            current_set = {
+                slot_id for slot_id in current_order if isinstance(slot_id, str)
+            }
+            ordered = [
+                slot_id
+                for slot_id in override_order
+                if isinstance(slot_id, str) and slot_id in current_set
+            ]
+            ordered.extend(
+                slot_id
+                for slot_id in current_order
+                if isinstance(slot_id, str) and slot_id not in ordered
+            )
+            region["slot_ids"] = ordered
+
+    slot_overrides = overrides.get("slots")
+    if isinstance(slot_overrides, dict):
+        slot_ids = {
+            slot.get("id")
+            for slot in layout.get("slots", [])
+            if isinstance(slot, dict) and isinstance(slot.get("id"), str)
+        }
+        slot_regions = overrides.get("slot_regions")
+        slot_region_map = slot_regions if isinstance(slot_regions, dict) else {}
+        for slot_id, patch in slot_overrides.items():
+            if (
+                isinstance(slot_id, str)
+                and slot_id
+                and isinstance(patch, dict)
+                and not _deleted_slot_matches(slot_id, deleted, deleted & slot_ids)
+            ):
+                if slot_id not in slot_ids:
+                    if overrides.get("layout_source"):
+                        patch_kind = patch.get("kind")
+                        is_visual = (
+                            patch_kind not in {"text", "text_box", "label", "choice", "blank"}
+                            or "avatar" in slot_id
+                            or "image" in slot_id
+                            or "calloutRect" in slot_id
+                        )
+                        if is_visual:
+                            continue
+                    explicit_region_id = slot_region_map.get(slot_id)
+                    _add_missing_override_slot(
+                        layout,
+                        slot_id,
+                        patch,
+                        explicit_region_id=(
+                            explicit_region_id
+                            if isinstance(explicit_region_id, str)
+                            else None
+                        ),
+                    )
+                    slot_ids.add(slot_id)
+                elif _expand_fraction_override_slots(
+                    slot_id, patch, layout=layout
+                ):
+                    explicit_region_id = slot_region_map.get(slot_id)
+                    _add_missing_override_slot(
+                        layout,
+                        slot_id,
+                        patch,
+                        explicit_region_id=(
+                            explicit_region_id
+                            if isinstance(explicit_region_id, str)
+                            else None
+                        ),
+                    )
+
+        for slot in layout.get("slots", []):
+            if not isinstance(slot, dict):
+                continue
+            slot_id = slot.get("id")
+            patch = slot_overrides.get(slot_id) if isinstance(slot_id, str) else None
+            if not isinstance(patch, dict):
+                continue
+            content = slot.get("content")
+            if isinstance(content, dict):
+                current_kind = (
+                    slot.get("kind") if isinstance(slot.get("kind"), str) else None
+                )
+                explicit_region_id = slot_region_map.get(slot_id)
+                patch, inserted_text_normalized = (
+                    _normalize_inserted_plain_text_override(
+                        slot_id,
+                        patch,
+                        has_explicit_region=isinstance(explicit_region_id, str),
+                    )
+                )
+                patch, _ = _normalize_slot_patch(
+                    current_kind,
+                    patch,
+                )
+                if inserted_text_normalized and current_kind == "text_box":
+                    current_kind = "text"
+                if current_kind == "text":
+                    patch, _ = _normalize_text_slot_override(content, patch)
+                patch = _prepare_text_blank_rect_override(slot, patch)
+                _drop_transform_for_absolute_geometry_override(
+                    current_kind,
+                    content,
+                    patch,
+                )
+                if patch.get("kind") in {
+                    "text",
+                    "text_box",
+                    "rect",
+                    "circle",
+                    "line",
+                    "polygon",
+                    "image",
+                    "path",
+                    "blank",
+                }:
+                    if current_kind == "text" and patch["kind"] == "text_box":
+                        content.pop("anchor", None)
+                    slot["kind"] = patch["kind"]
+                content.update(patch)
+                _normalize_answer_input_interaction(content)
+
+    canvas_override = overrides.get("canvas")
+    canvas = layout.get("canvas")
+    if isinstance(canvas, dict) and isinstance(canvas_override, dict):
+        canvas.update(canvas_override)
+
+    _sync_center_dot_text_slots(layout)
+
+    return layout

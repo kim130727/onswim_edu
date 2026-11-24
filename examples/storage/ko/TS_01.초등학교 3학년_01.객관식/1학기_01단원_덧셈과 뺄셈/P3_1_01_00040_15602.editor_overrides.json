@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "deleted_slots": [
+    "slot.expression_blank",
+    "slot.answer_blank"
+  ],
+  "slots": {
+    "konva_1785806283023_rect_832106": {
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "digit",
+        "max_length": 1,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      },
+      "x": 354.053,
+      "y": 119.968,
+      "width": 121.02,
+      "height": 58.75
+    },
+    "konva_1785806283023_text_811625": {
+      "x": 22.72,
+      "y": 11.689,
+      "width": 527.934,
+      "height": 121,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "konva_1785806283023_paste_838959_0": {
+      "x": 486.455,
+      "y": 128.669,
+      "width": 29,
+      "height": 38,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    }
+  },
+  "canvas": {
+    "width": 600,
+    "height": 200
+  }
+}

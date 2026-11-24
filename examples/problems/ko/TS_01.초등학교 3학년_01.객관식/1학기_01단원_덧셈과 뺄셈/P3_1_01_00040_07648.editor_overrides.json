@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "slots": {
+    "slot.question": {
+      "text": "서로 다른 두 수가 있습니다. 두 수 중 큰 수는 작은 수의 2배입니다. 두 수의 합이 735라면 큰 수는 얼마입니까?",
+      "x": 30.136,
+      "y": 27.851,
+      "font_size": 30,
+      "fill": "#202124",
+      "width": 804,
+      "height": 98,
+      "align": "left",
+      "line_height": 1.5,
+      "font_family": "\"Noto Sans KR\", sans-serif",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "konva_1785217709470_rect_5615662": {
+      "width": 121.03,
+      "height": 51.89,
+      "x": 605.09,
+      "y": 146
+    },
+    "konva_1795396069367_text_889478": {
+      "text": "답을 적어주세요",
+      "x": 561.99,
+      "y": 92.37,
+      "font_size": 30,
+      "fill": "#111827",
+      "width": 201,
+      "height": 38,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.25,
+      "kind": "text_box",
+      "font_family": "\"Noto Sans KR\", \"Pretendard\", \"Segoe UI\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif"
+    }
+  },
+  "slot_regions": {
+    "konva_1795396069367_text_889478": "region.stem"
+  }
+}

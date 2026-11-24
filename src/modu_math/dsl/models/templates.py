@@ -1,0 +1,29 @@
+﻿from __future__ import annotations
+
+from dataclasses import dataclass
+
+from .base import BlankSlot, Canvas, ChoiceSlot, CircleSlot, Constraint, Group, ImageSlot, LabelSlot, LineSlot, PathSlot, PolygonSlot, RectSlot, Region, TextBoxSlot, TextSlot
+from .objects import ShapeObject
+
+AuthoringSlot = TextSlot | TextBoxSlot | ChoiceSlot | BlankSlot | LabelSlot | RectSlot | LineSlot | CircleSlot | PolygonSlot | ImageSlot | PathSlot
+
+
+@dataclass(frozen=True)
+class DiagramTemplate:
+    id: str
+    objects: tuple[ShapeObject, ...] = ()
+    label_slots: tuple[LabelSlot, ...] = ()
+    constraints: tuple[Constraint, ...] = ()
+
+
+@dataclass(frozen=True)
+class ProblemTemplate:
+    id: str
+    title: str
+    canvas: Canvas
+    regions: tuple[Region, ...]
+    slots: tuple[AuthoringSlot, ...]
+    diagrams: tuple[DiagramTemplate, ...] = ()
+    groups: tuple[Group, ...] = ()
+    constraints: tuple[Constraint, ...] = ()
+    tags: tuple[str, ...] = ()

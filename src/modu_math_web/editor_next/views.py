@@ -1,0 +1,101 @@
+from __future__ import annotations
+
+import hashlib
+from functools import lru_cache
+from pathlib import Path
+
+from django.conf import settings
+
+from django.http import HttpRequest, FileResponse, HttpResponse
+from django.shortcuts import render
+from django.views.decorators.http import require_GET
+
+_ASSET_ROOT = (
+    Path(__file__).resolve().parent / "static" / "editor_next" / "konva_assets"
+)
+
+
+def _student_asset_root() -> Path:
+    if settings.STUDENT_STATIC_ROOT:
+        return Path(settings.STUDENT_STATIC_ROOT) / "editor_next" / "student_app"
+    return _ASSET_ROOT.with_name("student_app")
+
+
+@lru_cache(maxsize=8)
+def _fingerprint_asset(path: str, modified_ns: int, size: int) -> str:
+    del modified_ns, size
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:12]
+
+
+def editor_asset_version() -> str:
+    """Return a stable content version for the compiled editor assets."""
+    fingerprints: list[str] = []
+    for asset_name in ("editor-konva.js", "editor-konva.css"):
+        asset = _ASSET_ROOT / asset_name
+        stat = asset.stat()
+        fingerprints.append(
+            _fingerprint_asset(str(asset), stat.st_mtime_ns, stat.st_size)
+        )
+    return hashlib.sha256(":".join(fingerprints).encode()).hexdigest()[:12]
+
+
+def student_app_asset_version() -> str:
+    root = _student_asset_root()
+    index = root / "index.html"
+    if not index.exists():
+        return "missing"
+    stat = index.stat()
+    return _fingerprint_asset(str(index), stat.st_mtime_ns, stat.st_size)
+
+
+@require_GET
+def student_workspace(request: HttpRequest):
+    index = _student_asset_root() / "index.html"
+    if not index.is_file():
+        return HttpResponse("학생 학습 화면을 준비하고 있습니다.", status=503)
+    html = index.read_text(encoding="utf-8")
+    if "<base " not in html.lower():
+        if "<head>" in html:
+            html = html.replace(
+                "<head>",
+                '<head>\n    <base href="/static/editor_next/student_app/" />',
+                1,
+            )
+        else:
+            html = '<base href="/static/editor_next/student_app/" />\n' + html
+    response = HttpResponse(html, content_type="text/html; charset=utf-8")
+    response["Cache-Control"] = "no-cache"
+    return response
+
+
+@require_GET
+def teacher_workspace(request: HttpRequest):
+    fingerprints = []
+    for name in ("teacher.js", "teacher.css"):
+        asset = _ASSET_ROOT / name
+        stat = asset.stat()
+        fingerprints.append(
+            _fingerprint_asset(str(asset), stat.st_mtime_ns, stat.st_size)
+        )
+    return render(
+        request,
+        "editor_next/teacher.html",
+        {
+            "teacher_asset_version": hashlib.sha256(
+                ":".join(fingerprints).encode()
+            ).hexdigest()[:12],
+        },
+    )
+
+
+@require_GET
+def editor_konva(request: HttpRequest):
+    return render(
+        request,
+        "editor_next/konva.html",
+        {
+            "editor_asset_version": editor_asset_version(),
+            "student_app_version": student_app_asset_version(),
+            "local_editor": settings.DEBUG,
+        },
+    )

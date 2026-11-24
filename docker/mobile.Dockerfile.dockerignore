@@ -1,0 +1,17 @@
+.git
+.venv
+.uv-cache
+.env
+db.sqlite3
+__pycache__
+.pytest_cache
+.tmp
+node_modules
+logs
+scratch
+apps/mobile/node_modules
+apps/mobile/dist
+apps/mobile/android
+apps/mobile/ios
+apps/mobile/*.log
+src/modu_math_web/editor_next/node_modules

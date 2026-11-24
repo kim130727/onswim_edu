@@ -1,0 +1,174 @@
+{
+  "version": 1,
+  "slots": {
+    "slot.instruction": {
+      "text": "빈 곳에 알맞은 수를 써넣으시오.",
+      "x": 16.254,
+      "y": 7.545,
+      "font_size": 15,
+      "fill": "#111111",
+      "width": 222.057,
+      "height": 43,
+      "align": "left",
+      "line_height": 1.15,
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.start_oval": {
+      "d": "M -8.35 99.44 C -8.35 84.44 47.65 84.44 47.65 99.44 C 47.65 114.44 -8.35 114.44 -8.35 99.44 Z",
+      "fill": "#fff7ff",
+      "stroke": "#ead5e9",
+      "stroke_width": 1.2
+    },
+    "slot.operation_1_box": {
+      "x": 36.89,
+      "y": 42.39,
+      "width": 64,
+      "height": 28,
+      "fill": "#e9f8dd",
+      "stroke": "#a9ce93",
+      "stroke_width": 1.2
+    },
+    "slot.answer_1_oval": {
+      "d": "M 100.52 99.13 C 100.52 84.13 156.52 84.13 156.52 99.13 C 156.52 114.13 100.52 114.13 100.52 99.13 Z",
+      "fill": "#ffffff",
+      "stroke": "#ead5e9",
+      "stroke_width": 1.2,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "integer",
+        "max_length": 4,
+        "include_in_submission": true,
+        "order": 0,
+        "group_id": "final_answer",
+        "answer_key_index": 0,
+        "answer_ref": "slot.answer_1_oval",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      }
+    },
+    "slot.operation_2_box": {
+      "x": 160.52,
+      "y": 43.13,
+      "width": 64,
+      "height": 28,
+      "fill": "#e9f8dd",
+      "stroke": "#a9ce93",
+      "stroke_width": 1.2
+    },
+    "slot.answer_2_oval": {
+      "d": "M 230.52 98.13 C 230.52 83.13 286.52 83.13 286.52 98.13 C 286.52 113.13 230.52 113.13 230.52 98.13 Z",
+      "fill": "#ffffff",
+      "stroke": "#ead5e9",
+      "stroke_width": 1.2,
+      "interaction": {
+        "type": "input",
+        "role": "answer",
+        "value_type": "integer",
+        "max_length": 4,
+        "include_in_submission": true,
+        "order": 1,
+        "group_id": "final_answer",
+        "answer_key_index": 1,
+        "answer_ref": "slot.answer_2_oval",
+        "auto_advance": true,
+        "keyboard": "number"
+      },
+      "input_style": {
+        "font_size_mode": "auto",
+        "font_size_adjust": 0,
+        "min_font_size": 14,
+        "max_font_size": 52,
+        "font_weight": 700,
+        "horizontal_align": "center",
+        "vertical_align": "middle",
+        "padding": 6,
+        "text_color": "#222222"
+      }
+    },
+    "slot.start_value": {
+      "text": "156",
+      "x": 20.52,
+      "y": 104.13,
+      "font_size": 15,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.operation_1": {
+      "text": "+278",
+      "x": 66.52,
+      "y": 61.13,
+      "font_size": 15,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "slot.operation_2": {
+      "text": "+697",
+      "x": 191.52,
+      "y": 62.13,
+      "font_size": 15,
+      "fill": "#111111",
+      "anchor": "middle",
+      "font_family": "\"Noto Sans KR\", sans-serif"
+    },
+    "konva_1792368892203_arrow_190201": {
+      "d": "M 18.06 83.029 L 34.06 64.629 M 34.06 64.629 L 31.16 75.239 M 34.06 64.629 L 23.96 68.979",
+      "fill": "none",
+      "stroke": "#111827",
+      "stroke_width": 1.2
+    },
+    "konva_1792368892203_paste_198837_0": {
+      "d": "M 103.278 57.029 L 124.098 75.029 M 124.098 75.029 L 113.478 72.159 M 124.098 75.029 L 119.718 64.939",
+      "fill": "none",
+      "stroke": "#111827",
+      "stroke_width": 1.2
+    },
+    "konva_1792368892203_paste_205776_0": {
+      "d": "M 132.484 74.229 L 158.884 57.029 M 158.884 57.029 L 153.184 66.439 M 158.884 57.029 L 147.974 58.439",
+      "fill": "none",
+      "stroke": "#111827",
+      "stroke_width": 1.2
+    },
+    "konva_1792368892203_paste_212033_0": {
+      "d": "M 227.704 58.229 L 258.924 75.829 M 258.924 75.829 L 247.944 75.119 M 258.924 75.829 L 252.634 66.809",
+      "fill": "none",
+      "stroke": "#111827",
+      "stroke_width": 1.2
+    }
+  },
+  "deleted_slots": [
+    "slot.answer_1",
+    "slot.answer_2",
+    "slot.arrow_1_curve",
+    "slot.arrow_1_head",
+    "slot.arrow_2_curve",
+    "slot.arrow_2_head",
+    "konva_1784508924476_arrow_10107",
+    "konva_1784508924476_paste_46500_0",
+    "konva_1784508924476_paste_46916_0",
+    "konva_1784508924476_paste_96959_0",
+    "konva_1784592333289_arrow_2136844",
+    "konva_1784592333289_arrow_2144100",
+    "konva_1784592333289_arrow_2159396",
+    "konva_1784592333289_arrow_2165492"
+  ],
+  "slot_regions": {
+    "konva_1792368892203_arrow_190201": "region.diagram",
+    "konva_1792368892203_paste_198837_0": "region.diagram",
+    "konva_1792368892203_paste_205776_0": "region.diagram",
+    "konva_1792368892203_paste_212033_0": "region.diagram"
+  }
+}
