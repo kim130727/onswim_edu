@@ -33,16 +33,16 @@
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "89. 사각형에서 어느 부분을 잘라 내면 사다리꼴이 되는지 <보기>와 같이 선을 그은 것을 선택하세요."
+      "text": "사각형에서 어느 부분을 잘라 내면 사다리꼴이 되는지 <보기>와 같이 선을 그은 것을 선택하세요."
     },
     {
       "id": "slot.choice.option_0.rect",
       "type": "rect",
       "attributes": {
         "x": 316.0,
-        "y": 110.0,
+        "y": 127.773,
         "width": 246.0,
-        "height": 176.0,
+        "height": 158.23,
         "fill": "#f8fafc",
         "stroke": "#cbd5e1",
         "stroke-width": 1.5,
@@ -67,9 +67,9 @@
       "type": "rect",
       "attributes": {
         "x": 598.0,
-        "y": 110.0,
+        "y": 127.773,
         "width": 246.0,
-        "height": 176.0,
+        "height": 158.23,
         "fill": "#f8fafc",
         "stroke": "#cbd5e1",
         "stroke-width": 1.5,
@@ -94,9 +94,9 @@
       "type": "rect",
       "attributes": {
         "x": 38.0,
-        "y": 96.0,
+        "y": 129.769,
         "width": 236.0,
-        "height": 192.0,
+        "height": 158.23,
         "fill": "#ffffff",
         "stroke": "#6b7280",
         "stroke-width": 1.4
@@ -912,13 +912,24 @@
     },
     {
       "id": "slot.diagram.ex_lbl.text",
-      "type": "text",
+      "type": "text_box",
       "attributes": {
         "x": 54.0,
-        "y": 108.0,
+        "y": 96.22,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 18.0
+        "font-size": 18.0,
+        "width": 53.1,
+        "height": 22.0,
+        "max_width": 53.1,
+        "data-slot-kind": "text_box",
+        "data-box-x": 54.0,
+        "data-box-y": 96.22,
+        "data-box-width": 53.1,
+        "data-box-height": 22.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.2
       },
       "source_ref": "slot.diagram.ex_lbl",
       "refs": {
@@ -930,8 +941,8 @@
       "id": "slot.diagram.b0.text",
       "type": "text",
       "attributes": {
-        "x": 336.0,
-        "y": 120.0,
+        "x": 336.89,
+        "y": 112.0,
         "fill": "#4b5563",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0,
@@ -949,7 +960,7 @@
       "type": "text",
       "attributes": {
         "x": 618.0,
-        "y": 120.0,
+        "y": 111.11,
         "fill": "#4b5563",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0,

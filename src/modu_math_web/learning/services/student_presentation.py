@@ -3,6 +3,7 @@
 from collections import Counter
 import re
 
+from ..math_answers import is_multi_choice_set
 from .assignment_content import answer_field_values
 
 
@@ -172,7 +173,7 @@ def presentation_contract(problem, schema):
             {
                 "canvas_choices": canvas_choices,
                 "multi": len(keys) > 1
-                or (not review and answer.get("target", {}).get("type") == "multiple_choice_set"),
+                or (not review and is_multi_choice_set(answer)),
             }
             if mode == "canvas_select"
             else {}

@@ -15,32 +15,34 @@
         "fill": "#202124",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 24.0,
-        "width": 820.0,
-        "height": 44.0,
-        "max_width": 820.0,
+        "width": 273.0,
+        "height": 36.0,
+        "max_width": 273.0,
         "data-slot-kind": "text_box",
         "data-box-x": 32.0,
         "data-box-y": 22.0,
-        "data-box-width": 820.0,
-        "data-box-height": 44.0,
+        "data-box-width": 273.0,
+        "data-box-height": 36.0,
         "data-text-align": "left",
         "data-vertical-align": "top",
-        "data-line-height": 1.5
+        "data-line-height": 1.5,
+        "data-semantic-role": "question",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.stem.question",
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "21. 곱이 더 큰 것을 선택하세요."
+      "text": "곱이 더 큰 것을 선택하세요."
     },
     {
       "id": "slot.diagram.bg.rect",
       "type": "rect",
       "attributes": {
-        "x": 355.0,
+        "x": 456.012,
         "y": 72.0,
-        "width": 500.0,
-        "height": 76.0,
+        "width": 303.55,
+        "height": 59.76,
         "fill": "#dce7b7",
         "stroke": "none",
         "stroke-width": 0.0
@@ -58,7 +60,9 @@
         "y": 110.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 24.0
+        "font-size": 24.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "inferred"
       },
       "source_ref": "slot.choice.option_0",
       "refs": {
@@ -78,11 +82,13 @@
       "id": "slot.choice.option_1.text",
       "type": "text",
       "attributes": {
-        "x": 710.0,
+        "x": 620.65,
         "y": 110.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 24.0
+        "font-size": 24.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "inferred"
       },
       "source_ref": "slot.choice.option_1",
       "refs": {

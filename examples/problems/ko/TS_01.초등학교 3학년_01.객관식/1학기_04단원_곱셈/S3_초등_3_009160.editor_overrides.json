@@ -1,0 +1,20 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "곱이 더 큰 것을 선택하세요.",
+      "width": 273,
+      "height": 36,
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.diagram.bg": {
+      "x": 456.012,
+      "width": 303.55,
+      "height": 59.76
+    },
+    "slot.choice.option_1": {
+      "x": 620.65
+    }
+  },
+  "version": 1
+}

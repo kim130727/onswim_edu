@@ -186,3 +186,18 @@ SOLVABLE = {
 
 if __name__ == "__main__":
     print(f"[{PROBLEM_TEMPLATE.id}] 템플릿 컴파일 성공!")
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '겹치지 않게', 'ref': 'slot.choice.option_1'}],
+ 'choices': [{'id': 'choice.canvas.konva_1795506036974_select_147682',
+              'text': '겹치게',
+              'correct': False,
+              'label': '2',
+              'sourceRefs': ['slot.choice.option_0']},
+             {'id': 'choice.canvas.konva_1795506036974_select_151329',
+              'text': '겹치지 않게',
+              'correct': True,
+              'label': '3',
+              'sourceRefs': ['slot.choice.option_1']}]}

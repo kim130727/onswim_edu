@@ -33,7 +33,7 @@
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "70. 3가지 모양 조각 중 1가지 모양을 사용하여 지현, 동민, 수아가 정육각형 모양을 채웠습니다. 지현, 동민, 수아의 모양 채우기를 보고 알맞은 말을 선택하세요."
+      "text": "3가지 모양 조각 중 1가지 모양을 사용하여 지현, 동민, 수아가 정육각형 모양을 채웠습니다. 지현, 동민, 수아의 모양 채우기를 보고 알맞은 말을 선택하세요."
     },
     {
       "id": "slot.choice.option_0.rect",
@@ -493,8 +493,8 @@
       "id": "slot.diagram.th0_t.text",
       "type": "text",
       "attributes": {
-        "x": 203.0,
-        "y": 115.0,
+        "x": 185.0,
+        "y": 130.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -509,8 +509,8 @@
       "id": "slot.diagram.th1_t.text",
       "type": "text",
       "attributes": {
-        "x": 388.0,
-        "y": 115.0,
+        "x": 374.0,
+        "y": 128.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -525,8 +525,8 @@
       "id": "slot.diagram.th2_t.text",
       "type": "text",
       "attributes": {
-        "x": 548.0,
-        "y": 115.0,
+        "x": 535.0,
+        "y": 128.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -541,8 +541,8 @@
       "id": "slot.diagram.th3_t.text",
       "type": "text",
       "attributes": {
-        "x": 708.0,
-        "y": 115.0,
+        "x": 697.0,
+        "y": 130.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 18.0
@@ -611,8 +611,8 @@
       "id": "slot.diagram.c0_t.text",
       "type": "text",
       "attributes": {
-        "x": 326.0,
-        "y": 366.0,
+        "x": 300.95,
+        "y": 382.7,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 19.0
@@ -627,8 +627,8 @@
       "id": "slot.diagram.c1_t.text",
       "type": "text",
       "attributes": {
-        "x": 560.0,
-        "y": 366.0,
+        "x": 517.33,
+        "y": 383.19,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 19.0

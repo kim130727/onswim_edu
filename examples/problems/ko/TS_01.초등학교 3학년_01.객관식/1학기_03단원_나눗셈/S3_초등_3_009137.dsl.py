@@ -156,3 +156,18 @@ SOLVABLE = {
         },
     },
 }
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '㉠ 42 ÷ 6 = 7', 'ref': 'slot.choice.option_0'}],
+ 'choices': [{'id': 'slot.choice.option_0',
+              'text': '㉠ 42 ÷ 6 = 7',
+              'correct': True,
+              'label': '1',
+              'sourceRefs': ['slot.choice.option_0']},
+             {'id': 'slot.choice.option_1',
+              'text': '㉡ 35 ÷ 7 = 5',
+              'correct': False,
+              'label': '2',
+              'sourceRefs': ['slot.choice.option_1']}]}

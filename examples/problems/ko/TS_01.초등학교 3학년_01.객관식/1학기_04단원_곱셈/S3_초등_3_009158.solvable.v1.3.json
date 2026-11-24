@@ -32,33 +32,70 @@
   ],
   "answer": {
     "type": "choice",
-    "value": "㉡",
+    "value": "㉡ 48 × 4 = 192",
     "unit": "",
     "answer_index": 1,
-    "values": [
-      "㉡"
-    ],
     "blanks": [],
     "choices": [
       {
-        "id": "slot.choice.option_0",
-        "slot_id": "slot.choice.option_0",
-        "text": "㉠",
-        "value": "㉠"
+        "id": "choice.canvas.konva_1795504614807_select_750273",
+        "label": "3",
+        "text": "㉠ 29 × 5 = 105",
+        "source_refs": [
+          "slot.diagram.item_ga"
+        ]
       },
       {
-        "id": "slot.choice.option_1",
-        "slot_id": "slot.choice.option_1",
-        "text": "㉡",
-        "value": "㉡"
+        "id": "choice.canvas.konva_1795504614807_select_753784",
+        "label": "4",
+        "text": "㉡ 48 × 4 = 192",
+        "source_refs": [
+          "slot.diagram.item_na"
+        ]
       }
     ],
     "answer_key": [
       {
-        "slot_id": "slot.choice.option_1",
-        "value": "㉡"
+        "id": "choice.canvas.konva_1795504614807_select_753784",
+        "value": "㉡ 48 × 4 = 192"
       }
-    ]
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "㉡"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795504614807_select_750273",
+            "text": "㉠ 29 × 5 = 105",
+            "correct": false,
+            "label": "3",
+            "sourceRefs": [
+              "slot.diagram.item_ga"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795504614807_select_753784",
+            "text": "㉡ 48 × 4 = 192",
+            "correct": true,
+            "label": "4",
+            "sourceRefs": [
+              "slot.diagram.item_na"
+            ]
+          }
+        ]
+      }
+    }
   },
   "diagnostics": {
     "skills": [

@@ -22,7 +22,6 @@
       "role": "diagram",
       "flow": "absolute",
       "slot_ids": [
-        "slot.diagram.frame",
         "slot.diagram.item_ga",
         "slot.diagram.item_na"
       ]
@@ -31,13 +30,7 @@
       "id": "region.choices",
       "role": "choices",
       "flow": "absolute",
-      "slot_ids": [
-        "slot.choice.paren_l",
-        "slot.choice.option_0",
-        "slot.choice.comma_1",
-        "slot.choice.option_1",
-        "slot.choice.paren_r"
-      ]
+      "slot_ids": []
     }
   ],
   "slots": [
@@ -46,32 +39,20 @@
       "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "18. 계산이 옳은 것을 찾아 기호를 선택하세요.",
+        "text": "계산이 옳은 것을 찾아 기호를 선택하세요.",
         "style_role": "body",
         "x": 32.0,
         "y": 22.0,
-        "width": 820.0,
-        "height": 44.0,
+        "width": 410,
+        "height": 36,
         "align": "left",
         "valign": "top",
         "font_size": 24,
         "font_family": "\"Noto Sans KR\", sans-serif",
         "line_height": 1.5,
-        "fill": "#202124"
-      }
-    },
-    {
-      "id": "slot.diagram.frame",
-      "kind": "rect",
-      "prompt": "",
-      "content": {
-        "x": 380.0,
-        "y": 76.0,
-        "width": 480.0,
-        "height": 110.0,
-        "stroke": "#f59e0b",
-        "stroke_width": 1.8,
-        "fill": "#ffffff"
+        "fill": "#202124",
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -103,101 +84,6 @@
         "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111827"
       }
-    },
-    {
-      "id": "slot.choice.paren_l",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": "(",
-        "style_role": "body",
-        "x": 545.0,
-        "y": 220.0,
-        "font_size": 24,
-        "align": "center",
-        "font_family": "\"Noto Sans KR\", sans-serif",
-        "fill": "#111827"
-      }
-    },
-    {
-      "id": "slot.choice.option_0",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": "㉠",
-        "style_role": "body",
-        "x": 585.0,
-        "y": 220.0,
-        "font_size": 22,
-        "align": "center",
-        "font_family": "\"Noto Sans KR\", sans-serif",
-        "fill": "#111827",
-        "semantic_role": "choice_marker",
-        "semantic_role_source": "inferred",
-        "interaction": {
-          "type": "choice",
-          "role": "answer",
-          "choice_index": 0,
-          "value": "㉠",
-          "group_id": "slot.choice.group",
-          "include_in_submission": true
-        }
-      }
-    },
-    {
-      "id": "slot.choice.comma_1",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": ",",
-        "style_role": "body",
-        "x": 620.0,
-        "y": 220.0,
-        "font_size": 22,
-        "align": "center",
-        "font_family": "\"Noto Sans KR\", sans-serif",
-        "fill": "#111827"
-      }
-    },
-    {
-      "id": "slot.choice.option_1",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": "㉡",
-        "style_role": "body",
-        "x": 655.0,
-        "y": 220.0,
-        "font_size": 22,
-        "align": "center",
-        "font_family": "\"Noto Sans KR\", sans-serif",
-        "fill": "#111827",
-        "semantic_role": "choice_marker",
-        "semantic_role_source": "inferred",
-        "interaction": {
-          "type": "choice",
-          "role": "answer",
-          "choice_index": 1,
-          "value": "㉡",
-          "group_id": "slot.choice.group",
-          "include_in_submission": true
-        }
-      }
-    },
-    {
-      "id": "slot.choice.paren_r",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": ")",
-        "style_role": "body",
-        "x": 695.0,
-        "y": 220.0,
-        "font_size": 24,
-        "align": "center",
-        "font_family": "\"Noto Sans KR\", sans-serif",
-        "fill": "#111827"
-      }
     }
   ],
   "groups": [],
@@ -207,14 +93,8 @@
     "region.stem",
     "slot.stem.question",
     "region.diagram",
-    "slot.diagram.frame",
     "slot.diagram.item_ga",
     "slot.diagram.item_na",
-    "region.choices",
-    "slot.choice.paren_l",
-    "slot.choice.option_0",
-    "slot.choice.comma_1",
-    "slot.choice.option_1",
-    "slot.choice.paren_r"
+    "region.choices"
   ]
 }

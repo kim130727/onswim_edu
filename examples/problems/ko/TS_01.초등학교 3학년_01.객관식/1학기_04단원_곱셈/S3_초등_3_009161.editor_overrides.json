@@ -1,0 +1,73 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "계산에서 □ 안의 숫자 2가 실제로 나타내는 수는 얼마일까요?",
+      "width": 601,
+      "height": 36,
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.diagram.carry_box": {
+      "x": 160.87,
+      "y": 66.94
+    },
+    "slot.diagram.sep_line": {
+      "x1": 103.87,
+      "y1": 176.94,
+      "x2": 213.87,
+      "y2": 176.94
+    },
+    "slot.diagram.carry_digit": {
+      "x": 168.87,
+      "y": 86.94
+    },
+    "slot.diagram.top.place.1": {
+      "x": 176.87,
+      "y": 122.94
+    },
+    "slot.diagram.top.place.0": {
+      "x": 208.87,
+      "y": 122.94
+    },
+    "slot.diagram.mul_sign": {
+      "x": 115.87,
+      "y": 156.94
+    },
+    "slot.diagram.bot.place.0": {
+      "x": 208.87,
+      "y": 156.94
+    },
+    "slot.diagram.res.place.1": {
+      "x": 176.87,
+      "y": 204.94
+    },
+    "slot.diagram.res.place.0": {
+      "x": 208.87,
+      "y": 204.94
+    },
+    "slot.choice.option_0": {
+      "x": 53,
+      "y": 277
+    },
+    "slot.choice.option_1": {
+      "x": 129.68,
+      "y": 278.71
+    },
+    "slot.choice.option_2": {
+      "x": 216.07,
+      "y": 278.18
+    },
+    "slot.choice.option_3": {
+      "x": 53,
+      "y": 317
+    },
+    "slot.choice.option_4": {
+      "x": 129.68,
+      "y": 318.71
+    }
+  },
+  "version": 1,
+  "deleted_slots": [
+    "slot.diagram.frame"
+  ]
+}

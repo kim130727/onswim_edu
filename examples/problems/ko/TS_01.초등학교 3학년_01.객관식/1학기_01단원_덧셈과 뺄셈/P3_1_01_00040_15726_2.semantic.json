@@ -1,0 +1,129 @@
+{
+  "problem_id": "P3_1_01_00040_15726_2",
+  "problem_type": "base_ten_model_addition_regroup_tens",
+  "metadata": {
+    "title": "수 모형으로 알아보는 262와 271의 합 (2)",
+    "tags": [
+      "grade-3",
+      "addition",
+      "three-digit-addition",
+      "base-ten-blocks",
+      "regrouping",
+      "multi-answer"
+    ],
+    "instruction": "262+271을 수 모형으로 알아보시오.",
+    "question": "십 모형끼리 더한 것은 백 모형 몇 개와 십 모형 몇 개가 됩니까?",
+    "required_layout_ids": [
+      "slot.model262.container",
+      "slot.model262.hundred.1",
+      "slot.model262.hundred.2",
+      "slot.model262.ten.1",
+      "slot.model262.ten.2",
+      "slot.model262.ten.3",
+      "slot.model262.ten.4",
+      "slot.model262.ten.5",
+      "slot.model262.ten.6",
+      "slot.model262.one.1",
+      "slot.model262.one.2",
+      "slot.model271.container",
+      "slot.model271.hundred.1",
+      "slot.model271.hundred.2",
+      "slot.model271.ten.1",
+      "slot.model271.ten.2",
+      "slot.model271.ten.3",
+      "slot.model271.ten.4",
+      "slot.model271.ten.5",
+      "slot.model271.ten.6",
+      "slot.model271.ten.7",
+      "slot.model271.one.1"
+    ],
+    "extraction_confidence": 1.0,
+    "grade": 3,
+    "semester": 1,
+    "subject": "수학",
+    "topic": "세 자리 수의 덧셈",
+    "language": "ko-KR",
+    "presentation_sources": {
+      "question": [
+        "slot.question"
+      ],
+      "instruction": [
+        "slot.instruction"
+      ],
+      "choice": [],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "십 모형끼리 더한 것은 백 모형 몇 개와 십 모형 몇 개가 됩니까?\n262+271을 수 모형으로 알아보시오."
+  },
+  "domain": {
+    "objects": [
+      {
+        "id": "number.first",
+        "type": "number",
+        "label": "첫 번째 수",
+        "value": 262
+      },
+      {
+        "id": "number.second",
+        "type": "number",
+        "label": "두 번째 수",
+        "value": 271
+      },
+      {
+        "id": "model.first",
+        "type": "base_ten_model",
+        "label": "262의 수 모형",
+        "hundreds": 2,
+        "tens": 6,
+        "ones": 2
+      },
+      {
+        "id": "model.second",
+        "type": "base_ten_model",
+        "label": "271의 수 모형",
+        "hundreds": 2,
+        "tens": 7,
+        "ones": 1
+      }
+    ],
+    "relations": [],
+    "confidence": 1.0
+  },
+  "answer": {
+    "type": "multi_numeric",
+    "value": [
+      1,
+      3
+    ],
+    "unit": "",
+    "values": [
+      {
+        "value": 1,
+        "unit": "개",
+        "target_ref": "quantity.regrouped_hundreds"
+      },
+      {
+        "value": 3,
+        "unit": "개",
+        "target_ref": "quantity.remaining_tens"
+      }
+    ],
+    "answer_key": [
+      {
+        "id": "answer.regrouped_hundreds",
+        "label": "백 모형",
+        "value": 1,
+        "unit": "개"
+      },
+      {
+        "id": "answer.remaining_tens",
+        "label": "십 모형",
+        "value": 3,
+        "unit": "개"
+      }
+    ],
+    "target_ref": "answer.regrouped_tens",
+    "derived_from": "step.regroup_tens",
+    "sentence": "백 모형 1개와 십 모형 3개가 됩니다."
+  }
+}

@@ -46,7 +46,7 @@ export function answerChoicesFromArtifacts(
     const rawText = scalarText(record?.text ?? record?.value ?? item);
     const prefix = rawText.match(/^\s*([①-⑳]|\([1-9][0-9]?\)|[1-9][0-9]?[.)])\s*/);
     const label = stringValue(record?.label) || prefix?.[1] || `${index + 1}`;
-    const text = prefix ? rawText.slice(prefix[0].length) : rawText;
+    const text = prefix ? rawText.slice(prefix[0].length).trim() || rawText.trim() : rawText;
     const target = recordValue(recordValue(semantic?.answer)?.target)?.type ?? recordValue(recordValue(solvable?.answer)?.target)?.type;
     const labelNumber = /^[①-⑳]$/.test(label) ? label.charCodeAt(0) - "①".charCodeAt(0) + 1 : Number(label.replace(/[^0-9]/g, ""));
     const correct = answerOptions.some((option) => option.ref === id ||

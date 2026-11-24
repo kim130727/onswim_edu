@@ -32,33 +32,71 @@
   ],
   "answer": {
     "type": "choice",
-    "value": "㉠",
+    "value": "㉠ 71 × 4",
     "unit": "",
     "answer_index": 0,
-    "values": [
-      "㉠"
-    ],
     "blanks": [],
     "choices": [
       {
         "id": "slot.choice.option_0",
-        "slot_id": "slot.choice.option_0",
-        "text": "㉠",
-        "value": "㉠"
+        "label": "1",
+        "text": "㉠ 71 × 4",
+        "source_refs": [
+          "slot.choice.option_0"
+        ]
       },
       {
         "id": "slot.choice.option_1",
-        "slot_id": "slot.choice.option_1",
-        "text": "㉡",
-        "value": "㉡"
+        "label": "2",
+        "text": "㉡ 39 × 4",
+        "source_refs": [
+          "slot.choice.option_1"
+        ]
       }
     ],
     "answer_key": [
       {
-        "slot_id": "slot.choice.option_0",
-        "value": "㉠"
+        "id": "slot.choice.option_0",
+        "value": "㉠ 71 × 4"
       }
-    ]
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "㉠ 71 × 4",
+            "ref": "slot.choice.option_0"
+          }
+        ],
+        "choices": [
+          {
+            "id": "slot.choice.option_0",
+            "text": "㉠ 71 × 4",
+            "correct": true,
+            "label": "1",
+            "sourceRefs": [
+              "slot.choice.option_0"
+            ]
+          },
+          {
+            "id": "slot.choice.option_1",
+            "text": "㉡ 39 × 4",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.choice.option_1"
+            ]
+          }
+        ]
+      }
+    }
   },
   "diagnostics": {
     "skills": [

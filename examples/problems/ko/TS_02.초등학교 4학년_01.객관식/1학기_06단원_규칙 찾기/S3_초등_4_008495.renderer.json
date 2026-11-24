@@ -33,7 +33,7 @@
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "21. 극장 좌석표에서 규칙을 찾아 민재의 좌석 번호를 알아보려고 합니다. 알맞은 것을 선택하세요."
+      "text": "극장 좌석표에서 규칙을 찾아 민재의 좌석 번호를 알아보려고 합니다. 알맞은 것을 선택하세요."
     },
     {
       "id": "slot.diagram.board_bg.rect",
@@ -724,8 +724,8 @@
       "id": "slot.diagram.board_title.text",
       "type": "text",
       "attributes": {
-        "x": 325.0,
-        "y": 88.0,
+        "x": 269.24,
+        "y": 99.83,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 16.0
@@ -1311,8 +1311,8 @@
       "id": "slot.diagram.badge_txt.text",
       "type": "text",
       "attributes": {
-        "x": 586.0,
-        "y": 224.0,
+        "x": 574.68,
+        "y": 238.56,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 16.0
@@ -1327,8 +1327,8 @@
       "id": "slot.choice.g1_pre.text",
       "type": "text",
       "attributes": {
-        "x": 142.0,
-        "y": 274.0,
+        "x": 155.54,
+        "y": 286.58,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 19.0
@@ -1453,8 +1453,8 @@
       "id": "slot.choice.g1_suf.text",
       "type": "text",
       "attributes": {
-        "x": 586.0,
-        "y": 274.0,
+        "x": 391.23,
+        "y": 288.76,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 19.0
@@ -1469,8 +1469,8 @@
       "id": "slot.choice.g2_pre.text",
       "type": "text",
       "attributes": {
-        "x": 292.0,
-        "y": 314.0,
+        "x": 162.15,
+        "y": 319.9,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 19.0
@@ -1595,8 +1595,8 @@
       "id": "slot.choice.g2_suf.text",
       "type": "text",
       "attributes": {
-        "x": 614.0,
-        "y": 314.0,
+        "x": 447.76,
+        "y": 321.87,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 19.0

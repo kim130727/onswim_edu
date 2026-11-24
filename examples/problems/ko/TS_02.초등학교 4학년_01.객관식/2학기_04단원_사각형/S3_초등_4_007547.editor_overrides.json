@@ -1,0 +1,36 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "사각형에서 어느 부분을 잘라 내면 사다리꼴이 되는지 <보기>와 같이 선을 그은 것을 선택하세요."
+    },
+    "slot.choice.option_0": {
+      "y": 127.773,
+      "height": 158.23
+    },
+    "slot.choice.option_1": {
+      "y": 127.773,
+      "height": 158.23
+    },
+    "slot.diagram.ex_box": {
+      "y": 129.769,
+      "height": 158.23
+    },
+    "slot.diagram.ex_lbl": {
+      "y": 96.22,
+      "width": 53.1,
+      "height": 22,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
+    },
+    "slot.diagram.b0": {
+      "x": 336.89,
+      "y": 112
+    },
+    "slot.diagram.b1": {
+      "y": 111.11
+    }
+  },
+  "version": 1
+}

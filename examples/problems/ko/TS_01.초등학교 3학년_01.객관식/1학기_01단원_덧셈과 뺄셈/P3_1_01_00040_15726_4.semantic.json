@@ -1,0 +1,99 @@
+{
+  "problem_id": "P3_1_01_00040_15726_4",
+  "problem_type": "base_ten_model_addition_total",
+  "metadata": {
+    "title": "수 모형으로 알아보는 262와 271의 합 (4)",
+    "tags": [
+      "grade-3",
+      "addition",
+      "three-digit-addition",
+      "base-ten-blocks",
+      "regrouping"
+    ],
+    "instruction": "262+271을 수 모형으로 알아보시오.",
+    "question": "262+271은 얼마입니까?",
+    "required_layout_ids": [
+      "slot.model262.container",
+      "slot.model262.hundred.1",
+      "slot.model262.hundred.2",
+      "slot.model262.ten.1",
+      "slot.model262.ten.2",
+      "slot.model262.ten.3",
+      "slot.model262.ten.4",
+      "slot.model262.ten.5",
+      "slot.model262.ten.6",
+      "slot.model262.one.1",
+      "slot.model262.one.2",
+      "slot.model271.container",
+      "slot.model271.hundred.1",
+      "slot.model271.hundred.2",
+      "slot.model271.ten.1",
+      "slot.model271.ten.2",
+      "slot.model271.ten.3",
+      "slot.model271.ten.4",
+      "slot.model271.ten.5",
+      "slot.model271.ten.6",
+      "slot.model271.ten.7",
+      "slot.model271.one.1"
+    ],
+    "extraction_confidence": 1.0,
+    "grade": 3,
+    "semester": 1,
+    "subject": "수학",
+    "topic": "세 자리 수의 덧셈",
+    "language": "ko-KR",
+    "presentation_sources": {
+      "question": [
+        "slot.question"
+      ],
+      "instruction": [
+        "slot.instruction"
+      ],
+      "choice": [],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "262+271은 얼마입니까?\n262+271을 수 모형으로 알아보시오."
+  },
+  "domain": {
+    "objects": [
+      {
+        "id": "number.first",
+        "type": "number",
+        "label": "첫 번째 수",
+        "value": 262
+      },
+      {
+        "id": "number.second",
+        "type": "number",
+        "label": "두 번째 수",
+        "value": 271
+      },
+      {
+        "id": "model.first",
+        "type": "base_ten_model",
+        "label": "262의 수 모형",
+        "hundreds": 2,
+        "tens": 6,
+        "ones": 2
+      },
+      {
+        "id": "model.second",
+        "type": "base_ten_model",
+        "label": "271의 수 모형",
+        "hundreds": 2,
+        "tens": 7,
+        "ones": 1
+      }
+    ],
+    "relations": [],
+    "confidence": 1.0
+  },
+  "answer": {
+    "type": "numeric",
+    "value": 533,
+    "unit": "",
+    "target_ref": "sum.total",
+    "derived_from": "step.compose_total",
+    "sentence": "262+271은 533입니다."
+  }
+}

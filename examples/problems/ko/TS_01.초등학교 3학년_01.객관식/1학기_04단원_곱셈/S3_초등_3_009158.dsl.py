@@ -182,3 +182,18 @@ SOLVABLE = {
         },
     },
 }
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '㉡'}],
+ 'choices': [{'id': 'choice.canvas.konva_1795504614807_select_750273',
+              'text': '㉠ 29 × 5 = 105',
+              'correct': False,
+              'label': '3',
+              'sourceRefs': ['slot.diagram.item_ga']},
+             {'id': 'choice.canvas.konva_1795504614807_select_753784',
+              'text': '㉡ 48 × 4 = 192',
+              'correct': True,
+              'label': '4',
+              'sourceRefs': ['slot.diagram.item_na']}]}

@@ -311,4 +311,35 @@ describe("shared student-renderer", () => {
     );
     expect(resolveImageHref("data:image/png;base64,abc")).toBe("data:image/png;base64,abc");
   });
+
+  it("omits the visible '답 1' label for single-field panels and keeps labels for multi-field panels", () => {
+    const singleChoice = normalizeProblemContent({
+      input_schema: {
+        fields: [{
+          id: "choice",
+          type: "choice",
+          choices: [{ label: "○", value: "O" }, { label: "×", value: "X" }],
+        }],
+      },
+    });
+    const { rerender } = render(
+      <StudentProblemView item={singleChoice} value="" enabled locale="ko" onChange={() => undefined} />,
+    );
+    expect(screen.queryByText("답 1")).not.toBeInTheDocument();
+    expect(screen.getByRole("group", { name: "답 1" })).toBeInTheDocument();
+
+    const multiInput = normalizeProblemContent({
+      input_schema: {
+        fields: [
+          { id: "a", type: "number" },
+          { id: "b", type: "number" },
+        ],
+      },
+    });
+    rerender(
+      <StudentProblemView item={multiInput} value={["", ""]} enabled locale="ko" onChange={() => undefined} />,
+    );
+    expect(screen.getByText("답 1")).toBeInTheDocument();
+    expect(screen.getByText("답 2")).toBeInTheDocument();
+  });
 });

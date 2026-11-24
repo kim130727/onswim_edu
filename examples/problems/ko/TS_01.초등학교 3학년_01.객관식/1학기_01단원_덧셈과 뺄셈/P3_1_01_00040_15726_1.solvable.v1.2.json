@@ -1,0 +1,128 @@
+{
+  "schema": "modu.solvable.v1.2",
+  "problem_id": "P3_1_01_00040_15726_1",
+  "problem_type": "base_ten_model_addition_ones",
+  "inputs": {
+    "target_label": "낱개 모형끼리 더한 개수",
+    "unit": "개",
+    "quantities": {
+      "first_number": 262,
+      "second_number": 271,
+      "first_model": {
+        "hundreds": 2,
+        "tens": 6,
+        "ones": 2
+      },
+      "second_model": {
+        "hundreds": 2,
+        "tens": 7,
+        "ones": 1
+      }
+    }
+  },
+  "given": [
+    {
+      "ref": "number.first",
+      "value": 262
+    },
+    {
+      "ref": "number.second",
+      "value": 271
+    },
+    {
+      "ref": "model.first",
+      "value": {
+        "hundreds": 2,
+        "tens": 6,
+        "ones": 2
+      }
+    },
+    {
+      "ref": "model.second",
+      "value": {
+        "hundreds": 2,
+        "tens": 7,
+        "ones": 1
+      }
+    }
+  ],
+  "target": {
+    "ref": "quantity.ones_sum",
+    "type": "number"
+  },
+  "method": "두 수의 낱개 모형 개수를 더합니다.",
+  "understanding": {
+    "summary": "262와 271을 나타낸 수 모형에서 낱개 모형끼리 더한 개수를 구하는 문제입니다.",
+    "facts": [
+      {
+        "ref": "model.first",
+        "label": "262의 수 모형",
+        "value": {
+          "hundreds": 2,
+          "tens": 6,
+          "ones": 2
+        },
+        "unit": "",
+        "source": "explicit"
+      },
+      {
+        "ref": "model.second",
+        "label": "271의 수 모형",
+        "value": {
+          "hundreds": 2,
+          "tens": 7,
+          "ones": 1
+        },
+        "unit": "",
+        "source": "explicit"
+      }
+    ],
+    "unknowns": [
+      {
+        "ref": "quantity.ones_sum",
+        "label": "낱개 모형끼리 더한 개수",
+        "unit": "개",
+        "source": "unknown"
+      }
+    ],
+    "relation": {
+      "type": "add_same_base_ten_units",
+      "statement": "두 수의 낱개 모형끼리 더합니다.",
+      "symbolic": "2+1=3",
+      "uses": [
+        "model.first",
+        "model.second"
+      ],
+      "result": "quantity.ones_sum"
+    }
+  },
+  "plan": [
+    "262의 낱개 모형 2개와 271의 낱개 모형 1개를 확인합니다.",
+    "낱개 모형 2개와 1개를 더해 3개를 구합니다."
+  ],
+  "steps": [
+    {
+      "id": "step.add_ones",
+      "expr": "2+1",
+      "value": 3,
+      "explanation": "낱개 모형끼리 더하면 2+1=3개입니다."
+    }
+  ],
+  "checks": [
+    {
+      "id": "check.ones_sum",
+      "expr": "2+1",
+      "expected": 3,
+      "actual": 3,
+      "pass": true
+    }
+  ],
+  "answer": {
+    "type": "numeric",
+    "value": 3,
+    "unit": "개",
+    "target_ref": "quantity.ones_sum",
+    "derived_from": "step.add_ones",
+    "sentence": "낱개 모형끼리 더하면 3개입니다."
+  }
+}

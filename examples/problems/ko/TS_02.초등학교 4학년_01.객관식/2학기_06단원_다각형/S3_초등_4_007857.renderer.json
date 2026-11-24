@@ -33,61 +33,7 @@
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "71. 다음 모양 조각을 모두 사용하여 오각형을 만들 수 있으면 ○, 만들 수 없으면 ×를 선택하세요."
-    },
-    {
-      "id": "slot.choice.option_0.rect",
-      "type": "rect",
-      "attributes": {
-        "x": 286.0,
-        "y": 200.0,
-        "width": 124.0,
-        "height": 56.0,
-        "fill": "#f8fafc",
-        "stroke": "#94a3b8",
-        "stroke-width": 1.6,
-        "rx": 10.0,
-        "ry": 10.0
-      },
-      "source_ref": "slot.choice.option_0",
-      "refs": {
-        "layout_slot_id": "slot.choice.option_0"
-      },
-      "interaction": {
-        "type": "choice",
-        "role": "answer",
-        "choice_index": 0,
-        "value": "○",
-        "group_id": "slot.choice.group",
-        "include_in_submission": true
-      }
-    },
-    {
-      "id": "slot.choice.option_1.rect",
-      "type": "rect",
-      "attributes": {
-        "x": 476.0,
-        "y": 200.0,
-        "width": 124.0,
-        "height": 56.0,
-        "fill": "#f8fafc",
-        "stroke": "#94a3b8",
-        "stroke-width": 1.6,
-        "rx": 10.0,
-        "ry": 10.0
-      },
-      "source_ref": "slot.choice.option_1",
-      "refs": {
-        "layout_slot_id": "slot.choice.option_1"
-      },
-      "interaction": {
-        "type": "choice",
-        "role": "answer",
-        "choice_index": 1,
-        "value": "×",
-        "group_id": "slot.choice.group",
-        "include_in_submission": true
-      }
+      "text": "다음 모양 조각을 모두 사용하여 오각형을 만들 수 있으면 ○, 만들 수 없으면 ×를 선택하세요."
     },
     {
       "id": "slot.diagram.tri1.polygon",
@@ -122,15 +68,15 @@
       "attributes": {
         "points": [
           [
-            346.0,
+            301.0,
             108.0
           ],
           [
-            316.0,
+            271.0,
             160.0
           ],
           [
-            376.0,
+            331.0,
             160.0
           ]
         ],
@@ -149,19 +95,19 @@
       "attributes": {
         "points": [
           [
-            466.0,
+            387.0,
             108.0
           ],
           [
-            526.0,
+            447.0,
             108.0
           ],
           [
-            556.0,
+            477.0,
             160.0
           ],
           [
-            436.0,
+            357.0,
             160.0
           ]
         ],
@@ -180,19 +126,19 @@
       "attributes": {
         "points": [
           [
-            646.0,
+            529.0,
             108.0
           ],
           [
-            706.0,
+            589.0,
             108.0
           ],
           [
-            676.0,
+            559.0,
             160.0
           ],
           [
-            616.0,
+            499.0,
             160.0
           ]
         ],
@@ -204,38 +150,6 @@
       "refs": {
         "layout_slot_id": "slot.diagram.para"
       }
-    },
-    {
-      "id": "slot.diagram.c0_t.text",
-      "type": "text",
-      "attributes": {
-        "x": 348.0,
-        "y": 214.0,
-        "fill": "#111827",
-        "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 26.0
-      },
-      "source_ref": "slot.diagram.c0_t",
-      "refs": {
-        "layout_slot_id": "slot.diagram.c0_t"
-      },
-      "text": "○"
-    },
-    {
-      "id": "slot.diagram.c1_t.text",
-      "type": "text",
-      "attributes": {
-        "x": 538.0,
-        "y": 214.0,
-        "fill": "#111827",
-        "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 26.0
-      },
-      "source_ref": "slot.diagram.c1_t",
-      "refs": {
-        "layout_slot_id": "slot.diagram.c1_t"
-      },
-      "text": "×"
     }
   ],
   "contract_version": "modu_math.renderer.v2"

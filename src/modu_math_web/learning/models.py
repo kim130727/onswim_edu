@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 
-from .math_answers import same_math_notation
+from .math_answers import is_multi_choice_set, same_math_notation
 
 
 def _normalized(value: Any) -> Any:
@@ -112,7 +112,7 @@ def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
         choice["id"]: choice for choice in raw_choices
         if isinstance(choice, dict) and isinstance(choice.get("id"), str)
     }
-    choice_set = answer.get("target", {}).get("type") == "multiple_choice_set"
+    choice_set = is_multi_choice_set(answer)
     # The input schema sends the actual choice ID. Grade that identity before
     # interpreting any legacy answer text or one-based choice number.
     if answer_key and (len(answer_key) == 1 or choice_set or review.get("mode") == "canvas_select"):
@@ -121,9 +121,7 @@ def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
             return _keyed_choice_matches(choices_by_id, submitted, set(expected_ids))
     if review.get("mode") == "canvas_select" and not answer_key:
         return False
-    if len(answer_key) > 1 or (
-        answer_key and answer.get("target", {}).get("type") == "multiple_choice_set"
-    ):
+    if len(answer_key) > 1 or (answer_key and choice_set):
         expected = [
             item.get("value", item.get("id")) if isinstance(item, dict) else item
             for item in answer_key
@@ -157,7 +155,7 @@ def answer_matches(answer: dict[str, Any], submitted: Any) -> bool:
         if not isinstance(submitted, list):
             return False
         submitted = [choice_value(value) for value in submitted]
-        if answer.get("target", {}).get("type") == "multiple_choice_set":
+        if choice_set:
             return len(submitted) == len(set(map(str, submitted))) and sorted(
                 map(str, _normalized(submitted))
             ) == sorted(map(str, _normalized(expected)))

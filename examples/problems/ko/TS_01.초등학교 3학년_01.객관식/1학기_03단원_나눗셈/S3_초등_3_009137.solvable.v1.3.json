@@ -29,30 +29,68 @@
     "value": "㉠ 42 ÷ 6 = 7",
     "unit": "",
     "answer_index": 0,
-    "values": [
-      "㉠ 42 ÷ 6 = 7"
-    ],
     "blanks": [],
     "choices": [
       {
         "id": "slot.choice.option_0",
-        "slot_id": "slot.choice.option_0",
+        "label": "1",
         "text": "㉠ 42 ÷ 6 = 7",
-        "value": "㉠"
+        "source_refs": [
+          "slot.choice.option_0"
+        ]
       },
       {
         "id": "slot.choice.option_1",
-        "slot_id": "slot.choice.option_1",
+        "label": "2",
         "text": "㉡ 35 ÷ 7 = 5",
-        "value": "㉡"
+        "source_refs": [
+          "slot.choice.option_1"
+        ]
       }
     ],
     "answer_key": [
       {
-        "slot_id": "slot.choice.option_0",
+        "id": "slot.choice.option_0",
         "value": "㉠ 42 ÷ 6 = 7"
       }
-    ]
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "㉠ 42 ÷ 6 = 7",
+            "ref": "slot.choice.option_0"
+          }
+        ],
+        "choices": [
+          {
+            "id": "slot.choice.option_0",
+            "text": "㉠ 42 ÷ 6 = 7",
+            "correct": true,
+            "label": "1",
+            "sourceRefs": [
+              "slot.choice.option_0"
+            ]
+          },
+          {
+            "id": "slot.choice.option_1",
+            "text": "㉡ 35 ÷ 7 = 5",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.choice.option_1"
+            ]
+          }
+        ]
+      }
+    }
   },
   "diagnostics": {
     "skills": [

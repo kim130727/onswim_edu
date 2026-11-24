@@ -45,30 +45,68 @@
     "value": "18 ÷ 2",
     "unit": "",
     "answer_index": 0,
-    "values": [
-      "18 ÷ 2"
-    ],
     "blanks": [],
     "choices": [
       {
-        "id": "slot.choice.option_0",
-        "slot_id": "slot.choice.option_0",
+        "id": "choice.canvas.konva_1795504614807_select_530609",
+        "label": "1",
         "text": "18 ÷ 2",
-        "value": "18 ÷ 2"
+        "source_refs": [
+          "slot.diagram.choice_frame"
+        ]
       },
       {
-        "id": "slot.choice.option_1",
-        "slot_id": "slot.choice.option_1",
+        "id": "choice.canvas.konva_1795504614807_select_533120",
+        "label": "2",
         "text": "27 ÷ 9",
-        "value": "27 ÷ 9"
+        "source_refs": [
+          "konva_1795397215423_paste_1345119_0"
+        ]
       }
     ],
     "answer_key": [
       {
-        "slot_id": "slot.choice.option_0",
+        "id": "choice.canvas.konva_1795504614807_select_530609",
         "value": "18 ÷ 2"
       }
-    ]
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "18 ÷ 2",
+            "ref": "slot.choice.option_0"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795504614807_select_530609",
+            "text": "18 ÷ 2",
+            "correct": true,
+            "label": "1",
+            "sourceRefs": [
+              "slot.diagram.choice_frame"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795504614807_select_533120",
+            "text": "27 ÷ 9",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "konva_1795397215423_paste_1345119_0"
+            ]
+          }
+        ]
+      }
+    }
   },
   "diagnostics": {
     "skills": [

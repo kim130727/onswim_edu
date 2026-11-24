@@ -1,0 +1,128 @@
+{
+  "schema": "modu.solvable.v1.2",
+  "problem_id": "P3_1_01_00040_15726_3",
+  "problem_type": "base_ten_model_addition_hundreds",
+  "inputs": {
+    "target_label": "백 모형끼리 더한 개수",
+    "unit": "개",
+    "quantities": {
+      "first_number": 262,
+      "second_number": 271,
+      "first_model": {
+        "hundreds": 2,
+        "tens": 6,
+        "ones": 2
+      },
+      "second_model": {
+        "hundreds": 2,
+        "tens": 7,
+        "ones": 1
+      }
+    }
+  },
+  "given": [
+    {
+      "ref": "number.first",
+      "value": 262
+    },
+    {
+      "ref": "number.second",
+      "value": 271
+    },
+    {
+      "ref": "model.first",
+      "value": {
+        "hundreds": 2,
+        "tens": 6,
+        "ones": 2
+      }
+    },
+    {
+      "ref": "model.second",
+      "value": {
+        "hundreds": 2,
+        "tens": 7,
+        "ones": 1
+      }
+    }
+  ],
+  "target": {
+    "ref": "quantity.direct_hundreds_sum",
+    "type": "number"
+  },
+  "method": "두 수의 백 모형 개수를 더합니다.",
+  "understanding": {
+    "summary": "262와 271을 나타낸 수 모형에서 백 모형끼리 더한 개수를 구하는 문제입니다.",
+    "facts": [
+      {
+        "ref": "model.first",
+        "label": "262의 수 모형",
+        "value": {
+          "hundreds": 2,
+          "tens": 6,
+          "ones": 2
+        },
+        "unit": "",
+        "source": "explicit"
+      },
+      {
+        "ref": "model.second",
+        "label": "271의 수 모형",
+        "value": {
+          "hundreds": 2,
+          "tens": 7,
+          "ones": 1
+        },
+        "unit": "",
+        "source": "explicit"
+      }
+    ],
+    "unknowns": [
+      {
+        "ref": "quantity.direct_hundreds_sum",
+        "label": "백 모형끼리 더한 개수",
+        "unit": "개",
+        "source": "unknown"
+      }
+    ],
+    "relation": {
+      "type": "add_same_base_ten_units",
+      "statement": "두 수의 백 모형끼리 더합니다.",
+      "symbolic": "2+2=4",
+      "uses": [
+        "model.first",
+        "model.second"
+      ],
+      "result": "quantity.direct_hundreds_sum"
+    }
+  },
+  "plan": [
+    "262의 백 모형 2개와 271의 백 모형 2개를 확인합니다.",
+    "백 모형 2개와 2개를 더해 4개를 구합니다."
+  ],
+  "steps": [
+    {
+      "id": "step.add_direct_hundreds",
+      "expr": "2+2",
+      "value": 4,
+      "explanation": "두 수의 백 모형끼리 더하면 2+2=4개입니다."
+    }
+  ],
+  "checks": [
+    {
+      "id": "check.hundreds_sum",
+      "expr": "2+2",
+      "expected": 4,
+      "actual": 4,
+      "pass": true
+    }
+  ],
+  "answer": {
+    "type": "numeric",
+    "value": 4,
+    "unit": "개",
+    "target_ref": "quantity.direct_hundreds_sum",
+    "derived_from": "step.add_direct_hundreds",
+    "sentence": "백 모형끼리 더하면 4개입니다."
+  }
+}

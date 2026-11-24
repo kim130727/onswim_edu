@@ -1,0 +1,23 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "1부터 9까지의 자연수 중에서 □ 안에 들어갈 수 있는 수를 모두 선택하세요.",
+      "width": 675,
+      "height": 33,
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.diagram.expr_text": {
+      "x": 291.35,
+      "y": 134.94
+    },
+    "slot.diagram.expr_box": {
+      "width": 244.87
+    },
+    "slot.diagram.blank_box": {
+      "x": 460.44,
+      "y": 113.1
+    }
+  },
+  "version": 1
+}

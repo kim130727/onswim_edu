@@ -1,0 +1,32 @@
+{
+  "slots": {
+    "slot.choice.g1_pre": {
+      "x": 155.54,
+      "y": 286.58
+    },
+    "slot.choice.g1_suf": {
+      "x": 391.23,
+      "y": 288.76
+    },
+    "slot.choice.g2_pre": {
+      "x": 162.15,
+      "y": 319.9
+    },
+    "slot.choice.g2_suf": {
+      "x": 447.76,
+      "y": 321.87
+    },
+    "slot.stem.question": {
+      "text": "극장 좌석표에서 규칙을 찾아 민재의 좌석 번호를 알아보려고 합니다. 알맞은 것을 선택하세요."
+    },
+    "slot.diagram.board_title": {
+      "x": 269.24,
+      "y": 99.83
+    },
+    "slot.diagram.badge_txt": {
+      "x": 574.68,
+      "y": 238.56
+    }
+  },
+  "version": 1
+}

@@ -47,3 +47,51 @@ def same_math_notation(expected, submitted):
         return value
 
     return normalize(expected) == normalize(submitted)
+
+
+def is_multi_choice_set(answer):
+    """Return True when a flat choice list represents a single multi-select set."""
+    if not isinstance(answer, dict):
+        return False
+    review = (answer.get("presentation") or {}).get("review") or {}
+    if review.get("mode") == "grouped_choice":
+        return False
+    keys = answer.get("answer_key") or []
+    keys = keys if isinstance(keys, list) else []
+    if review.get("mode") in {"canvas_select", "choice"}:
+        return len(keys) > 1
+    if answer.get("type") in {"multi_choice", "multiple_choice_set", "multi_select"}:
+        return True
+    target = answer.get("target")
+    if isinstance(target, dict) and target.get("type") in {
+        "multiple_choice_set",
+        "multiple_choice_values",
+        "multi_choice",
+    }:
+        return True
+    choices = answer.get("choices") or []
+    if isinstance(choices, list) and len(choices) > len(keys) > 1:
+        choice_ids = {
+            ref
+            for choice in choices
+            if isinstance(choice, dict)
+            for ref in (choice.get("id"), choice.get("slot_id"))
+            if isinstance(ref, str) and ref
+        }
+        key_refs = [
+            key.get("slot_id") or key.get("id")
+            for key in keys
+            if isinstance(key, dict)
+        ]
+        if (
+            len(key_refs) == len(keys)
+            and len(set(key_refs)) == len(keys)
+            and all(
+                isinstance(ref, str)
+                and ref in choice_ids
+                and not re.search(r"[._]g\d+_", ref)
+                for ref in key_refs
+            )
+        ):
+            return True
+    return False

@@ -38,11 +38,15 @@ function AnswerFields({ item, value, enabled, locale, onChange, onAnswerSelected
         const symbol = kind === "comparison_operator" || kind === "operator";
         const math = ["digit", "integer", "number", "decimal", "fraction", "expression"].includes(kind);
 
+        const showFieldLabel = item.fields.length > 1;
+
         return (
           <div key={`${field.id}-${index}`} className="modu-answer-field">
-            <label htmlFor={field.choices.length ? undefined : `modu-panel-input-${item.id}-${index}`}>{label}</label>
+            {showFieldLabel && (
+              <label htmlFor={field.choices.length ? undefined : `modu-panel-input-${item.id}-${index}`}>{label}</label>
+            )}
             {field.choices.length > 0 ? (
-              <div className="modu-panel-choices">
+              <div className="modu-panel-choices" role="group" aria-label={showFieldLabel ? undefined : label}>
                 {field.choices.map((choice, choiceIndex) => {
                   const multi = field.type === "multi_choice";
                   const selected = multi ? Array.isArray(value) && value.includes(choice.value) : current === choice.value;
@@ -69,6 +73,7 @@ function AnswerFields({ item, value, enabled, locale, onChange, onAnswerSelected
                   {symbol ? (
                     <button type="button" className="modu-answer-input"
                       id={`modu-panel-input-${item.id}-${index}`}
+                      aria-label={showFieldLabel ? undefined : label}
                       disabled={!enabled} aria-expanded={open}
                       onClick={() => setActiveIndex(open ? null : index)}>
                       {current || translateStudent(locale, "write")}
@@ -78,6 +83,7 @@ function AnswerFields({ item, value, enabled, locale, onChange, onAnswerSelected
                       id={`modu-panel-input-${item.id}-${index}`}
                       className="modu-answer-input"
                       data-testid={`assignment-answer-${index}`}
+                      aria-label={showFieldLabel ? undefined : label}
                       type="text"
                       inputMode={math ? "none" : "text"}
                       disabled={!enabled}

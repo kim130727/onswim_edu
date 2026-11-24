@@ -1,0 +1,70 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "다음 모양 조각을 모두 사용하여 오각형을 만들 수 있으면 ○, 만들 수 없으면 ×를 선택하세요."
+    },
+    "slot.diagram.tri2": {
+      "points": [
+        [
+          301.0,
+          108.0
+        ],
+        [
+          271.0,
+          160.0
+        ],
+        [
+          331.0,
+          160.0
+        ]
+      ]
+    },
+    "slot.diagram.trap": {
+      "points": [
+        [
+          387.0,
+          108.0
+        ],
+        [
+          447.0,
+          108.0
+        ],
+        [
+          477.0,
+          160.0
+        ],
+        [
+          357.0,
+          160.0
+        ]
+      ]
+    },
+    "slot.diagram.para": {
+      "points": [
+        [
+          529.0,
+          108.0
+        ],
+        [
+          589.0,
+          108.0
+        ],
+        [
+          559.0,
+          160.0
+        ],
+        [
+          499.0,
+          160.0
+        ]
+      ]
+    }
+  },
+  "version": 1,
+  "deleted_slots": [
+    "slot.choice.option_0",
+    "slot.choice.option_1",
+    "slot.diagram.c0_t",
+    "slot.diagram.c1_t"
+  ]
+}

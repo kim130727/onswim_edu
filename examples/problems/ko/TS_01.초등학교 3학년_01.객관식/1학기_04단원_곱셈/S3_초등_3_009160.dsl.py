@@ -152,3 +152,18 @@ SOLVABLE = {
         },
     },
 }
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '㉠ 71 × 4', 'ref': 'slot.choice.option_0'}],
+ 'choices': [{'id': 'slot.choice.option_0',
+              'text': '㉠ 71 × 4',
+              'correct': True,
+              'label': '1',
+              'sourceRefs': ['slot.choice.option_0']},
+             {'id': 'slot.choice.option_1',
+              'text': '㉡ 39 × 4',
+              'correct': False,
+              'label': '2',
+              'sourceRefs': ['slot.choice.option_1']}]}

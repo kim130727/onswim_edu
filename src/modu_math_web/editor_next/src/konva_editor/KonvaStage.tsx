@@ -490,8 +490,12 @@ export function KonvaStage({
     ]);
   };
 
+  const hasCanvasContent = renderedShapes.length > 0;
+  const showEmptyCanvasNotice = !answerReviewMode && !hasCanvasContent && !drawingPreset && (promptShapes.length > 0 || answerChoices.length > 0);
+  const hideReviewCanvas = answerReviewMode && (!showAnswerCanvas || !hasCanvasContent);
+
   return (
-    <div className={`konva-stage-wrap presentation-layout${drawingPreset ? " drawing" : ""}${presentationPanel ? " presentation-with-panel" : ""}${answerReviewMode ? " presentation-review" : ""}${answerReviewMode && !showAnswerCanvas ? " presentation-canvas-hidden" : ""}`} ref={wrapRef}>
+    <div className={`konva-stage-wrap presentation-layout${drawingPreset ? " drawing" : ""}${presentationPanel ? " presentation-with-panel" : ""}${answerReviewMode ? " presentation-review" : ""}${hideReviewCanvas ? " presentation-canvas-hidden" : ""}`} ref={wrapRef}>
       {promptShapes.length > 0 ? <div className="konva-question-preview" role="region" aria-label="문제 지문">
           <div className="presentation-zone-title">
             <span>문제 지문</span>
@@ -516,7 +520,13 @@ export function KonvaStage({
           <button type="button" title="화면에 맞추기" aria-pressed={zoom === null} onClick={() => setZoom(null)}>맞춤</button>
         </div>
       </div>
-      <div className="konva-canvas-viewport" ref={surfaceRef}>
+      <div className={`konva-canvas-viewport${showEmptyCanvasNotice ? " is-empty-canvas" : ""}`} ref={surfaceRef}>
+      {showEmptyCanvasNotice ? (
+        <div className="konva-canvas-empty-notice" role="status">
+          <strong>{answerChoices.length > 0 ? "지문과 보기만으로 구성된 문제입니다" : "캔버스에 표시할 그림·도형이 없습니다"}</strong>
+          <p>학생 화면에서는 캔버스 없이 상단 지문과 하단 답안 영역만 표시됩니다. 도형이나 이미지를 추가하면 여기에 나타납니다.</p>
+        </div>
+      ) : null}
       <Stage
         className="konva-canvas-surface"
         width={stageWidth}

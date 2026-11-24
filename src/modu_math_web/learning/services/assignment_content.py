@@ -10,7 +10,7 @@ from xml.etree import ElementTree
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
-from ..math_answers import math_input_type
+from ..math_answers import is_multi_choice_set, math_input_type
 
 
 def answer_field_values(answer):
@@ -60,10 +60,7 @@ def input_schema(problem):
         elif isinstance(choice, str):
             safe_choices.append({"label": choice, "value": index + 1})
     fields = []
-    review = (answer.get("presentation") or {}).get("review") or {}
-    choice_set = answer.get("target", {}).get("type") == "multiple_choice_set"
-    if review.get("mode") == "canvas_select":
-        choice_set = len(keys) > 1
+    choice_set = is_multi_choice_set(answer)
     if choice_set and safe_choices:
         return {
             "fields": [

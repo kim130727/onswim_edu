@@ -383,10 +383,16 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
         }
       }
 
-      const left = (entry.minX - padLeft) * metrics.scale;
-      const top = (entry.minY - padTop) * metrics.scale;
-      const width = Math.max(32, (entry.maxX - entry.minX + padLeft + padRight) * metrics.scale);
-      const height = Math.max(32, (entry.maxY - entry.minY + padTop + padBottom) * metrics.scale);
+      const rawWidth = (entry.maxX - entry.minX + padLeft + padRight) * metrics.scale;
+      const rawHeight = (entry.maxY - entry.minY + padTop + padBottom) * metrics.scale;
+      const width = Math.max(32, rawWidth);
+      const height = Math.max(32, rawHeight);
+      const rawLeft = (entry.minX - padLeft) * metrics.scale - (width - rawWidth) / 2;
+      const rawTop = (entry.minY - padTop) * metrics.scale - (height - rawHeight) / 2;
+      const frameLeft = metrics.originX * metrics.scale;
+      const frameTop = metrics.originY * metrics.scale;
+      const left = Math.max(frameLeft, Math.min(frameLeft + metrics.canvasWidth - width, rawLeft));
+      const top = Math.max(frameTop, Math.min(frameTop + metrics.canvasHeight - height, rawTop));
       const choiceValue = String(entry.choice.value ?? entry.choice.choice_id ?? "");
       const choiceId = String(entry.choice.choice_id ?? "");
       const label = String(entry.choice.label ?? choiceValue);
@@ -395,7 +401,16 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
 
       return { left, top, width, height, choiceValue, label, selected };
     });
-  }, [canvasChoices, renderer.elements, metrics.scale, selectedChoices]);
+  }, [
+    canvasChoices,
+    renderer.elements,
+    metrics.scale,
+    metrics.originX,
+    metrics.originY,
+    metrics.canvasWidth,
+    metrics.canvasHeight,
+    selectedChoices,
+  ]);
 
   const fieldForSlot = (slot: InputSlot) => fields[bindings?.[slot.id] ?? -1];
   const kindForSlot = (slot: InputSlot): string => {
@@ -742,9 +757,11 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
                   background: c.selected
                     ? "var(--mm-canvas-choice-bg-selected)"
                     : "var(--mm-canvas-choice-bg)",
+                  boxSizing: "border-box",
+                  margin: 0,
                   cursor: inputsEnabled ? "pointer" : "default",
                   padding: 0,
-                  transition: "all var(--mm-motion-fast, 120ms) var(--mm-p-ease, ease)",
+                  transition: "border-color var(--mm-motion-fast, 120ms) var(--mm-p-ease, ease), background-color var(--mm-motion-fast, 120ms) var(--mm-p-ease, ease)",
                 }}
               >
                 {c.selected && (

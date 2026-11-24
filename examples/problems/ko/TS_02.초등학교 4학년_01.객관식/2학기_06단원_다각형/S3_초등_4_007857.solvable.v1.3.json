@@ -34,20 +34,6 @@
       "×"
     ],
     "blanks": [],
-    "answer_key": [
-      {
-        "slot_id": "slot.choice.option_0",
-        "value": "○",
-        "diagnostics": [
-          {
-            "id": "diag.missed_pentagon_construction",
-            "condition": "answer_equals_x",
-            "concept": "모양 조각으로 다각형 만들기",
-            "reason": "정삼각형 2개, 마름모 1개, 사다리꼴 1개로 오각형을 만들 수 있음을 놓침",
-            "feedback": "정삼각형 2개, 평행사변형(마름모) 1개, 사다리꼴 1개를 이어 붙이면 오각형을 만들 수 있으므로 ○입니다."
-          }
-        ]
-      }
-    ]
+    "answer_key": []
   }
 }
