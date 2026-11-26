@@ -185,6 +185,8 @@ def _layout_has_answer_interaction(layout: dict[str, Any], deleted: set[str]) ->
 
 
 def _infer_override_slot_kind(content: dict[str, Any]) -> str:
+    if content.get("kind") == "interactive_widget" or "widget" in content:
+        return "interactive_widget"
     if "d" in content:
         return "path"
     if (
@@ -290,7 +292,7 @@ def _is_editor_inserted_visual_slot(
     slot_id: str, content: dict[str, Any], layout: dict[str, Any] | None = None
 ) -> bool:
     inferred_kind = _infer_override_slot_kind(content)
-    if inferred_kind in {"image", "path"}:
+    if inferred_kind in {"image", "path", "interactive_widget"}:
         return True
     return bool(EDITOR_INSERTED_SLOT_PATTERN.match(slot_id))
 
@@ -1153,6 +1155,7 @@ def apply_editor_overrides(
                     "line",
                     "polygon",
                     "image",
+                    "interactive_widget",
                     "path",
                     "blank",
                 }:

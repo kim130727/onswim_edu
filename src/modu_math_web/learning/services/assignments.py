@@ -55,7 +55,7 @@ def student_problem(problem):
         )
         if attrs.get("data-semantic-role") in forbidden and not is_input:
             continue
-        element = {k: raw[k] for k in ("id", "type", "text", "source_ref") if k in raw}
+        element = {k: raw[k] for k in ("id", "type", "text", "source_ref", "widget") if k in raw}
         if isinstance(raw.get("refs"), dict) and "layout_slot_id" in raw["refs"]:
             element["refs"] = {"layout_slot_id": raw["refs"]["layout_slot_id"]}
         element["attributes"] = {k: v for k, v in attrs.items() if k in attr_keys}

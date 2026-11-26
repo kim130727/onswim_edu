@@ -153,7 +153,7 @@ CANVAS_FIELDS = {"width", "height"}
 EDITOR_OVERRIDE_FIELDS = (
     set().union(*SUPPORTED_SLOTS.values())
     | BASE_SLOT_FIELDS
-    | {"kind", "semantic_role_source"}
+    | {"kind", "semantic_role_source", "widget"}
 ) - {"move_dx", "move_dy"}
 FAST_ADD_OVERRIDE_KINDS = {
     "text",
@@ -163,6 +163,7 @@ FAST_ADD_OVERRIDE_KINDS = {
     "rect",
     "image",
     "path",
+    "interactive_widget",
 }
 TEXT_SLOT_COMPAT_FIELDS = {
     "TextSlot": {"kind"},
@@ -1224,7 +1225,7 @@ def _fast_add_override_fields(
     kind = value.get("kind")
     if not isinstance(kind, str) or kind not in FAST_ADD_OVERRIDE_KINDS:
         return None
-    if kind not in SLOT_KIND_TO_CTOR:
+    if kind != "interactive_widget" and kind not in SLOT_KIND_TO_CTOR:
         raise DslPatchError(f"unsupported slot kind for add: {kind}")
 
     content = value.get("content")
@@ -1239,7 +1240,10 @@ def _fast_add_override_fields(
     region_id = value.get("region_id")
     if region_id is not None and not isinstance(region_id, str):
         raise DslPatchError("add patch value.region_id must be a string")
-    return dict(content), region_id
+    result = dict(content)
+    if kind == "interactive_widget":
+        result["kind"] = "interactive_widget"
+    return result, region_id
 
 
 def _try_apply_fast_editor_overrides(
@@ -2471,6 +2475,28 @@ def apply_layout_patches(
             if not isinstance(value, dict):
                 raise DslPatchError("patch value must be an object")
             kind = value.get("kind")
+            if kind == "interactive_widget":
+                content = value.get("content")
+                if not isinstance(content, dict):
+                    raise DslPatchError("add patch value.content must be an object")
+                override_fields = dict(content)
+                override_fields["kind"] = "interactive_widget"
+                region_id = value.get("region_id")
+                _clear_editor_slot_state(paths, target)
+                _save_editor_slot_override(paths, target, override_fields)
+                _save_editor_slot_region(
+                    paths,
+                    target,
+                    region_id
+                    if isinstance(region_id, str) and region_id
+                    else _default_editor_region_id(paths),
+                )
+                applied.append(
+                    AppliedPatch(
+                        target=target, op=op, fields=list(override_fields.keys())
+                    )
+                )
+                continue
             ctor = SLOT_KIND_TO_CTOR.get(kind) if isinstance(kind, str) else None
             if ctor is None:
                 raise DslPatchError(f"unsupported slot kind for add: {kind}")

@@ -283,19 +283,29 @@ export function EditorKonva() {
     if (requested) void openProblem(requested);
   }, [openProblem]);
 
-  const createNewProblem = useCallback(async () => {
-    const rawName = window.prompt("새 문제 이름 또는 경로", defaultNewProblemId());
-    if (rawName === null) return;
-    const problemId = normalizeNewProblemId(rawName);
+  const [isNewFileModalOpen, setNewFileModalOpen] = useState(false);
+  const [newFileNameInput, setNewFileNameInput] = useState("");
+  const [newFileError, setNewFileError] = useState("");
+
+  const openNewFileModal = useCallback(() => {
+    setNewFileNameInput(defaultNewProblemId());
+    setNewFileError("");
+    setNewFileModalOpen(true);
+  }, []);
+
+  const submitNewProblem = useCallback(async () => {
+    const problemId = normalizeNewProblemId(newFileNameInput);
     if (!problemId) {
-      setMessage("새 문제 이름을 입력해 주세요.");
+      setNewFileError("새 문제 이름을 입력해 주세요.");
       return;
     }
 
+    setNewFileError("");
     setMessage(`Creating ${problemId}...`);
     try {
       const detail = await createProblem(problemId, fileTitleFromProblemId(problemId));
-      setProblem(problemDetailToCanonicalProblem(detail), `Created ${detail.problem_id}. Start filling slots, then save/build when ready.`, {
+      setNewFileModalOpen(false);
+      setProblem(problemDetailToCanonicalProblem(detail), `새 문제 ${detail.problem_id}를 만들었습니다. 요소를 배치한 뒤 저장하고 화면 반영을 눌러주세요.`, {
         semantic: detail.semantic,
         solvable: detail.solvable,
         layout: detail.layout,
@@ -303,9 +313,11 @@ export function EditorKonva() {
       });
       setProblemListVersion((version) => version + 1);
     } catch (error) {
-      setMessage(`Could not create ${problemId}: ${String(error)}`);
+      const msg = `새 파일을 만들지 못했습니다 (${problemId}): ${String(error)}`;
+      setNewFileError(msg);
+      setMessage(msg);
     }
-  }, [setProblem]);
+  }, [newFileNameInput, setProblem]);
 
   const updateShape = useCallback((nextShape: EditorShape) => {
     setSaveStatus("unsaved");
@@ -1291,8 +1303,82 @@ export function EditorKonva() {
         onSave={() => { void saveJson(); }}
         onSaveAndBuild={saveAndBuildCurrentProblem}
         onBuild={buildCurrentProblem}
-        onNewFile={createNewProblem}
+        onNewFile={openNewFileModal}
       />
+      {isNewFileModalOpen ? (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="new-file-dialog-title"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(15, 23, 42, 0.45)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 16,
+          }}
+          onClick={() => setNewFileModalOpen(false)}
+        >
+          <form
+            style={{
+              width: "min(440px, 100%)",
+              background: "#ffffff",
+              color: "#0f172a",
+              borderRadius: 12,
+              padding: 20,
+              boxShadow: "0 20px 50px rgba(15, 23, 42, 0.28)",
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+            }}
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={(e) => {
+              e.preventDefault();
+              void submitNewProblem();
+            }}
+          >
+            <strong id="new-file-dialog-title" style={{ fontSize: 16 }}>새 문제 만들기</strong>
+            <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 13 }}>
+              <span>새 문제 이름 또는 경로</span>
+              <input
+                type="text"
+                autoFocus
+                value={newFileNameInput}
+                onChange={(e) => setNewFileNameInput(e.target.value)}
+                style={{
+                  padding: "8px 10px",
+                  borderRadius: 8,
+                  border: "1px solid #cbd5e1",
+                  fontSize: 14,
+                }}
+              />
+            </label>
+            {newFileError ? (
+              <div role="alert" style={{ fontSize: 12, color: "#dc2626" }}>
+                {newFileError}
+              </div>
+            ) : null}
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
+              <button
+                type="button"
+                onClick={() => setNewFileModalOpen(false)}
+                style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #cbd5e1", background: "#f8fafc", cursor: "pointer" }}
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                style={{ padding: "6px 14px", borderRadius: 8, border: "1px solid #4f46e5", background: "#4f46e5", color: "#ffffff", fontWeight: 600, cursor: "pointer" }}
+              >
+                만들기
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : null}
       <KidAvatarMakerModal
         isOpen={isAvatarModalOpen}
         onClose={() => setAvatarModalOpen(false)}
@@ -1551,6 +1637,10 @@ function defaultNewProblemId(): string {
     now.getFullYear(),
     String(now.getMonth() + 1).padStart(2, "0"),
     String(now.getDate()).padStart(2, "0"),
+    "_",
+    String(now.getHours()).padStart(2, "0"),
+    String(now.getMinutes()).padStart(2, "0"),
+    String(now.getSeconds()).padStart(2, "0"),
   ].join("");
   return `drafts/new_problem_${stamp}`;
 }

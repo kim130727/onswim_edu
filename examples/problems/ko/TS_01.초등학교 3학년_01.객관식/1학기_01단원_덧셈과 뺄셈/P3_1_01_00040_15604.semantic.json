@@ -22,7 +22,8 @@
         "slot.question"
       ],
       "instruction": [],
-      "choice": []
+      "choice": [],
+      "answer_prompt": []
     },
     "presentation_prompt": "크기를 비교하여 ○ 안에 >, <, =를 알맞게 써넣으시오."
   },
@@ -102,9 +103,30 @@
   },
   "answer": {
     "type": "text",
-    "value": "<",
+    "value": [],
     "unit": "",
     "target_ref": "comparison.left_sum_right_sum",
-    "derived_from": "step.compare_sums"
+    "derived_from": "step.compare_sums",
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "<",
+            "ref": "answer.value"
+          }
+        ],
+        "choices": []
+      }
+    },
+    "choices": [],
+    "answer_key": [],
+    "blanks": []
   }
 }
