@@ -18,7 +18,8 @@
     "paths": {
       "@modu/student-renderer": ["../../../packages/student-renderer/src/index.ts"],
       "react": ["./node_modules/@types/react/index.d.ts"],
-      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime.d.ts"]
+      "react/jsx-runtime": ["./node_modules/@types/react/jsx-runtime.d.ts"],
+      "three": ["./node_modules/@types/three/index.d.ts"]
     }
   },
   "include": ["src", "../../../packages/student-renderer/src"]

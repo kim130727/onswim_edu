@@ -1,3 +1,5 @@
+import type { InteractiveWidgetSpec } from "@modu/student-renderer";
+
 export type EditorShape =
   | RectShape
   | CircleShape
@@ -7,7 +9,8 @@ export type EditorShape =
   | TextShape
   | ImageShape
   | MathShape
-  | BaseTenBlockShape;
+  | BaseTenBlockShape
+  | InteractiveWidgetShape;
 
 export type AnswerInteractionType = "input" | "select";
 export type AnswerRole = "answer" | "result" | "intermediate" | "carry" | "blank" | "choice";
@@ -175,6 +178,13 @@ export type BaseTenBlockShape = BaseShape & {
   sideFill?: string;
   stroke?: string;
   strokeWidth?: number;
+};
+
+export type InteractiveWidgetShape = BaseShape & {
+  type: "interactiveWidget";
+  width: number;
+  height: number;
+  widget: InteractiveWidgetSpec;
 };
 
 export interface EditorShapeDocument {

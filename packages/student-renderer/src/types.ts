@@ -1,3 +1,5 @@
+import type { InteractiveWidgetSpec } from "./widgets/types";
+
 export type StudentLocale = "ko" | "uk";
 
 export interface ChoiceOption {
@@ -43,6 +45,7 @@ export interface RendererElement {
   attributes?: Record<string, unknown>;
   interaction?: Record<string, unknown>;
   input_style?: Record<string, unknown>;
+  widget?: InteractiveWidgetSpec;
   refs?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
   [key: string]: unknown;

@@ -6,3 +6,6 @@ export * from "./slots";
 export * from "./RendererCanvas";
 export * from "./AnswerInputPanel";
 export * from "./StudentProblemView";
+export * from "./widgets/types";
+export * from "./widgets/InteractiveWidgetHost";
+export * from "./widgets/three/voxelMath";

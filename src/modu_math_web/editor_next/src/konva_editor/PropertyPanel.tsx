@@ -4,6 +4,7 @@ import { scalePathData } from "../utils/pathData";
 import { KONVA_PREVIEW_FONT_FAMILY, normalizePreviewFontFamily } from "./fonts";
 import { resolveAnswerBinding, type AnswerBindingOption } from "./answerReview";
 import { estimateTextWidth, fitTextBoxToContent, fittedTextHeight } from "./converters";
+import { InteractiveWidgetInspector } from "./InteractiveWidgetInspector";
 
 interface PropertyPanelProps {
   shape: EditorShape | null;
@@ -126,10 +127,45 @@ export function PropertyPanel({ shape, selectedShapes = [], answerOptions = [], 
             {scalableShape(shape) && shape.type !== "baseTenBlock" ? (
               <NumberField label="크기 (%)" value={shapeScalePercent(shape)} onChange={(scale) => onChange(shapeScalePatch(shape, scale))} />
             ) : null}
-            {shape.type === "rect" || shape.type === "image" || shape.type === "math" || shape.type === "baseTenBlock" || shape.type === "text" ? (
+            {shape.type === "rect" || shape.type === "image" || shape.type === "math" || shape.type === "baseTenBlock" || shape.type === "text" || shape.type === "interactiveWidget" ? (
               <>
                 <NumberField label="너비" value={shape.width ?? 0} onChange={(width) => onChange({ width } as Partial<EditorShape>)} />
                 <NumberField label="높이" value={shape.height ?? 0} onChange={(height) => onChange({ height } as Partial<EditorShape>)} />
+              </>
+            ) : null}
+            {shape.type === "interactiveWidget" ? (
+              <>
+                <SelectField
+                  label="위젯 유형"
+                  value={shape.widget.kind}
+                  options={["protractor_2d", "graph_2d", "voxel_3d", "solid_3d"]}
+                  optionLabels={{
+                    protractor_2d: "2D 각도기",
+                    graph_2d: "2D 그래프",
+                    voxel_3d: "3D 쌓기나무",
+                    solid_3d: "3D 입체도형",
+                  }}
+                  onChange={(kind) =>
+                    onChange({
+                      widget: { ...shape.widget, kind: kind as typeof shape.widget.kind },
+                    } as Partial<EditorShape>)
+                  }
+                />
+                <SelectField
+                  label="동작 모드"
+                  value={shape.widget.mode ?? "sandbox"}
+                  options={["sandbox", "graded"]}
+                  optionLabels={{ sandbox: "탐구 도구(Sandbox)", graded: "조작 채점(Graded)" }}
+                  onChange={(mode) =>
+                    onChange({
+                      widget: { ...shape.widget, mode: mode as "sandbox" | "graded" },
+                    } as Partial<EditorShape>)
+                  }
+                />
+                <InteractiveWidgetInspector
+                  shape={shape}
+                  onChangeWidget={(widget) => onChange({ widget } as Partial<EditorShape>)}
+                />
               </>
             ) : null}
             {shape.type === "baseTenBlock" ? (

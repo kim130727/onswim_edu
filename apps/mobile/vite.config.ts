@@ -13,6 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@modu/student-renderer": sharedRendererEntry,
+      "three": path.resolve(rootDir, "node_modules/three"),
     },
   },
   server: {

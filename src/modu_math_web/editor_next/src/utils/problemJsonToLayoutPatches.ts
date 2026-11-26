@@ -127,6 +127,8 @@ function objectBounds(object: ProblemObject): { x: number; y: number; width: num
       return { x: object.x, y: object.y, width: object.props.width, height: 1 };
     case "group_objects":
       return { x: object.x, y: object.y, width: 1, height: 1 };
+    case "interactive_widget":
+      return { x: object.x, y: object.y, width: object.props.width, height: object.props.height };
   }
 }
 
@@ -175,6 +177,14 @@ function updateValue(baseObject: ProblemObject, object: ProblemObject): Record<s
       return {
         move_dx: 0,
         move_dy: 0,
+      };
+    case "interactive_widget":
+      return {
+        x: round(object.x),
+        y: round(object.y),
+        width: round(object.props.width),
+        height: round(object.props.height),
+        widget: object.props.widget,
       };
   }
 }
@@ -229,6 +239,17 @@ function addValue(object: ProblemObject): Record<string, unknown> {
       return {
         kind: "rect",
         content: tableOuterFields(object),
+      };
+    case "interactive_widget":
+      return {
+        kind: "interactive_widget",
+        content: {
+          x: round(object.x),
+          y: round(object.y),
+          width: round(object.props.width),
+          height: round(object.props.height),
+          widget: object.props.widget,
+        },
       };
     default:
       return {

@@ -47,6 +47,46 @@
           },
           "input_style": {
             "type": "object"
+          },
+          "widget": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "protractor_2d",
+                  "graph_2d",
+                  "voxel_3d",
+                  "solid_3d"
+                ]
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "sandbox",
+                  "graded"
+                ]
+              },
+              "props": {
+                "type": "object"
+              },
+              "interactions": {
+                "type": "object"
+              },
+              "evaluation": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
           }
         },
         "required": [

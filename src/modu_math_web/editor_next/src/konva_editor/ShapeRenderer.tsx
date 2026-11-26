@@ -132,7 +132,113 @@ export function ShapeRenderer({ shape, nodeRef, interactive = true, onSelect, on
       return <MathShapeRenderer shape={shape} common={common} />;
     case "baseTenBlock":
       return <BaseTenBlockRenderer shape={shape} common={common} />;
+    case "interactiveWidget":
+      return <InteractiveWidgetPreviewRenderer shape={shape} common={common} />;
   }
+}
+
+function InteractiveWidgetPreviewRenderer({
+  shape,
+  common,
+}: {
+  shape: Extract<EditorShape, { type: "interactiveWidget" }>;
+  common: Record<string, unknown>;
+}) {
+  const kindLabel =
+    shape.widget.kind === "protractor_2d"
+      ? "2D 각도기 위젯"
+      : shape.widget.kind === "graph_2d"
+        ? "2D 그래프 위젯"
+        : shape.widget.kind === "voxel_3d"
+          ? "3D 쌓기나무 위젯"
+          : "3D 입체도형 위젯";
+  const w = Math.max(40, shape.width);
+  const h = Math.max(40, shape.height);
+  const r = Math.max(24, Math.min(w * 0.34, h * 0.42));
+  const cx = w / 2;
+  const cy = h * 0.72;
+
+  return (
+    <Group {...common}>
+      <Rect
+        width={w}
+        height={h}
+        fill="#f0f9ff"
+        stroke="#0284c7"
+        strokeWidth={1.5}
+        dash={[6, 4]}
+        cornerRadius={8}
+      />
+      {shape.widget.kind === "protractor_2d" ? (
+        <>
+          <Line
+            points={[w * 0.14, h * 0.78, w * 0.86, h * 0.62]}
+            stroke="#1e293b"
+            strokeWidth={2}
+            listening={false}
+          />
+          <Path
+            data={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy} Z`}
+            fill="rgba(56, 189, 248, 0.25)"
+            stroke="#0284c7"
+            strokeWidth={1.5}
+            listening={false}
+          />
+        </>
+      ) : shape.widget.kind === "voxel_3d" || shape.widget.kind === "solid_3d" ? (
+        <>
+          <Path
+            data={`M ${cx} ${h * 0.28} L ${cx + r * 0.65} ${h * 0.42} L ${cx} ${h * 0.56} L ${cx - r * 0.65} ${h * 0.42} Z`}
+            fill={shape.widget.kind === "voxel_3d" ? "#fde68a" : "#bae6fd"}
+            stroke="#334155"
+            strokeWidth={1.3}
+            listening={false}
+          />
+          <Path
+            data={`M ${cx - r * 0.65} ${h * 0.42} L ${cx} ${h * 0.56} L ${cx} ${h * 0.8} L ${cx - r * 0.65} ${h * 0.66} Z`}
+            fill={shape.widget.kind === "voxel_3d" ? "#f59e0b" : "#7dd3fc"}
+            opacity={0.75}
+            stroke="#334155"
+            strokeWidth={1.3}
+            listening={false}
+          />
+          <Path
+            data={`M ${cx} ${h * 0.56} L ${cx + r * 0.65} ${h * 0.42} L ${cx + r * 0.65} ${h * 0.66} L ${cx} ${h * 0.8} Z`}
+            fill={shape.widget.kind === "voxel_3d" ? "#d97706" : "#38bdf8"}
+            opacity={0.65}
+            stroke="#334155"
+            strokeWidth={1.3}
+            listening={false}
+          />
+        </>
+      ) : shape.widget.kind === "graph_2d" ? (
+        <>
+          <Line
+            points={[w * 0.16, h * 0.25, w * 0.16, h * 0.82, w * 0.88, h * 0.82]}
+            stroke="#475569"
+            strokeWidth={1.6}
+            listening={false}
+          />
+          <Line
+            points={[w * 0.24, h * 0.68, w * 0.44, h * 0.56, w * 0.64, h * 0.46, w * 0.82, h * 0.34]}
+            stroke="#db2777"
+            strokeWidth={2}
+            listening={false}
+          />
+        </>
+      ) : null}
+      <Text
+        x={8}
+        y={8}
+        width={w - 16}
+        text={`[${kindLabel}]`}
+        fontSize={12}
+        fontStyle="bold"
+        fill="#0369a1"
+        listening={false}
+      />
+    </Group>
+  );
 }
 
 function BaseTenBlockRenderer({

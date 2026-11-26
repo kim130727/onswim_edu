@@ -255,6 +255,24 @@ function problemObjectToEditorShape(object: ProblemObject, canvas: ProblemCanvas
           stringProp(object.props.transform),
         ),
       ];
+    case "interactive_widget":
+      return [
+        applySvgTransform(
+          {
+            id: object.id,
+            type: "interactiveWidget",
+            x: object.x,
+            y: object.y,
+            width: object.props.width,
+            height: object.props.height,
+            widget: object.props.widget,
+            ...regionProps,
+            ...answerProps,
+            visible: true,
+          },
+          stringProp(object.props.transform),
+        ),
+      ];
     default:
       return [];
   }
@@ -373,7 +391,13 @@ function parseSvgRotate(transform: string | undefined): { angle: number; cx: num
 }
 
 function isSupportedProblemObject(object: ProblemObject): boolean {
-  return object.type === "math_text" || object.type === "basic_shape" || object.type === "image" || object.type === "path";
+  return (
+    object.type === "math_text" ||
+    object.type === "basic_shape" ||
+    object.type === "image" ||
+    object.type === "path" ||
+    object.type === "interactive_widget"
+  );
 }
 
 function editorShapeToProblemObject(shape: EditorShape): ProblemObject[] {
@@ -578,6 +602,23 @@ function editorShapeToProblemObject(shape: EditorShape): ProblemObject[] {
       ];
     case "baseTenBlock":
       return baseTenBlockToProblemObjects(shape);
+    case "interactiveWidget":
+      return [
+        {
+          id: shape.id,
+          type: "interactive_widget",
+          x: shapeBaseX(shape),
+          y: shapeBaseY(shape),
+          props: {
+            width: shape.width,
+            height: shape.height,
+            widget: shape.widget,
+            ...regionProps,
+            ...answerProps,
+            ...transformProps(shape),
+          },
+        },
+      ];
   }
 }
 

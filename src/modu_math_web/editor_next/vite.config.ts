@@ -10,11 +10,12 @@ export default defineConfig({
   plugins: [react(), copyMathJaxAssets()],
   base: "/static/editor_next/konva_assets/",
   resolve: {
-    dedupe: ["react", "react-dom"],
+    dedupe: ["react", "react-dom", "three"],
     alias: {
       "@modu/student-renderer": sharedStudentRenderer,
       "react/jsx-runtime": resolve(__dirname, "node_modules/react/jsx-runtime"),
       "react": resolve(__dirname, "node_modules/react"),
+      "three": resolve(__dirname, "node_modules/three"),
     },
   },
   build: {

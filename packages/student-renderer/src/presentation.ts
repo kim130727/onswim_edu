@@ -166,6 +166,7 @@ export function elementVisualBounds(element: RendererElement): BoundsTuple | nul
     case "rect":
     case "image":
     case "text_box":
+    case "interactive_widget":
       return [x, y, x + n("width"), y + n("height")];
     case "line":
       return [
@@ -258,7 +259,12 @@ function hasVisualPresence(element: RendererElement): boolean {
   if (element.type === "text") {
     return String(element.text ?? "").trim().length > 0;
   }
-  if (element.type === "rect" || element.type === "image" || element.type === "text_box") {
+  if (
+    element.type === "rect" ||
+    element.type === "image" ||
+    element.type === "text_box" ||
+    element.type === "interactive_widget"
+  ) {
     const w = readNumber(a.width ?? element.width) ?? 0;
     const h = readNumber(a.height ?? element.height) ?? 0;
     return w > 0 && h > 0;

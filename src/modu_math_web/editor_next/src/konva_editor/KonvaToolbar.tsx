@@ -62,6 +62,10 @@ type ToolName =
   | "baseTen100"
   | "baseTen10"
   | "baseTen1"
+  | "widgetProtractor"
+  | "widgetGraph"
+  | "widgetVoxel"
+  | "widgetSolid"
   | "answerSlot"
   | "delete"
   | "refresh"
@@ -95,6 +99,7 @@ interface KonvaToolbarProps {
   onAddBaseTenHundred: () => void;
   onAddBaseTenTen: () => void;
   onAddBaseTenOne: () => void;
+  onAddInteractiveWidget: (kind: "protractor_2d" | "graph_2d" | "voxel_3d" | "solid_3d") => void;
   onMarkSelectedAsAnswerSlot: () => void;
   onDeleteSelected: () => void;
   onRefreshJson: () => void;
@@ -348,6 +353,34 @@ function ToolbarIcon({ name }: { name: ToolName }) {
           <path d="M15 9l3-3v8l-3 3" />
         </svg>
       );
+    case "widgetProtractor":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 17a8 8 0 0 1 16 0Z" />
+          <path d="M12 17v-6M8 17l2-3M16 17l-2-3" />
+        </svg>
+      );
+    case "widgetGraph":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 19h16M5 5v14" />
+          <path d="M7 15l4-5 4 3 4-6" />
+        </svg>
+      );
+    case "widgetVoxel":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 4l6 3.5v7L12 18l-6-3.5v-7Z" />
+          <path d="M12 11v7M12 11l6-3.5M12 11L6 7.5" />
+        </svg>
+      );
+    case "widgetSolid":
+      return (
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="4" y="8" width="10" height="10" />
+          <path d="M4 8l4-4h10v10l-4 4M14 8l4-4" />
+        </svg>
+      );
     case "answerSlot":
       return (
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -535,6 +568,10 @@ export function KonvaToolbar(props: KonvaToolbarProps) {
       <IconButton label="백 모형" icon="baseTen100" onClick={props.onAddBaseTenHundred} />
       <IconButton label="십 모형" icon="baseTen10" onClick={props.onAddBaseTenTen} />
       <IconButton label="일 모형" icon="baseTen1" onClick={props.onAddBaseTenOne} />
+      <IconButton label="각도기" icon="widgetProtractor" onClick={() => props.onAddInteractiveWidget("protractor_2d")} />
+      <IconButton label="그래프" icon="widgetGraph" onClick={() => props.onAddInteractiveWidget("graph_2d")} />
+      <IconButton label="쌓기나무" icon="widgetVoxel" onClick={() => props.onAddInteractiveWidget("voxel_3d")} />
+      <IconButton label="입체도형" icon="widgetSolid" onClick={() => props.onAddInteractiveWidget("solid_3d")} />
       </> : null}
       {toolGroup === "manage" ? <>
       <IconButton label="정답 빈칸 추가" icon="answerSlot" onClick={props.onAddAnswerBlank} />

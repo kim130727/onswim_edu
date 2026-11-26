@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { MathKeypad } from "./MathKeypad";
 import { translateStudent } from "./strings";
+import { InteractiveWidgetHost } from "./widgets/InteractiveWidgetHost";
 import {
   asRecord,
   computeCanvasMetrics,
@@ -319,6 +320,11 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     [visibleElements],
   );
 
+  const widgetElements = useMemo(
+    () => visibleElements.filter((el) => el.type === "interactive_widget"),
+    [visibleElements],
+  );
+
   const canvasChoiceOverlays = useMemo(() => {
     if (canvasChoices.length === 0) return [];
     const byId = new Map<string, RendererElement>();
@@ -618,6 +624,16 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
 
           {textBoxElements.map((element, index) => (
             <CanvasTextBox key={element.id ?? index} element={element} scale={metrics.scale} />
+          ))}
+
+          {/* Interactive Manipulative Widgets (2D/3D) */}
+          {widgetElements.map((element, index) => (
+            <InteractiveWidgetHost
+              key={element.id ?? `widget-${index}`}
+              element={element}
+              scale={metrics.scale}
+              interactive={inputsEnabled}
+            />
           ))}
 
           {/* Interactive Canvas Input Slots */}

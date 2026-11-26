@@ -1548,7 +1548,7 @@ function appendFreeformPoint(points: CanvasPoint[], point: CanvasPoint): CanvasP
 function shapeLongEnough(shape: EditorShape): boolean {
   if (shape.type === "line") return Math.hypot(shape.points[2] ?? 0, shape.points[3] ?? 0) >= 4;
   if (shape.type === "connector") return Math.hypot(shape.end.x - shape.start.x, shape.end.y - shape.start.y) >= 4;
-  if (shape.type === "path" || shape.type === "rect" || shape.type === "image" || shape.type === "math") {
+  if (shape.type === "path" || shape.type === "rect" || shape.type === "image" || shape.type === "math" || shape.type === "interactiveWidget") {
     return Math.max(shape.width, shape.height) >= 4;
   }
   if (shape.type === "baseTenBlock") return Math.max(shape.width, shape.height) >= 4;
@@ -1564,7 +1564,7 @@ function drawingEndPoint(shape: EditorShape): CanvasPoint {
   if (shape.type === "connector") {
     return connectorPointToCanvasPoint(shape, connectorEnd(shape));
   }
-  if (shape.type === "path" || shape.type === "rect" || shape.type === "image" || shape.type === "math") {
+  if (shape.type === "path" || shape.type === "rect" || shape.type === "image" || shape.type === "math" || shape.type === "interactiveWidget") {
     return { x: shape.x + shape.width, y: shape.y + shape.height };
   }
   if (shape.type === "baseTenBlock") {
@@ -1880,6 +1880,17 @@ function shapeFromNode(shape: EditorShape, node: Konva.Node): EditorShape {
       width: Math.max(6, shape.width * Math.abs(scaleX)),
       height: Math.max(6, shape.height * Math.abs(scaleY)),
       depth: Math.max(0, shape.depth * depthScale),
+    };
+  }
+  if (shape.type === "interactiveWidget") {
+    const size = scaledNodeSize(shape.width, shape.height, scaleX, scaleY, 80, 60);
+    return {
+      ...shape,
+      x: node.x(),
+      y: node.y(),
+      rotation: node.rotation(),
+      width: size.width,
+      height: size.height,
     };
   }
   if (shape.type === "path") {

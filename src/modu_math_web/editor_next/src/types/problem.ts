@@ -1,3 +1,5 @@
+import type { InteractiveWidgetSpec } from "@modu/student-renderer";
+
 export interface ProblemCanvas {
   width: number;
   height: number;
@@ -11,7 +13,8 @@ export type ProblemObject =
   | TableObject
   | BasicShapeObject
   | PathObject
-  | ImageObject;
+  | ImageObject
+  | InteractiveWidgetObject;
 
 export interface ProblemJson {
   id: string;
@@ -125,3 +128,11 @@ export interface ImageProps extends Record<string, unknown> {
 }
 
 export type ImageObject = BaseProblemObject<"image", ImageProps>;
+
+export interface InteractiveWidgetProps extends Record<string, unknown> {
+  width: number;
+  height: number;
+  widget: InteractiveWidgetSpec;
+}
+
+export type InteractiveWidgetObject = BaseProblemObject<"interactive_widget", InteractiveWidgetProps>;

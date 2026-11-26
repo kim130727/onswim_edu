@@ -13,7 +13,14 @@ import {
   type TutorRendererOverlay,
 } from "../api/editorApi";
 import { problemJsonToLayoutPatches } from "../utils/problemJsonToLayoutPatches";
-import type { BaseTenBlockKind, EditorShape, EditorShapeDocument, InputInteraction, InputStyle } from "../types/editorShape";
+import type { BaseTenBlockKind, EditorShape, EditorShapeDocument, InputInteraction, InputStyle, InteractiveWidgetShape } from "../types/editorShape";
+import {
+  defaultGraph2DProps,
+  defaultProtractorProps,
+  defaultSolid3DProps,
+  defaultVoxel3DProps,
+  type InteractiveWidgetKind,
+} from "@modu/student-renderer";
 import type { ProblemJson } from "../types/problem";
 import { scalePathData } from "../utils/pathData";
 import sampleProblem from "../samples/sample_problem.json";
@@ -727,6 +734,37 @@ export function EditorKonva() {
     [addShape, fitInsertBox, nextId],
   );
 
+  const addInteractiveWidget = useCallback(
+    (kind: InteractiveWidgetKind) => {
+      const box = fitInsertBox(440, 280, 72, 96);
+      const props =
+        kind === "protractor_2d"
+          ? defaultProtractorProps(box.width, box.height)
+          : kind === "graph_2d"
+            ? defaultGraph2DProps()
+            : kind === "voxel_3d"
+              ? defaultVoxel3DProps()
+              : defaultSolid3DProps();
+      const shape: InteractiveWidgetShape = {
+        id: nextId(`widget_${kind}`),
+        type: "interactiveWidget",
+        x: box.x,
+        y: box.y,
+        width: box.width,
+        height: box.height,
+        widget: {
+          kind,
+          version: 1,
+          mode: "sandbox",
+          props: props as unknown as Record<string, unknown>,
+        },
+        visible: true,
+      };
+      addShape(shape);
+    },
+    [addShape, fitInsertBox, nextId],
+  );
+
   const deleteSelected = useCallback(() => {
     if (!selectedShapeIds.length) return;
     const selected = new Set(selectedShapeIds);
@@ -1246,6 +1284,7 @@ export function EditorKonva() {
         onAddBaseTenHundred={() => addBaseTenModel("hundred")}
         onAddBaseTenTen={() => addBaseTenModel("ten")}
         onAddBaseTenOne={() => addBaseTenModel("one")}
+        onAddInteractiveWidget={addInteractiveWidget}
         onMarkSelectedAsAnswerSlot={markSelectedAsAnswerSlot}
         onDeleteSelected={deleteSelected}
         onRefreshJson={refreshJson}
@@ -1977,6 +2016,9 @@ function scaleShapeAround(shape: EditorShape, originX: number, originY: number, 
   }
   if (shape.type === "baseTenBlock") {
     return { ...shape, ...commonPatch, width: scaledAtLeast(shape.width, scale, 6), height: scaledAtLeast(shape.height, scale, 6), depth: scaledAtLeast(shape.depth, scale, 0) };
+  }
+  if (shape.type === "interactiveWidget") {
+    return { ...shape, ...commonPatch, width: scaledAtLeast(shape.width, scale, 80), height: scaledAtLeast(shape.height, scale, 60) };
   }
   if (shape.type === "circle") {
     return { ...shape, ...commonPatch, radius: scaledAtLeast(shape.radius, scale, 4) };
