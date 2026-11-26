@@ -18,6 +18,7 @@ _DRAW_OP_TYPES = {
     "arc",
     "formula",
     "image",
+    "interactive_widget",
     "fill_path",
     "path",
     "group",
@@ -95,6 +96,10 @@ def _validate_element(element: dict[str, Any], path: str) -> None:
         href = element["attributes"].get("href")
         if not isinstance(href, str) or not href.strip():
             raise RendererValidationError(f"{path}.attributes.href must be a non-empty string for image elements")
+    if element_type == "interactive_widget":
+        widget = element.get("widget")
+        if not isinstance(widget, dict) or not isinstance(widget.get("kind"), str) or not widget["kind"].strip():
+            raise RendererValidationError(f"{path}.widget.kind must be a non-empty string for interactive_widget elements")
 
 
 def validate_renderer_json(data: dict[str, Any]) -> None:

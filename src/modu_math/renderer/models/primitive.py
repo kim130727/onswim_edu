@@ -21,6 +21,7 @@ class RenderElement:
     attributes: dict[str, Any] = field(default_factory=dict)
     interaction: dict[str, Any] | None = None
     input_style: dict[str, Any] | None = None
+    widget: dict[str, Any] | None = None
     
     def to_dict(self) -> dict[str, Any]:
         data: dict[str, Any] = {
@@ -32,6 +33,8 @@ class RenderElement:
             data["interaction"] = self.interaction
         if self.input_style is not None:
             data["input_style"] = self.input_style
+        if self.widget is not None:
+            data["widget"] = self.widget
         return data
 
     @classmethod
@@ -62,6 +65,7 @@ class RenderElement:
             attributes=dict(data.get("attributes", {})),
             interaction=dict(data["interaction"]) if isinstance(data.get("interaction"), dict) else None,
             input_style=dict(data["input_style"]) if isinstance(data.get("input_style"), dict) else None,
+            widget=dict(data["widget"]) if isinstance(data.get("widget"), dict) else None,
         )
 
 @dataclass

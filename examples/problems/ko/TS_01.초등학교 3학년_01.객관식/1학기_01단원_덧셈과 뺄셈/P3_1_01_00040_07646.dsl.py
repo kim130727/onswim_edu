@@ -452,8 +452,8 @@ SOLVABLE = {
 
 
 SEMANTIC_ANSWER = SOLVABLE["answer"]
-EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
- 'show_canvas': True,
+EDITOR_ANSWER_REVIEW = {'mode': 'choice',
+ 'show_canvas': False,
  'status': 'pending',
  'note': '',
  'answers': [{'value': '소방서', 'ref': 'answer.value'}],

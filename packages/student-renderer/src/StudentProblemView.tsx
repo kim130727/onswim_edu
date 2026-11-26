@@ -91,6 +91,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
             color: "var(--mm-color-text-primary)",
             wordBreak: "keep-all",
             letterSpacing: "-0.01em",
+            textAlign: "center",
           }}
         >
           {headingText}

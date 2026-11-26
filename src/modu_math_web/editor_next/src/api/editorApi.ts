@@ -78,6 +78,7 @@ export interface RendererElement {
   text?: string;
   interaction?: Record<string, unknown>;
   input_style?: Record<string, unknown>;
+  widget?: Record<string, unknown>;
 }
 
 export interface TutorRendererStep {
@@ -934,6 +935,29 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
       },
       ];
     }
+    case "interactive_widget": {
+      const widgetRaw = isRecord(element.widget)
+        ? element.widget
+        : isRecord(attrs.widget)
+          ? attrs.widget
+          : { kind: "protractor_2d", version: 1, mode: "sandbox" };
+      return [
+        {
+          id: sourceId(element),
+          type: "interactive_widget",
+          x: numberValue(attrs.x, 0),
+          y: numberValue(attrs.y, 0),
+          props: {
+            width: numberValue(attrs.width, 420),
+            height: numberValue(attrs.height, 280),
+            widget: widgetRaw as unknown as import("@modu/student-renderer").InteractiveWidgetSpec,
+            transform: stringValue(attrs.transform, ""),
+            ...regionProps,
+            ...answerElementProps(element),
+          },
+        },
+      ];
+    }
     case "path": {
       const path = localizePathData(stringValue(attrs.d, ""));
       return [
@@ -1121,6 +1145,25 @@ function layoutSlotToProblemObject(problemId: string, slot: LayoutSlot, sourceRe
             width: numberValue(content.width, 120),
             height: numberValue(content.height, 80),
             preserveAspectRatio: stringValue(content.preserve_aspect_ratio, "xMidYMid meet"),
+            transform: stringValue(content.transform, ""),
+            ...regionProps,
+            ...answerContentProps(content),
+          },
+        },
+      ];
+    case "interactive_widget":
+      return [
+        {
+          id: slot.id,
+          type: "interactive_widget",
+          x: numberValue(content.x, 0),
+          y: numberValue(content.y, 0),
+          props: {
+            width: numberValue(content.width, 420),
+            height: numberValue(content.height, 280),
+            widget: (isRecord(content.widget)
+              ? content.widget
+              : { kind: "protractor_2d", version: 1, mode: "sandbox" }) as unknown as import("@modu/student-renderer").InteractiveWidgetSpec,
             transform: stringValue(content.transform, ""),
             ...regionProps,
             ...answerContentProps(content),

@@ -77,6 +77,13 @@ Prefer readable helper use over hundreds of hand-written primitive slots when th
 - Add TODO comments for uncertain OCR or unclear image details.
 - Prefer valid, maintainable layout intent over pixel-perfect overfitting.
 
+### Mobile-Friendly Layout Rules (380~430px Viewport)
+
+- **권장 논리 가로폭**: 핵심 콘텐츠 가로폭은 **`560~600px` 이내**로 배치합니다 (세로는 내용에 맞게 유동, 학생 화면 자동 크롭 활용).
+- **최소 글자 크기**: 본문·표·도형 라벨 텍스트는 **`18~20px` 이상**을 유지합니다 (모바일 `0.65×` 축소 시에도 `12~13px` 이상 가독성 확보).
+- **응답 방식 기준**: 텍스트나 수식 선택은 기본 `choice`(하단 반응형 버튼)를 사용하고, 도형·그림·영역을 직접 탭해야 하는 문제에만 `canvas_select`를 사용합니다.
+- **터치 영역 간격**: `canvas_select` / `canvas_slots` 요소는 모바일 축소 후에도 터치 영역이 겹치지 않도록 요소 간 간격을 최소 **`12px` 이상** 확보합니다.
+
 ## 4) Forbidden Patterns
 
 Do not use:

@@ -773,6 +773,39 @@ def _compile_slots(
             y = max(y, y_pos + ih + 16.0)
             continue
 
+        if kind == "interactive_widget":
+            x_pos = float(content.get("x", x))
+            y_pos = float(content.get("y", y - 24.0))
+            ww = float(content.get("width", 420.0))
+            wh = float(content.get("height", 280.0))
+            raw_widget = content.get("widget")
+            widget_spec: dict[str, Any] = (
+                dict(raw_widget)
+                if isinstance(raw_widget, dict)
+                else {"kind": "protractor_2d", "version": 1, "mode": "sandbox"}
+            )
+            attributes: dict[str, Any] = {
+                "x": x_pos,
+                "y": y_pos,
+                "width": ww,
+                "height": wh,
+            }
+            if transform:
+                attributes["transform"] = transform
+            elements.append(
+                DrawElement(
+                    id=f"{slot_id}.widget",
+                    type="interactive_widget",
+                    attributes=attributes,
+                    widget=widget_spec,
+                    source_ref=slot_id,
+                    refs=refs,
+                    **answer_kwargs,
+                )
+            )
+            y = max(y, y_pos + wh + 16.0)
+            continue
+
         if kind == "path":
             d = str(content.get("d", ""))
             x_pos = (

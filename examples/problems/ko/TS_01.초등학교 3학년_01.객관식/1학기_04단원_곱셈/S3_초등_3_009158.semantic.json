@@ -59,68 +59,26 @@
     "blanks": [],
     "choices": [
       {
-        "id": "choice.canvas.konva_1795504614807_select_750273",
-        "label": "3",
-        "text": "㉠ 29 × 5 = 105",
-        "source_refs": [
-          "slot.diagram.item_ga"
-        ]
+        "id": "slot.choice.option_0",
+        "slot_id": "slot.choice.option_0",
+        "text": "㉠",
+        "value": "㉠"
       },
       {
-        "id": "choice.canvas.konva_1795504614807_select_753784",
-        "label": "4",
-        "text": "㉡ 48 × 4 = 192",
-        "source_refs": [
-          "slot.diagram.item_na"
-        ]
+        "id": "slot.choice.option_1",
+        "slot_id": "slot.choice.option_1",
+        "text": "㉡",
+        "value": "㉡"
       }
     ],
-    "answer_key": [
-      {
-        "id": "choice.canvas.konva_1795504614807_select_753784",
-        "value": "㉡ 48 × 4 = 192"
-      }
-    ],
+    "answer_key": [],
     "confidence": 1.0,
     "type": "choice",
-    "value": "㉡ 48 × 4 = 192",
+    "value": "㉡",
     "unit": "",
     "answer_index": 1,
-    "presentation": {
-      "mode": "canvas_select",
-      "show_canvas": true,
-      "editor_managed": true,
-      "review": {
-        "mode": "canvas_select",
-        "show_canvas": true,
-        "status": "pending",
-        "note": "",
-        "answers": [
-          {
-            "value": "㉡"
-          }
-        ],
-        "choices": [
-          {
-            "id": "choice.canvas.konva_1795504614807_select_750273",
-            "text": "㉠ 29 × 5 = 105",
-            "correct": false,
-            "label": "3",
-            "sourceRefs": [
-              "slot.diagram.item_ga"
-            ]
-          },
-          {
-            "id": "choice.canvas.konva_1795504614807_select_753784",
-            "text": "㉡ 48 × 4 = 192",
-            "correct": true,
-            "label": "4",
-            "sourceRefs": [
-              "slot.diagram.item_na"
-            ]
-          }
-        ]
-      }
-    }
+    "values": [
+      "㉡"
+    ]
   }
 }

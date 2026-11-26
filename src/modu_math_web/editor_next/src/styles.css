@@ -2025,6 +2025,19 @@ input {
 }
 .review-canvas-toolbar { grid-column: 1; grid-row: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 16px; color: #334155; font-size: 13px; }
 .review-fit-toggle { display: inline-flex; align-items: center; gap: 6px; }
+.review-mobile-guide-toggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.mobile-width-warning-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fcd34d;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
 .review-tabs { display: flex; gap: 6px; }
 .placement-sync-panel { margin: 12px; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 12px; overflow-wrap: anywhere; }
 .placement-sync-panel summary { cursor: pointer; font-weight: 700; }
@@ -3044,6 +3057,11 @@ input {
 [data-mm-surface="editor"][data-theme="dark"] .editor-document-name strong,
 [data-mm-surface="editor"][data-theme="dark"] .editor-workspace-brand strong {
   color: var(--mm-color-text-primary);
+}
+[data-mm-surface="editor"][data-theme="dark"] .review-canvas-toolbar .mobile-width-warning-badge {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fcd34d;
+  border-color: rgba(251, 191, 36, 0.45);
 }
 
 /* Keep the actual Konva problem sheet crisp white for student/print accuracy */

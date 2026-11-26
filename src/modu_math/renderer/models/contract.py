@@ -46,6 +46,7 @@ class DrawElement:
     refs: RenderRefs | None = None
     interaction: dict[str, Any] | None = None
     input_style: dict[str, Any] | None = None
+    widget: dict[str, Any] | None = None
     text: str | None = None
     elements: tuple["DrawElement", ...] = ()
 
@@ -65,6 +66,8 @@ class DrawElement:
             data["interaction"] = self.interaction
         if self.input_style is not None:
             data["input_style"] = self.input_style
+        if self.widget is not None:
+            data["widget"] = self.widget
         if self.text is not None:
             data["text"] = self.text
         if self.elements:

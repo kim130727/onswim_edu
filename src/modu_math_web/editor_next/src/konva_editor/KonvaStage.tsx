@@ -235,11 +235,15 @@ export function KonvaStage({
     return visible.sort(compareRenderOrder);
   }, [answerChoices.length, canvasPresentation, diagramRegionIds, isCanvasSelect, shapes]);
   const [fitContent, setFitContent] = useState(true);
+  const [showMobileGuide, setShowMobileGuide] = useState(false);
   const [zoom, setZoom] = useState<number | null>(null);
   const crop = useMemo(
     () => (fitContent && canvasPresentation?.viewport) || contentCrop(renderedShapes, width, height, fitContent),
     [canvasPresentation, fitContent, height, renderedShapes, width],
   );
+  const contentWidth = Math.max(0, Math.round(crop.width - 40));
+  const isMobileWidthWarning = contentWidth > 600;
+  const mobileGuideX = crop.x + 20 + 560;
   const presentationPanel = answerReviewMode ? reviewPanel : editorPanel;
   // Measure the canvas grid cell so prompt, answer and panel sizes are all respected.
   const canvasGutter = 32;
@@ -511,7 +515,17 @@ export function KonvaStage({
       </div> : null}
       <div className="review-canvas-toolbar">
         <strong>문제 캔버스</strong>
+        {isMobileWidthWarning ? (
+          <span
+            className="mobile-width-warning-badge"
+            role="status"
+            title="모바일(380px)에서 캔버스가 크게 축소될 수 있습니다. 콘텐츠 폭을 560~600px 이내로 권장합니다."
+          >
+            모바일 축소 주의 · 가로 {contentWidth}px
+          </span>
+        ) : null}
         <label className="review-fit-toggle"><input type="checkbox" checked={fitContent} onChange={(event) => { setFitContent(event.target.checked); setZoom(null); }} />내용에 맞춰 보기</label>
+        <label className="review-mobile-guide-toggle"><input type="checkbox" checked={showMobileGuide} onChange={(event) => setShowMobileGuide(event.target.checked)} />모바일 폭 가이드 (560px)</label>
         <div className="canvas-zoom-controls" aria-label="캔버스 확대 및 축소">
           <button type="button" aria-label="캔버스 축소" disabled={scale <= 0.1} onClick={() => setZoom(Math.max(0.1, scale - 0.25))}>−</button>
           <span aria-live="polite">{Math.round(scale * 100)}%</span>
@@ -601,6 +615,25 @@ export function KonvaStage({
       >
         <Layer x={offsetX} y={offsetY} scaleX={scale} scaleY={scale}>
           <Rect x={crop.x} y={crop.y} width={crop.width} height={crop.height} fill="#ffffff" stroke="#cbd5e1" strokeWidth={1} listening={false} />
+          {showMobileGuide ? (
+            <Group listening={false}>
+              <Line
+                points={[mobileGuideX, crop.y, mobileGuideX, crop.y + crop.height]}
+                stroke={isMobileWidthWarning ? "#f59e0b" : "#6366f1"}
+                strokeWidth={1.5 / Math.max(0.25, scale)}
+                dash={[6 / Math.max(0.25, scale), 5 / Math.max(0.25, scale)]}
+                opacity={0.75}
+              />
+              <Text
+                x={mobileGuideX + 4 / Math.max(0.25, scale)}
+                y={crop.y + 6 / Math.max(0.25, scale)}
+                text="560px"
+                fontSize={11 / Math.max(0.25, scale)}
+                fill={isMobileWidthWarning ? "#d97706" : "#4f46e5"}
+                opacity={0.85}
+              />
+            </Group>
+          ) : null}
           {renderedShapes.map((shape) => (
             <ShapeRenderer
               key={shape.id}
