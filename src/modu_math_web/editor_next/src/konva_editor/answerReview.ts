@@ -145,9 +145,42 @@ export function inferAnswerPresentationMode(
 ): AnswerPresentationMode {
   const explicit = explicitPresentationMode(semantic) ?? explicitPresentationMode(solvable);
   if (explicit) return explicit;
+  if (hasInteractiveCanvasChoices(shapes, semantic ?? solvable)) return "canvas_select";
   if (shapes.some((shape) => shape.interaction && isCanvasAnswer(shape.interaction))) return "canvas_slots";
   if (shapes.some((shape) => shape.interaction?.role === "choice") || hasChoices(semantic) || hasChoices(solvable)) return "choice";
   return "panel_input";
+}
+
+function hasInteractiveCanvasChoices(
+  shapes: EditorShape[],
+  artifact: Record<string, unknown> | null,
+): boolean {
+  const choices = answerChoices(artifact);
+  if (!choices || choices.length < 2) return false;
+  const interactiveIds = new Set<string>();
+  for (const shape of shapes) {
+    const kind = String(shape.interaction?.type ?? "");
+    if (kind === "choice" || kind === "select") {
+      interactiveIds.add(shape.id);
+    }
+  }
+  if (interactiveIds.size === 0) return false;
+  return choices.every((entry) => {
+    const choice = recordValue(entry);
+    if (!choice) return false;
+    const refs = new Set<string>();
+    if (Array.isArray(choice.source_refs)) {
+      for (const ref of choice.source_refs) {
+        if (typeof ref === "string" && ref.trim()) refs.add(ref.trim());
+      }
+    }
+    if (typeof choice.slot_id === "string" && choice.slot_id.trim()) refs.add(choice.slot_id.trim());
+    if (typeof choice.id === "string" && choice.id.trim()) refs.add(choice.id.trim());
+    for (const ref of refs) {
+      if (interactiveIds.has(ref)) return true;
+    }
+    return false;
+  });
 }
 
 function isSubmittedAnswer(interaction: InputInteraction): boolean {

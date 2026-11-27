@@ -182,6 +182,7 @@ export interface RendererCanvasProps {
   onChoiceTap?: (choiceValue: string) => void;
   assetBaseUrl?: string;
   maxCanvasHeight?: number;
+  onCanvasWidthChange?: (width: number) => void;
 }
 
 export const RendererCanvas: React.FC<RendererCanvasProps> = ({
@@ -196,6 +197,7 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   onChoiceTap,
   assetBaseUrl,
   maxCanvasHeight,
+  onCanvasWidthChange,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(640);
@@ -247,6 +249,12 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     () => computeCanvasMetrics(renderer, containerWidth, effectiveMaxHeight),
     [renderer, containerWidth, effectiveMaxHeight],
   );
+
+  useEffect(() => {
+    if (onCanvasWidthChange && Number.isFinite(metrics.canvasWidth) && metrics.canvasWidth > 0) {
+      onCanvasWidthChange(Math.round(metrics.canvasWidth));
+    }
+  }, [metrics.canvasWidth, onCanvasWidthChange]);
 
   const bindings = renderer.field_bindings;
   const externalSlotTexts = useMemo(() => {

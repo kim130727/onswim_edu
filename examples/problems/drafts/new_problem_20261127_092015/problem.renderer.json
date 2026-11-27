@@ -1,0 +1,163 @@
+{
+  "problem_id": "new_problem_20261127_092015",
+  "view_box": {
+    "width": 900.0,
+    "height": 420.0,
+    "background": "#FFFFFF"
+  },
+  "elements": [
+    {
+      "id": "slot.question.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 48.0,
+        "y": 40.0,
+        "fill": "#111111",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 28.0,
+        "width": 804.0,
+        "height": 64.0,
+        "max_width": 804.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 40.0,
+        "data-box-width": 804.0,
+        "data-box-height": 64.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.35,
+        "data-semantic-role": "question",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.question",
+      "refs": {
+        "layout_slot_id": "slot.question"
+      },
+      "text": "문제를 입력하세요."
+    },
+    {
+      "id": "slot.instruction.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 48.0,
+        "y": 112.0,
+        "fill": "#111111",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 20.0,
+        "width": 804.0,
+        "height": 44.0,
+        "max_width": 804.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 112.0,
+        "data-box-width": 804.0,
+        "data-box-height": 44.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.35,
+        "data-semantic-role": "instruction",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.instruction",
+      "refs": {
+        "layout_slot_id": "slot.instruction"
+      },
+      "text": "알맞은 답을 구하세요."
+    },
+    {
+      "id": "slot.work_area.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 48.0,
+        "y": 176.0,
+        "fill": "#111111",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 22.0,
+        "width": 520.0,
+        "height": 184.0,
+        "max_width": 520.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 176.0,
+        "data-box-width": 520.0,
+        "data-box-height": 184.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.35,
+        "data-semantic-role": "work_area",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.work_area",
+      "refs": {
+        "layout_slot_id": "slot.work_area"
+      },
+      "text": ""
+    },
+    {
+      "id": "konva_1795738808281_widget_voxel_3d_21919.widget",
+      "type": "interactive_widget",
+      "attributes": {
+        "x": 420.0,
+        "y": 220.0,
+        "width": 440.0,
+        "height": 280.0
+      },
+      "source_ref": "konva_1795738808281_widget_voxel_3d_21919",
+      "refs": {
+        "layout_slot_id": "konva_1795738808281_widget_voxel_3d_21919"
+      },
+      "widget": {
+        "kind": "voxel_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "baseBlocks": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "extraBlocksLimit": 1,
+          "cameraPreset": "isometric",
+          "showViewButtons": true,
+          "showProjectionGrid": true,
+          "allowOverlayCompare": true
+        }
+      }
+    },
+    {
+      "id": "slot.answer.blank",
+      "type": "rect",
+      "attributes": {
+        "x": 64.0,
+        "y": 492.0,
+        "width": 120.0,
+        "height": 32.0,
+        "fill": "#ffffff",
+        "stroke": "#111111",
+        "stroke-width": 1.5
+      },
+      "source_ref": "slot.answer",
+      "refs": {
+        "layout_slot_id": "slot.answer"
+      }
+    }
+  ],
+  "contract_version": "modu_math.renderer.v2"
+}

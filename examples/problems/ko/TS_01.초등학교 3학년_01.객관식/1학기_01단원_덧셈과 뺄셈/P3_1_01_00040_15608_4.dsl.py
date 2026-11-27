@@ -307,3 +307,23 @@ def build_problem_template() -> ProblemTemplate:
 
 
 PROBLEM_TEMPLATE = build_problem_template()
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '3', 'ref': 'answer.value'}],
+ 'choices': [{'id': 'choice.canvas.konva_1795742592379_select_824939',
+              'text': '① 530+140',
+              'correct': False,
+              'label': '1',
+              'sourceRefs': ['slot.choice_1.expression']},
+             {'id': 'choice.canvas.konva_1795742592379_select_826546',
+              'text': '② 610+100',
+              'correct': False,
+              'label': '2',
+              'sourceRefs': ['slot.choice_2.expression']},
+             {'id': 'choice.canvas.konva_1795742592379_select_827938',
+              'text': '③ 545+235',
+              'correct': True,
+              'label': '3',
+              'sourceRefs': ['slot.choice_3.expression']}]}

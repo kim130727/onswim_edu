@@ -18,7 +18,22 @@
     "subject": "수학",
     "topic": "세 자리 수의 뺄셈",
     "language": "ko-KR",
-    "instruction": "각 선택지에서 큰 수에서 작은 수를 빼어 차가 123인지 확인합니다."
+    "instruction": "각 선택지에서 큰 수에서 작은 수를 빼어 차가 123인지 확인합니다.",
+    "presentation_sources": {
+      "question": [
+        "slot.question"
+      ],
+      "instruction": [],
+      "choice": [
+        "slot.choice1",
+        "slot.choice2",
+        "slot.choice3",
+        "slot.choice4",
+        "slot.choice5"
+      ],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "다음 두 수의 차가 123인 것은 어느 것입니까?"
   },
   "domain": {
     "objects": [
@@ -141,7 +156,7 @@
   },
   "answer": {
     "type": "multiple_choice",
-    "value": 4,
+    "value": "④ 528, 405",
     "unit": "",
     "choice_index": 3,
     "choice_label": "④",
@@ -150,6 +165,99 @@
       405
     ],
     "target_ref": "choice.4",
-    "derived_from": "step.evaluate_choice4"
+    "derived_from": "step.evaluate_choice4",
+    "choices": [
+      {
+        "id": "slot.choice1",
+        "label": "1",
+        "text": "① 647, 341",
+        "source_refs": []
+      },
+      {
+        "id": "slot.choice2",
+        "label": "2",
+        "text": "② 488, 227",
+        "source_refs": []
+      },
+      {
+        "id": "slot.choice3",
+        "label": "3",
+        "text": "③ 847, 740",
+        "source_refs": []
+      },
+      {
+        "id": "slot.choice4",
+        "label": "4",
+        "text": "④ 528, 405",
+        "source_refs": []
+      },
+      {
+        "id": "slot.choice5",
+        "label": "5",
+        "text": "⑤ 386, 223",
+        "source_refs": []
+      }
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "4",
+            "ref": "answer.value"
+          }
+        ],
+        "choices": [
+          {
+            "id": "slot.choice1",
+            "text": "① 647, 341",
+            "correct": false,
+            "label": "1",
+            "sourceRefs": []
+          },
+          {
+            "id": "slot.choice2",
+            "text": "② 488, 227",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": []
+          },
+          {
+            "id": "slot.choice3",
+            "text": "③ 847, 740",
+            "correct": false,
+            "label": "3",
+            "sourceRefs": []
+          },
+          {
+            "id": "slot.choice4",
+            "text": "④ 528, 405",
+            "correct": true,
+            "label": "4",
+            "sourceRefs": []
+          },
+          {
+            "id": "slot.choice5",
+            "text": "⑤ 386, 223",
+            "correct": false,
+            "label": "5",
+            "sourceRefs": []
+          }
+        ]
+      }
+    },
+    "answer_key": [
+      {
+        "id": "slot.choice4",
+        "value": "④ 528, 405"
+      }
+    ],
+    "blanks": []
   }
 }

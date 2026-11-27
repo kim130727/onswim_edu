@@ -1,0 +1,216 @@
+{
+  "slots": {
+    "konva_1795739512715_widget_voxel_3d_238155": {
+      "x": 420,
+      "y": 220,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "voxel_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "baseBlocks": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ],
+            [
+              2,
+              1,
+              0
+            ],
+            [
+              2,
+              1,
+              1
+            ],
+            [
+              2,
+              2,
+              1
+            ],
+            [
+              1,
+              2,
+              1
+            ],
+            [
+              0,
+              2,
+              0
+            ],
+            [
+              0,
+              2,
+              1
+            ]
+          ],
+          "extraBlocksLimit": 5,
+          "cameraPreset": "isometric",
+          "showViewButtons": true,
+          "showProjectionGrid": true,
+          "allowOverlayCompare": true
+        }
+      },
+      "kind": "interactive_widget"
+    },
+    "konva_1795739512715_widget_solid_3d_265371": {
+      "x": 420,
+      "y": 220,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "solid_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "solids": [
+            {
+              "id": "solid_ga",
+              "label": "가",
+              "shape": "cuboid",
+              "dimensions": {
+                "w": 3,
+                "d": 2,
+                "h": 5,
+                "unit": "cm"
+              },
+              "color": "#7dd3fc",
+              "showDimensions": true,
+              "showHiddenEdges": true
+            },
+            {
+              "id": "solid_na",
+              "label": "나",
+              "shape": "cuboid",
+              "dimensions": {
+                "w": 3,
+                "d": 2,
+                "h": 3,
+                "unit": "cm"
+              },
+              "color": "#fdba74",
+              "showDimensions": true,
+              "showHiddenEdges": true
+            }
+          ],
+          "allowOverlayCompare": true,
+          "allowUnitCubeFill": true,
+          "allowUnfoldNet": false
+        }
+      },
+      "kind": "interactive_widget"
+    },
+    "konva_1795739512715_widget_voxel_3d_266628": {
+      "x": 420,
+      "y": 220,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "voxel_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "baseBlocks": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "extraBlocksLimit": 1,
+          "cameraPreset": "isometric",
+          "showViewButtons": true,
+          "showProjectionGrid": true,
+          "allowOverlayCompare": true
+        }
+      },
+      "kind": "interactive_widget"
+    },
+    "konva_1795739512715_widget_graph_2d_267155": {
+      "x": 420,
+      "y": 220,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "graph_2d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "chartType": "line",
+          "title": "100m 달리기 기록",
+          "xAxis": {
+            "label": "대회",
+            "categories": [
+              "1차",
+              "2차",
+              "3차",
+              "4차"
+            ]
+          },
+          "yAxis": {
+            "label": "기록",
+            "unit": "초",
+            "min": 0,
+            "max": 20,
+            "majorStep": 1,
+            "minorStep": 0.25,
+            "waveBreak": {
+              "from": 0,
+              "to": 16.6
+            }
+          },
+          "series": [
+            {
+              "id": "record_line",
+              "type": "line",
+              "color": "#db2777",
+              "values": [
+                19.2,
+                18.4,
+                17.8,
+                17.4
+              ],
+              "editable": true
+            }
+          ],
+          "allowOverlayDrag": true
+        }
+      },
+      "kind": "interactive_widget"
+    }
+  },
+  "version": 1
+}

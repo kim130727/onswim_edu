@@ -46,14 +46,15 @@
         "style_role": "body",
         "x": 12.8,
         "y": 11.6,
-        "width": 276,
+        "width": 271.2,
         "height": 43,
         "align": "left",
         "valign": "top",
         "font_size": 14,
-        "font_family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
+        "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111111",
-        "semantic_role": "question"
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -66,9 +67,10 @@
         "x": 49.6,
         "y": 65.189,
         "font_size": 14,
-        "font_family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
+        "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111111",
-        "semantic_role": "choice"
+        "semantic_role": "choice",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -81,9 +83,10 @@
         "x": 49.6,
         "y": 87.189,
         "font_size": 14,
-        "font_family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
+        "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111111",
-        "semantic_role": "choice"
+        "semantic_role": "choice",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -96,9 +99,10 @@
         "x": 49.6,
         "y": 109.189,
         "font_size": 14,
-        "font_family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
+        "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111111",
-        "semantic_role": "choice"
+        "semantic_role": "choice",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -111,9 +115,10 @@
         "x": 160.4,
         "y": 65.227,
         "font_size": 14,
-        "font_family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
+        "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111111",
-        "semantic_role": "choice"
+        "semantic_role": "choice",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -126,9 +131,10 @@
         "x": 160.4,
         "y": 87.227,
         "font_size": 14,
-        "font_family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
+        "font_family": "\"Noto Sans KR\", sans-serif",
         "fill": "#111111",
-        "semantic_role": "choice"
+        "semantic_role": "choice",
+        "semantic_role_source": "explicit"
       }
     }
   ],

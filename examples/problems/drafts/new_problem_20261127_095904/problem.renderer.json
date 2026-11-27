@@ -1,0 +1,205 @@
+{
+  "problem_id": "new_problem_20261127_095904",
+  "view_box": {
+    "width": 900.0,
+    "height": 420.0,
+    "background": "#FFFFFF"
+  },
+  "elements": [
+    {
+      "id": "slot.question.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 48.0,
+        "y": 40.0,
+        "fill": "#111111",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 28.0,
+        "width": 804.0,
+        "height": 64.0,
+        "max_width": 804.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 40.0,
+        "data-box-width": 804.0,
+        "data-box-height": 64.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.35,
+        "data-semantic-role": "question",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.question",
+      "refs": {
+        "layout_slot_id": "slot.question"
+      },
+      "text": "문제를 입력하세요."
+    },
+    {
+      "id": "slot.instruction.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 48.0,
+        "y": 112.0,
+        "fill": "#111111",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 20.0,
+        "width": 804.0,
+        "height": 44.0,
+        "max_width": 804.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 112.0,
+        "data-box-width": 804.0,
+        "data-box-height": 44.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.35,
+        "data-semantic-role": "instruction",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.instruction",
+      "refs": {
+        "layout_slot_id": "slot.instruction"
+      },
+      "text": "알맞은 답을 구하세요."
+    },
+    {
+      "id": "konva_1795741141566_widget_voxel_3d_1085028.widget",
+      "type": "interactive_widget",
+      "attributes": {
+        "x": 230.0,
+        "y": 70.0,
+        "width": 440.0,
+        "height": 280.0
+      },
+      "source_ref": "konva_1795741141566_widget_voxel_3d_1085028",
+      "refs": {
+        "layout_slot_id": "konva_1795741141566_widget_voxel_3d_1085028"
+      },
+      "widget": {
+        "kind": "voxel_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "baseBlocks": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "extraBlocksLimit": 1,
+          "cameraPreset": "isometric",
+          "showViewButtons": true,
+          "showProjectionGrid": true,
+          "allowOverlayCompare": true
+        }
+      }
+    },
+    {
+      "id": "konva_1795741141566_widget_graph_2d_1270443.widget",
+      "type": "interactive_widget",
+      "attributes": {
+        "x": 230.0,
+        "y": 70.0,
+        "width": 440.0,
+        "height": 280.0
+      },
+      "source_ref": "konva_1795741141566_widget_graph_2d_1270443",
+      "refs": {
+        "layout_slot_id": "konva_1795741141566_widget_graph_2d_1270443"
+      },
+      "widget": {
+        "kind": "graph_2d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "chartType": "line",
+          "title": "100m 달리기 기록",
+          "xAxis": {
+            "label": "대회",
+            "categories": [
+              "1차",
+              "2차",
+              "3차",
+              "4차"
+            ]
+          },
+          "yAxis": {
+            "label": "기록",
+            "unit": "초",
+            "min": 17,
+            "max": 20,
+            "majorStep": 1,
+            "minorStep": 0.2,
+            "waveBreak": {
+              "from": 0,
+              "to": 16.6
+            }
+          },
+          "series": [
+            {
+              "id": "record_line",
+              "type": "line",
+              "color": "#db2777",
+              "values": [
+                19.2,
+                18.4,
+                17.8,
+                17.4
+              ],
+              "editable": true
+            }
+          ],
+          "allowOverlayDrag": true
+        }
+      }
+    },
+    {
+      "id": "slot.work_area.text",
+      "type": "text_box",
+      "attributes": {
+        "x": 48.0,
+        "y": 176.0,
+        "fill": "#111111",
+        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
+        "font-size": 22.0,
+        "width": 520.0,
+        "height": 184.0,
+        "max_width": 520.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 176.0,
+        "data-box-width": 520.0,
+        "data-box-height": 184.0,
+        "data-text-align": "left",
+        "data-vertical-align": "top",
+        "data-line-height": 1.35,
+        "data-semantic-role": "work_area",
+        "data-semantic-role-source": "explicit"
+      },
+      "source_ref": "slot.work_area",
+      "refs": {
+        "layout_slot_id": "slot.work_area"
+      },
+      "text": ""
+    }
+  ],
+  "contract_version": "modu_math.renderer.v2"
+}

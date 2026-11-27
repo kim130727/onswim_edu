@@ -5,71 +5,87 @@
   },
   "version": 1,
   "slots": {
-    "slot.choice_2.number": {
-      "x": 144.836,
-      "y": 61.702,
-      "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas",
-      "semantic_role_source": "explicit"
-    },
     "slot.choice_2.expression": {
-      "x": 173.836,
-      "y": 61.702,
-      "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas"
-    },
-    "slot.choice_3.number": {
-      "x": 263.633,
-      "y": 61.784,
+      "x": 156.836,
+      "y": 39.702,
       "font_family": "\"Noto Sans KR\", sans-serif",
       "semantic_role": "canvas",
-      "semantic_role_source": "explicit"
+      "text": "② 420+220",
+      "width": 114,
+      "height": 27,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
     },
     "slot.choice_3.expression": {
-      "x": 292.633,
-      "y": 61.784,
-      "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas"
-    },
-    "slot.choice_4.number": {
-      "x": 26.41,
-      "y": 99.951,
+      "x": 283.633,
+      "y": 39.784,
       "font_family": "\"Noto Sans KR\", sans-serif",
       "semantic_role": "canvas",
-      "semantic_role_source": "explicit"
+      "text": "③ 610+100",
+      "width": 114,
+      "height": 27,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
     },
     "slot.choice_4.expression": {
-      "x": 55.41,
-      "y": 99.951,
-      "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas"
-    },
-    "slot.choice_5.number": {
-      "x": 146.046,
-      "y": 99.262,
+      "x": 26.41,
+      "y": 77.95,
       "font_family": "\"Noto Sans KR\", sans-serif",
       "semantic_role": "canvas",
-      "semantic_role_source": "explicit"
+      "text": " ④140+550",
+      "width": 114,
+      "height": 27,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
     },
     "slot.choice_5.expression": {
-      "x": 175.046,
-      "y": 99.262,
+      "x": 156.05,
+      "y": 76.93,
       "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas"
+      "semantic_role": "canvas",
+      "text": "⑤ 545+235",
+      "width": 114,
+      "height": 27,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
     },
     "slot.question": {
       "font_family": "\"Noto Sans KR\", sans-serif",
       "semantic_role": "question",
       "semantic_role_source": "explicit"
     },
-    "slot.choice_1.number": {
-      "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas",
-      "semantic_role_source": "explicit"
-    },
     "slot.choice_1.expression": {
       "font_family": "\"Noto Sans KR\", sans-serif",
-      "semantic_role": "canvas"
+      "semantic_role": "canvas",
+      "text": "① 530+140",
+      "x": 31,
+      "y": 40,
+      "width": 114,
+      "height": 27,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
     }
-  }
+  },
+  "deleted_slots": [
+    "slot.choice_1.number",
+    "slot.choice_1",
+    "slot.choice_2.number",
+    "slot.choice_2",
+    "slot.choice_3.number",
+    "slot.choice_3",
+    "slot.choice_4.number",
+    "slot.choice_4",
+    "slot.choice_5.number",
+    "slot.choice_5"
+  ]
 }

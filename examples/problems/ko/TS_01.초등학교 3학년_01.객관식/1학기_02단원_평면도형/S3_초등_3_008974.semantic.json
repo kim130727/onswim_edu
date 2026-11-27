@@ -24,12 +24,7 @@
         "slot.stem.question"
       ],
       "instruction": [],
-      "choice": [
-        "slot.choice.option_0",
-        "slot.choice.option_1",
-        "slot.choice.option_2",
-        "slot.choice.option_3"
-      ],
+      "choice": [],
       "answer_prompt": []
     },
     "presentation_prompt": "곧은 선을 찾아 기호를 선택하세요."
@@ -446,65 +441,102 @@
     "value": "다",
     "answer_index": 2,
     "unit": "",
-    "values": [
-      "다"
-    ],
     "choices": [
       {
-        "id": "slot.choice.option_0",
-        "slot_id": "slot.choice.option_0",
+        "id": "choice.canvas.konva_1795742592379_select_1659074",
+        "label": "1",
         "text": "가",
-        "value": "가"
+        "source_refs": [
+          "slot.diagram.label_ga"
+        ]
       },
       {
-        "id": "slot.choice.option_1",
-        "slot_id": "slot.choice.option_1",
+        "id": "choice.canvas.konva_1795742592379_select_1661763",
+        "label": "2",
         "text": "나",
-        "value": "나"
+        "source_refs": [
+          "slot.diagram.label_na"
+        ]
       },
       {
-        "id": "slot.choice.option_2",
-        "slot_id": "slot.choice.option_2",
+        "id": "choice.canvas.konva_1795742592379_select_1663930",
+        "label": "3",
         "text": "다",
-        "value": "다"
+        "source_refs": [
+          "slot.diagram.label_da"
+        ]
       },
       {
-        "id": "slot.choice.option_3",
-        "slot_id": "slot.choice.option_3",
+        "id": "choice.canvas.konva_1795742592379_select_1666107",
+        "label": "4",
         "text": "라",
-        "value": "라"
+        "source_refs": [
+          "slot.diagram.label_ra"
+        ]
       }
     ],
     "blanks": [],
     "answer_key": [
       {
-        "slot_id": "slot.choice.option_2",
-        "value": "다",
-        "diagnostics": [
+        "id": "choice.canvas.konva_1795742592379_select_1663930",
+        "value": "다"
+      }
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
           {
-            "id": "diag.curved_line_ga",
-            "condition": "answer_equals_ga",
-            "concept": "곧은 선과 굽은 선",
-            "reason": "구불구불하게 휘어진 굽은 선 '가'를 선택함",
-            "feedback": "'가'는 구불구불하게 휘어져 있으므로 굽은 선입니다. 반듯하게 뻗은 선을 찾아보세요."
+            "value": "다",
+            "ref": "slot.choice.option_2"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1659074",
+            "text": "가",
+            "correct": false,
+            "label": "1",
+            "sourceRefs": [
+              "slot.diagram.label_ga"
+            ]
           },
           {
-            "id": "diag.curved_line_na",
-            "condition": "answer_equals_na",
-            "concept": "곧은 선과 굽은 선",
-            "reason": "위로 완만하게 휜 굽은 선 '나'를 선택함",
-            "feedback": "'나'는 위쪽으로 완만하게 휘어져 있는 굽은 선입니다. 자를 대었을 때 반듯한 선을 찾아보세요."
+            "id": "choice.canvas.konva_1795742592379_select_1661763",
+            "text": "나",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.diagram.label_na"
+            ]
           },
           {
-            "id": "diag.curved_line_ra",
-            "condition": "answer_equals_ra",
-            "concept": "곧은 선과 굽은 선",
-            "reason": "아래로 휘어진 굽은 선 '라'를 선택함",
-            "feedback": "'라'는 아래쪽으로 휘어져 있는 굽은 선입니다. 구부러지지 않고 곧게 뻗은 선을 찾아보세요."
+            "id": "choice.canvas.konva_1795742592379_select_1663930",
+            "text": "다",
+            "correct": true,
+            "label": "3",
+            "sourceRefs": [
+              "slot.diagram.label_da"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1666107",
+            "text": "라",
+            "correct": false,
+            "label": "4",
+            "sourceRefs": [
+              "slot.diagram.label_ra"
+            ]
           }
         ]
       }
-    ]
+    }
   },
   "entities": {
     "point_left": {

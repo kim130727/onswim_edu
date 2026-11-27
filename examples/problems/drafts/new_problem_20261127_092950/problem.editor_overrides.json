@@ -1,0 +1,52 @@
+{
+  "slots": {
+    "konva_1795739386410_widget_solid_3d_135195": {
+      "x": 425.27,
+      "y": 216.05,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "solid_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "solids": [
+            {
+              "id": "solid_ga",
+              "label": "가",
+              "shape": "cuboid",
+              "dimensions": {
+                "w": 3,
+                "d": 2,
+                "h": 5,
+                "unit": "cm"
+              },
+              "color": "#7dd3fc",
+              "showDimensions": true,
+              "showHiddenEdges": true
+            },
+            {
+              "id": "solid_na",
+              "label": "나",
+              "shape": "cuboid",
+              "dimensions": {
+                "w": 3,
+                "d": 2,
+                "h": 3,
+                "unit": "cm"
+              },
+              "color": "#fdba74",
+              "showDimensions": true,
+              "showHiddenEdges": true
+            }
+          ],
+          "allowOverlayCompare": true,
+          "allowUnitCubeFill": true,
+          "allowUnfoldNet": false
+        }
+      },
+      "kind": "interactive_widget"
+    }
+  },
+  "version": 1
+}

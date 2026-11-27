@@ -56,9 +56,71 @@
   },
   "answer": {
     "type": "choice",
-    "value": 1,
+    "value": "① 610+100",
     "unit": "",
     "target_ref": "choice.option_1",
-    "derived_from": "step.select_largest_sum"
+    "derived_from": "step.select_largest_sum",
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "1",
+            "ref": "answer.value"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795742592379_select_709498",
+            "text": "① 610+100",
+            "correct": true,
+            "label": "1",
+            "sourceRefs": [
+              "slot.choice_1.expression"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795742592379_select_710994",
+            "text": "② 140+550",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.choice_2.expression"
+            ]
+          }
+        ]
+      }
+    },
+    "choices": [
+      {
+        "id": "choice.canvas.konva_1795742592379_select_709498",
+        "label": "1",
+        "text": "① 610+100",
+        "source_refs": [
+          "slot.choice_1.expression"
+        ]
+      },
+      {
+        "id": "choice.canvas.konva_1795742592379_select_710994",
+        "label": "2",
+        "text": "② 140+550",
+        "source_refs": [
+          "slot.choice_2.expression"
+        ]
+      }
+    ],
+    "answer_key": [
+      {
+        "id": "choice.canvas.konva_1795742592379_select_709498",
+        "value": "① 610+100"
+      }
+    ],
+    "blanks": []
   }
 }

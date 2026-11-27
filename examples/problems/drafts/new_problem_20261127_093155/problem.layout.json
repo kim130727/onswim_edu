@@ -1,0 +1,171 @@
+{
+  "schema": "modu.layout.v1",
+  "problem_id": "new_problem_20261127_093155",
+  "title": "new_problem_20261127_093155",
+  "canvas": {
+    "width": 900,
+    "height": 420,
+    "coordinate_mode": "logical",
+    "background": "#FFFFFF"
+  },
+  "regions": [
+    {
+      "id": "region.stem",
+      "role": "stem",
+      "flow": "vertical",
+      "slot_ids": [
+        "slot.question",
+        "slot.instruction"
+      ]
+    },
+    {
+      "id": "region.diagram",
+      "role": "diagram",
+      "flow": "absolute",
+      "slot_ids": [
+        "slot.work_area",
+        "konva_1795739512715_widget_solid_3d_23059"
+      ]
+    },
+    {
+      "id": "region.answer",
+      "role": "answer",
+      "flow": "vertical",
+      "slot_ids": [
+        "slot.answer"
+      ]
+    }
+  ],
+  "slots": [
+    {
+      "id": "slot.question",
+      "kind": "text_box",
+      "prompt": "학생에게 제시할 문제 문장",
+      "content": {
+        "text": "문제를 입력하세요.",
+        "style_role": "body",
+        "x": 48.0,
+        "y": 40.0,
+        "width": 804.0,
+        "height": 64.0,
+        "align": "left",
+        "valign": "top",
+        "font_size": 28,
+        "line_height": 1.35,
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
+      }
+    },
+    {
+      "id": "slot.instruction",
+      "kind": "text_box",
+      "prompt": "풀이 또는 응답 지시문",
+      "content": {
+        "text": "알맞은 답을 구하세요.",
+        "style_role": "body",
+        "x": 48.0,
+        "y": 112.0,
+        "width": 804.0,
+        "height": 44.0,
+        "align": "left",
+        "valign": "top",
+        "font_size": 20,
+        "line_height": 1.35,
+        "semantic_role": "instruction",
+        "semantic_role_source": "explicit"
+      }
+    },
+    {
+      "id": "slot.work_area",
+      "kind": "text_box",
+      "prompt": "그림, 표, 수식 등 문제 자료를 배치하는 영역",
+      "content": {
+        "text": "",
+        "style_role": "body",
+        "x": 48.0,
+        "y": 176.0,
+        "width": 520.0,
+        "height": 184.0,
+        "align": "left",
+        "valign": "top",
+        "font_size": 22,
+        "line_height": 1.35,
+        "semantic_role": "work_area",
+        "semantic_role_source": "explicit"
+      }
+    },
+    {
+      "id": "slot.answer",
+      "kind": "blank",
+      "prompt": "단답형 정답",
+      "content": {
+        "placeholder": "정답"
+      }
+    },
+    {
+      "id": "konva_1795739512715_widget_solid_3d_23059",
+      "kind": "interactive_widget",
+      "prompt": "",
+      "content": {
+        "x": 423.95,
+        "y": 225.93,
+        "width": 440,
+        "height": 280,
+        "widget": {
+          "kind": "solid_3d",
+          "version": 1,
+          "mode": "sandbox",
+          "props": {
+            "solids": [
+              {
+                "id": "solid_ga",
+                "label": "가",
+                "shape": "cuboid",
+                "dimensions": {
+                  "w": 3,
+                  "d": 2,
+                  "h": 5,
+                  "unit": "cm"
+                },
+                "color": "#7dd3fc",
+                "showDimensions": true,
+                "showHiddenEdges": true
+              },
+              {
+                "id": "solid_na",
+                "label": "나",
+                "shape": "cuboid",
+                "dimensions": {
+                  "w": 3,
+                  "d": 2,
+                  "h": 3,
+                  "unit": "cm"
+                },
+                "color": "#fdba74",
+                "showDimensions": true,
+                "showHiddenEdges": true
+              }
+            ],
+            "allowOverlayCompare": true,
+            "allowUnitCubeFill": true,
+            "allowUnfoldNet": false
+          }
+        },
+        "kind": "interactive_widget"
+      }
+    }
+  ],
+  "groups": [],
+  "constraints": [],
+  "diagrams": [],
+  "reading_order": [
+    "region.stem",
+    "slot.question",
+    "slot.instruction",
+    "region.diagram",
+    "slot.work_area",
+    "region.answer",
+    "slot.answer",
+    "konva_1795739512715_widget_solid_3d_23059"
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "problem_id": "P3_1_01_00040_15608_4",
   "view_box": {
-    "width": 420.0,
+    "width": 432.0,
     "height": 130.0,
     "background": "#FFFFFF"
   },
@@ -25,32 +25,25 @@
       "text": "다음 중 합이 가장 큰 것은 어느 것입니까?"
     },
     {
-      "id": "slot.choice_1.number.text",
-      "type": "text",
-      "attributes": {
-        "x": 20.0,
-        "y": 80.0,
-        "fill": "#2F80C9",
-        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
-        "font-size": 21.0,
-        "data-semantic-role": "canvas",
-        "data-semantic-role-source": "explicit"
-      },
-      "source_ref": "slot.choice_1.number",
-      "refs": {
-        "layout_slot_id": "slot.choice_1.number"
-      },
-      "text": "①"
-    },
-    {
       "id": "slot.choice_1.expression.text",
-      "type": "text",
+      "type": "text_box",
       "attributes": {
         "x": 48.0,
-        "y": 80.0,
+        "y": 59.0,
         "fill": "#111111",
         "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
         "font-size": 21.0,
+        "width": 109.0,
+        "height": 26.0,
+        "max_width": 109.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 48.0,
+        "data-box-y": 59.0,
+        "data-box-width": 109.0,
+        "data-box-height": 26.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.2,
         "data-semantic-role": "canvas",
         "data-semantic-role-source": "explicit"
       },
@@ -58,35 +51,28 @@
       "refs": {
         "layout_slot_id": "slot.choice_1.expression"
       },
-      "text": "530+140"
-    },
-    {
-      "id": "slot.choice_2.number.text",
-      "type": "text",
-      "attributes": {
-        "x": 152.0,
-        "y": 80.0,
-        "fill": "#2F80C9",
-        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
-        "font-size": 21.0,
-        "data-semantic-role": "canvas",
-        "data-semantic-role-source": "explicit"
-      },
-      "source_ref": "slot.choice_2.number",
-      "refs": {
-        "layout_slot_id": "slot.choice_2.number"
-      },
-      "text": "②"
+      "text": "① 530+140"
     },
     {
       "id": "slot.choice_2.expression.text",
-      "type": "text",
+      "type": "text_box",
       "attributes": {
-        "x": 180.0,
-        "y": 80.0,
+        "x": 177.0,
+        "y": 59.0,
         "fill": "#111111",
         "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
         "font-size": 21.0,
+        "width": 109.0,
+        "height": 26.0,
+        "max_width": 109.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 177.0,
+        "data-box-y": 59.0,
+        "data-box-width": 109.0,
+        "data-box-height": 26.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.2,
         "data-semantic-role": "canvas",
         "data-semantic-role-source": "explicit"
       },
@@ -94,35 +80,28 @@
       "refs": {
         "layout_slot_id": "slot.choice_2.expression"
       },
-      "text": "610+100"
-    },
-    {
-      "id": "slot.choice_3.number.text",
-      "type": "text",
-      "attributes": {
-        "x": 284.0,
-        "y": 80.0,
-        "fill": "#2F80C9",
-        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
-        "font-size": 21.0,
-        "data-semantic-role": "canvas",
-        "data-semantic-role-source": "explicit"
-      },
-      "source_ref": "slot.choice_3.number",
-      "refs": {
-        "layout_slot_id": "slot.choice_3.number"
-      },
-      "text": "③"
+      "text": "② 610+100"
     },
     {
       "id": "slot.choice_3.expression.text",
-      "type": "text",
+      "type": "text_box",
       "attributes": {
-        "x": 312.0,
-        "y": 80.0,
+        "x": 307.0,
+        "y": 59.0,
         "fill": "#111111",
         "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
         "font-size": 21.0,
+        "width": 109.0,
+        "height": 26.0,
+        "max_width": 109.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 307.0,
+        "data-box-y": 59.0,
+        "data-box-width": 109.0,
+        "data-box-height": 26.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.2,
         "data-semantic-role": "canvas",
         "data-semantic-role-source": "explicit"
       },
@@ -130,7 +109,7 @@
       "refs": {
         "layout_slot_id": "slot.choice_3.expression"
       },
-      "text": "545+235"
+      "text": "③ 545+235"
     }
   ],
   "contract_version": "modu_math.renderer.v2"

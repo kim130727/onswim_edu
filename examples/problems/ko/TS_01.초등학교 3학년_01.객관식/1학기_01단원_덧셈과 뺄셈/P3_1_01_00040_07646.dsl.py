@@ -452,17 +452,17 @@ SOLVABLE = {
 
 
 SEMANTIC_ANSWER = SOLVABLE["answer"]
-EDITOR_ANSWER_REVIEW = {'mode': 'choice',
- 'show_canvas': False,
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
  'status': 'pending',
  'note': '',
  'answers': [{'value': '소방서', 'ref': 'answer.value'}],
- 'choices': [{'id': 'choice.canvas.konva_1795337647636_select_64114',
+ 'choices': [{'id': 'choice.canvas.konva_1795742592379_select_140394',
               'text': '소방서',
               'correct': True,
               'label': '1',
               'sourceRefs': ['konva_1792368892203_text_422073']},
-             {'id': 'choice.canvas.konva_1795337647636_select_67978',
+             {'id': 'choice.canvas.konva_1795742592379_select_142186',
               'text': '주민센터',
               'correct': False,
               'label': '2',

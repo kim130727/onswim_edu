@@ -3,7 +3,7 @@
   "problem_id": "P3_1_01_00040_15608_4",
   "title": "합이 가장 큰 덧셈식 (4)",
   "canvas": {
-    "width": 420,
+    "width": 432.0,
     "height": 130,
     "coordinate_mode": "logical",
     "background": "#FFFFFF"
@@ -22,11 +22,8 @@
       "role": "diagram",
       "flow": "absolute",
       "slot_ids": [
-        "slot.choice_1.number",
         "slot.choice_1.expression",
-        "slot.choice_2.number",
         "slot.choice_2.expression",
-        "slot.choice_3.number",
         "slot.choice_3.expression"
       ]
     }
@@ -48,93 +45,66 @@
       }
     },
     {
-      "id": "slot.choice_1.number",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": "①",
-        "style_role": "diagram_label",
-        "x": 20.0,
-        "y": 80.0,
-        "font_size": 21,
-        "fill": "#2F80C9",
-        "semantic_role": "canvas",
-        "semantic_role_source": "explicit"
-      }
-    },
-    {
       "id": "slot.choice_1.expression",
-      "kind": "text",
+      "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "530+140",
+        "text": "① 530+140",
         "style_role": "diagram_label",
         "x": 48.0,
-        "y": 80.0,
+        "y": 59,
         "font_size": 21,
         "fill": "#111111",
         "semantic_role": "canvas",
-        "semantic_role_source": "explicit"
-      }
-    },
-    {
-      "id": "slot.choice_2.number",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": "②",
-        "style_role": "diagram_label",
-        "x": 152.0,
-        "y": 80.0,
-        "font_size": 21,
-        "fill": "#2F80C9",
-        "semantic_role": "canvas",
-        "semantic_role_source": "explicit"
+        "semantic_role_source": "explicit",
+        "width": 109,
+        "height": 26,
+        "align": "left",
+        "valign": "middle",
+        "line_height": 1.2,
+        "kind": "text_box"
       }
     },
     {
       "id": "slot.choice_2.expression",
-      "kind": "text",
+      "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "610+100",
+        "text": "② 610+100",
         "style_role": "diagram_label",
-        "x": 180.0,
-        "y": 80.0,
+        "x": 177,
+        "y": 59,
         "font_size": 21,
         "fill": "#111111",
         "semantic_role": "canvas",
-        "semantic_role_source": "explicit"
-      }
-    },
-    {
-      "id": "slot.choice_3.number",
-      "kind": "text",
-      "prompt": "",
-      "content": {
-        "text": "③",
-        "style_role": "diagram_label",
-        "x": 284.0,
-        "y": 80.0,
-        "font_size": 21,
-        "fill": "#2F80C9",
-        "semantic_role": "canvas",
-        "semantic_role_source": "explicit"
+        "semantic_role_source": "explicit",
+        "width": 109,
+        "height": 26,
+        "align": "left",
+        "valign": "middle",
+        "line_height": 1.2,
+        "kind": "text_box"
       }
     },
     {
       "id": "slot.choice_3.expression",
-      "kind": "text",
+      "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "545+235",
+        "text": "③ 545+235",
         "style_role": "diagram_label",
-        "x": 312.0,
-        "y": 80.0,
+        "x": 307,
+        "y": 59,
         "font_size": 21,
         "fill": "#111111",
         "semantic_role": "canvas",
-        "semantic_role_source": "explicit"
+        "semantic_role_source": "explicit",
+        "width": 109,
+        "height": 26,
+        "align": "left",
+        "valign": "middle",
+        "line_height": 1.2,
+        "kind": "text_box"
       }
     }
   ],
@@ -145,11 +115,8 @@
     "region.stem",
     "slot.question",
     "region.choices",
-    "slot.choice_1.number",
     "slot.choice_1.expression",
-    "slot.choice_2.number",
     "slot.choice_2.expression",
-    "slot.choice_3.number",
     "slot.choice_3.expression"
   ]
 }

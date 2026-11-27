@@ -1,0 +1,106 @@
+{
+  "slots": {
+    "konva_1795741141566_widget_voxel_3d_1085028": {
+      "x": 230,
+      "y": 70,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "voxel_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "baseBlocks": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "extraBlocksLimit": 1,
+          "cameraPreset": "isometric",
+          "showViewButtons": true,
+          "showProjectionGrid": true,
+          "allowOverlayCompare": true
+        }
+      },
+      "kind": "interactive_widget"
+    },
+    "konva_1795741141566_widget_graph_2d_1270443": {
+      "x": 230,
+      "y": 70,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "graph_2d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "chartType": "line",
+          "title": "100m 달리기 기록",
+          "xAxis": {
+            "label": "대회",
+            "categories": [
+              "1차",
+              "2차",
+              "3차",
+              "4차"
+            ]
+          },
+          "yAxis": {
+            "label": "기록",
+            "unit": "초",
+            "min": 17,
+            "max": 20,
+            "majorStep": 1,
+            "minorStep": 0.2,
+            "waveBreak": {
+              "from": 0,
+              "to": 16.6
+            }
+          },
+          "series": [
+            {
+              "id": "record_line",
+              "type": "line",
+              "color": "#db2777",
+              "values": [
+                19.2,
+                18.4,
+                17.8,
+                17.4
+              ],
+              "editable": true
+            }
+          ],
+          "allowOverlayDrag": true
+        }
+      },
+      "kind": "interactive_widget"
+    }
+  },
+  "version": 1,
+  "slot_regions": {
+    "konva_1795741141566_widget_voxel_3d_1085028": "region.stem",
+    "konva_1795741141566_widget_graph_2d_1270443": "region.stem"
+  },
+  "deleted_slots": [
+    "slot.answer",
+    "konva_1795741141566_widget_protractor_2d_89067"
+  ]
+}

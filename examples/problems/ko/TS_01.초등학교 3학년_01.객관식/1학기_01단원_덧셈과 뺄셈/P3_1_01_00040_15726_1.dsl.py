@@ -315,3 +315,9 @@ SOLVABLE = {'schema': 'modu.solvable.v1.2',
 
 
 SEMANTIC_ANSWER = SOLVABLE["answer"]
+EDITOR_ANSWER_REVIEW = {'mode': 'panel_input',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '533', 'ref': 'answer.value', 'unit': '개'}],
+ 'choices': []}

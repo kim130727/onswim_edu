@@ -11,7 +11,10 @@ export interface ChoiceOption {
 export interface AssignmentField {
   id: string;
   type: string;
+  label?: string;
+  unit?: string;
   maxLength: number | null;
+  displayLength?: number | null;
   choices: ChoiceOption[];
 }
 

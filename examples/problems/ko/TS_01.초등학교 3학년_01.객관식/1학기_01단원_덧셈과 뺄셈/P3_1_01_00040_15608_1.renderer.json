@@ -25,32 +25,25 @@
       "text": "다음 중 합이 더 큰 것은 어느 것입니까?"
     },
     {
-      "id": "slot.choice_1.number.text",
-      "type": "text",
-      "attributes": {
-        "x": 40.0,
-        "y": 80.0,
-        "fill": "#2F80C9",
-        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
-        "font-size": 22.0,
-        "data-semantic-role": "canvas",
-        "data-semantic-role-source": "explicit"
-      },
-      "source_ref": "slot.choice_1.number",
-      "refs": {
-        "layout_slot_id": "slot.choice_1.number"
-      },
-      "text": "①"
-    },
-    {
       "id": "slot.choice_1.expression.text",
-      "type": "text",
+      "type": "text_box",
       "attributes": {
         "x": 70.0,
-        "y": 80.0,
+        "y": 58.0,
         "fill": "#111111",
         "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
         "font-size": 22.0,
+        "width": 114.0,
+        "height": 27.0,
+        "max_width": 114.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 70.0,
+        "data-box-y": 58.0,
+        "data-box-width": 114.0,
+        "data-box-height": 27.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.2,
         "data-semantic-role": "canvas",
         "data-semantic-role-source": "explicit"
       },
@@ -58,35 +51,28 @@
       "refs": {
         "layout_slot_id": "slot.choice_1.expression"
       },
-      "text": "530+140"
-    },
-    {
-      "id": "slot.choice_2.number.text",
-      "type": "text",
-      "attributes": {
-        "x": 210.0,
-        "y": 80.0,
-        "fill": "#2F80C9",
-        "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
-        "font-size": 22.0,
-        "data-semantic-role": "canvas",
-        "data-semantic-role-source": "explicit"
-      },
-      "source_ref": "slot.choice_2.number",
-      "refs": {
-        "layout_slot_id": "slot.choice_2.number"
-      },
-      "text": "②"
+      "text": "① 530+140"
     },
     {
       "id": "slot.choice_2.expression.text",
-      "type": "text",
+      "type": "text_box",
       "attributes": {
-        "x": 240.0,
-        "y": 80.0,
+        "x": 196.0,
+        "y": 58.0,
         "fill": "#111111",
         "font-family": "\"Noto Sans KR\", \"Pretendard\", \"Malgun Gothic\", \"Apple SD Gothic Neo\", \"Segoe UI Symbol\", sans-serif",
         "font-size": 22.0,
+        "width": 114.0,
+        "height": 27.0,
+        "max_width": 114.0,
+        "data-slot-kind": "text_box",
+        "data-box-x": 196.0,
+        "data-box-y": 58.0,
+        "data-box-width": 114.0,
+        "data-box-height": 27.0,
+        "data-text-align": "left",
+        "data-vertical-align": "middle",
+        "data-line-height": 1.2,
         "data-semantic-role": "canvas",
         "data-semantic-role-source": "explicit"
       },
@@ -94,7 +80,7 @@
       "refs": {
         "layout_slot_id": "slot.choice_2.expression"
       },
-      "text": "420+220"
+      "text": "② 420+220"
     }
   ],
   "contract_version": "modu_math.renderer.v2"

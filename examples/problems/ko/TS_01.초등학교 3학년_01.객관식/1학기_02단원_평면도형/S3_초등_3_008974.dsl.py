@@ -510,3 +510,28 @@ if __name__ == "__main__":
     print(f"- 제목: {PROBLEM_TEMPLATE.title}")
     print(f"- 캔버스: {PROBLEM_TEMPLATE.canvas.width} x {PROBLEM_TEMPLATE.canvas.height}")
     print(f"- 구역 수: {len(PROBLEM_TEMPLATE.regions)}")
+EDITOR_ANSWER_REVIEW = {'mode': 'canvas_select',
+ 'show_canvas': True,
+ 'status': 'pending',
+ 'note': '',
+ 'answers': [{'value': '다', 'ref': 'slot.choice.option_2'}],
+ 'choices': [{'id': 'choice.canvas.konva_1795742592379_select_1659074',
+              'text': '가',
+              'correct': False,
+              'label': '1',
+              'sourceRefs': ['slot.diagram.label_ga']},
+             {'id': 'choice.canvas.konva_1795742592379_select_1661763',
+              'text': '나',
+              'correct': False,
+              'label': '2',
+              'sourceRefs': ['slot.diagram.label_na']},
+             {'id': 'choice.canvas.konva_1795742592379_select_1663930',
+              'text': '다',
+              'correct': True,
+              'label': '3',
+              'sourceRefs': ['slot.diagram.label_da']},
+             {'id': 'choice.canvas.konva_1795742592379_select_1666107',
+              'text': '라',
+              'correct': False,
+              'label': '4',
+              'sourceRefs': ['slot.diagram.label_ra']}]}

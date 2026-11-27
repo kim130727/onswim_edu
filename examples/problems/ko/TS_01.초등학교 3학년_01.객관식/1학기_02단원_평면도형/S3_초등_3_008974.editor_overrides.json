@@ -2,7 +2,25 @@
   "slots": {
     "slot.stem.question": {
       "text": "곧은 선을 찾아 기호를 선택하세요."
+    },
+    "slot.diagram.line_ra": {
+      "d": "M 360 155 Q 545 244.404 815 174.868"
+    },
+    "slot.diagram.label_na": {
+      "x": 484.85,
+      "y": 110.94
     }
   },
-  "version": 1
+  "version": 1,
+  "deleted_slots": [
+    "slot.choice.paren_left",
+    "slot.choice.option_0",
+    "slot.choice.comma_1",
+    "slot.choice.option_1",
+    "slot.choice.comma_2",
+    "slot.choice.option_2",
+    "slot.choice.comma_3",
+    "slot.choice.option_3",
+    "slot.choice.paren_right"
+  ]
 }

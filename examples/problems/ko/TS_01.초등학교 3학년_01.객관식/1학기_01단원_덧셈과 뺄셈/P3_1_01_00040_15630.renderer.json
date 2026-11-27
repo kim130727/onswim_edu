@@ -13,19 +13,20 @@
         "x": 12.8,
         "y": 11.6,
         "fill": "#111111",
-        "font-family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
-        "font-size": 14,
-        "width": 276.0,
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 14.0,
+        "width": 271.2,
         "height": 43.0,
-        "max_width": 276.0,
+        "max_width": 271.2,
         "data-slot-kind": "text_box",
         "data-box-x": 12.8,
         "data-box-y": 11.6,
-        "data-box-width": 276.0,
+        "data-box-width": 271.2,
         "data-box-height": 43.0,
         "data-text-align": "left",
         "data-vertical-align": "top",
-        "data-semantic-role": "question"
+        "data-semantic-role": "question",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.question",
       "refs": {
@@ -40,9 +41,10 @@
         "x": 49.6,
         "y": 65.189,
         "fill": "#111111",
-        "font-family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
-        "font-size": 14,
-        "data-semantic-role": "choice"
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 14.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.choice1",
       "refs": {
@@ -57,9 +59,10 @@
         "x": 49.6,
         "y": 87.189,
         "fill": "#111111",
-        "font-family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
-        "font-size": 14,
-        "data-semantic-role": "choice"
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 14.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.choice2",
       "refs": {
@@ -74,9 +77,10 @@
         "x": 49.6,
         "y": 109.189,
         "fill": "#111111",
-        "font-family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
-        "font-size": 14,
-        "data-semantic-role": "choice"
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 14.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.choice3",
       "refs": {
@@ -91,9 +95,10 @@
         "x": 160.4,
         "y": 65.227,
         "fill": "#111111",
-        "font-family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
-        "font-size": 14,
-        "data-semantic-role": "choice"
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 14.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.choice4",
       "refs": {
@@ -108,9 +113,10 @@
         "x": 160.4,
         "y": 87.227,
         "fill": "#111111",
-        "font-family": "\"Poor Story\", \"Noto Sans KR\", sans-serif",
-        "font-size": 14,
-        "data-semantic-role": "choice"
+        "font-family": "\"Noto Sans KR\", sans-serif",
+        "font-size": 14.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.choice5",
       "refs": {

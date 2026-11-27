@@ -32,49 +32,49 @@
   ],
   "answer": {
     "type": "choice",
-    "value": "②",
+    "value": "② 20",
     "unit": "",
     "answer_index": 1,
     "values": [
-      "②"
+      "② 20"
     ],
     "blanks": [],
     "choices": [
       {
         "id": "slot.choice.option_0",
         "slot_id": "slot.choice.option_0",
-        "text": "①",
+        "text": "① 2",
         "value": "①"
       },
       {
         "id": "slot.choice.option_1",
         "slot_id": "slot.choice.option_1",
-        "text": "②",
+        "text": "② 20",
         "value": "②"
       },
       {
         "id": "slot.choice.option_2",
         "slot_id": "slot.choice.option_2",
-        "text": "③",
+        "text": "③ 22",
         "value": "③"
       },
       {
         "id": "slot.choice.option_3",
         "slot_id": "slot.choice.option_3",
-        "text": "④",
+        "text": "④ 24",
         "value": "④"
       },
       {
         "id": "slot.choice.option_4",
         "slot_id": "slot.choice.option_4",
-        "text": "⑤",
+        "text": "⑤ 200",
         "value": "⑤"
       }
     ],
     "answer_key": [
       {
         "slot_id": "slot.choice.option_1",
-        "value": "②"
+        "value": "② 20"
       }
     ]
   },

@@ -200,61 +200,122 @@
   ],
   "answer": {
     "type": "choice",
-    "value": 4,
+    "value": "④ 236+362",
     "unit": "",
     "target_ref": "choice.option_4",
     "derived_from": "step.select_largest_sum",
     "choices": [
       {
-        "text": "①",
-        "slot_id": "slot.choice_1.number",
-        "id": "slot.choice_1.number"
+        "id": "choice.canvas.konva_1795742592379_select_1131243",
+        "label": "1",
+        "text": "① 320+145",
+        "source_refs": [
+          "slot.choice_1.expression"
+        ]
       },
       {
-        "text": "320+145",
-        "slot_id": "slot.choice_1.expression",
-        "id": "slot.choice_1.expression"
+        "id": "choice.canvas.konva_1795742592379_select_1132626",
+        "label": "2",
+        "text": "② 300+200",
+        "source_refs": [
+          "slot.choice_2.expression"
+        ]
       },
       {
-        "text": "②",
-        "slot_id": "slot.choice_2.number",
-        "id": "slot.choice_2.number"
+        "id": "choice.canvas.konva_1795742592379_select_1134579",
+        "label": "3",
+        "text": "③ 163+326",
+        "source_refs": [
+          "slot.choice_3.expression"
+        ]
       },
       {
-        "text": "300+200",
-        "slot_id": "slot.choice_2.expression",
-        "id": "slot.choice_2.expression"
+        "id": "choice.canvas.konva_1795742592379_select_1135683",
+        "label": "4",
+        "text": "④ 236+362",
+        "source_refs": [
+          "slot.choice_4.expression"
+        ]
       },
       {
-        "text": "③",
-        "slot_id": "slot.choice_3.number",
-        "id": "slot.choice_3.number"
-      },
-      {
-        "text": "163+326",
-        "slot_id": "slot.choice_3.expression",
-        "id": "slot.choice_3.expression"
-      },
-      {
-        "text": "④",
-        "slot_id": "slot.choice_4.number",
-        "id": "slot.choice_4.number"
-      },
-      {
-        "text": "236+362",
-        "slot_id": "slot.choice_4.expression",
-        "id": "slot.choice_4.expression"
-      },
-      {
-        "text": "⑤",
-        "slot_id": "slot.choice_5.number",
-        "id": "slot.choice_5.number"
-      },
-      {
-        "text": "405+104",
-        "slot_id": "slot.choice_5.expression",
-        "id": "slot.choice_5.expression"
+        "id": "choice.canvas.konva_1795742592379_select_1137051",
+        "label": "5",
+        "text": "⑤ 405+104",
+        "source_refs": [
+          "slot.choice_5.expression"
+        ]
       }
-    ]
+    ],
+    "presentation": {
+      "mode": "canvas_select",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "canvas_select",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "4",
+            "ref": "answer.value"
+          }
+        ],
+        "choices": [
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1131243",
+            "text": "① 320+145",
+            "correct": false,
+            "label": "1",
+            "sourceRefs": [
+              "slot.choice_1.expression"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1132626",
+            "text": "② 300+200",
+            "correct": false,
+            "label": "2",
+            "sourceRefs": [
+              "slot.choice_2.expression"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1134579",
+            "text": "③ 163+326",
+            "correct": false,
+            "label": "3",
+            "sourceRefs": [
+              "slot.choice_3.expression"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1135683",
+            "text": "④ 236+362",
+            "correct": true,
+            "label": "4",
+            "sourceRefs": [
+              "slot.choice_4.expression"
+            ]
+          },
+          {
+            "id": "choice.canvas.konva_1795742592379_select_1137051",
+            "text": "⑤ 405+104",
+            "correct": false,
+            "label": "5",
+            "sourceRefs": [
+              "slot.choice_5.expression"
+            ]
+          }
+        ]
+      }
+    },
+    "answer_key": [
+      {
+        "id": "choice.canvas.konva_1795742592379_select_1135683",
+        "value": "④ 236+362"
+      }
+    ],
+    "blanks": []
   }
 }

@@ -89,10 +89,37 @@
   },
   "answer": {
     "type": "numeric",
-    "value": 3,
+    "value": "533",
     "unit": "개",
     "target_ref": "quantity.ones_sum",
     "derived_from": "step.add_ones",
-    "sentence": "낱개 모형끼리 더하면 3개입니다."
+    "sentence": "낱개 모형끼리 더하면 3개입니다.",
+    "presentation": {
+      "mode": "panel_input",
+      "show_canvas": true,
+      "editor_managed": true,
+      "review": {
+        "mode": "panel_input",
+        "show_canvas": true,
+        "status": "pending",
+        "note": "",
+        "answers": [
+          {
+            "value": "533",
+            "ref": "answer.value",
+            "unit": "개"
+          }
+        ],
+        "choices": []
+      }
+    },
+    "choices": [],
+    "answer_key": [
+      {
+        "value": "533",
+        "unit": "개"
+      }
+    ],
+    "blanks": []
   }
 }

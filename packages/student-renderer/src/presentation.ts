@@ -55,7 +55,10 @@ export function normalizeProblemContent(
           return {
             id: String(obj.id ?? "answer"),
             type: String(obj.type ?? "text"),
+            label: typeof obj.label === "string" && obj.label.trim() ? obj.label.trim() : undefined,
+            unit: typeof obj.unit === "string" ? obj.unit : undefined,
             maxLength: readInt(obj.max_length),
+            displayLength: readInt(obj.display_length),
             choices,
           };
         })

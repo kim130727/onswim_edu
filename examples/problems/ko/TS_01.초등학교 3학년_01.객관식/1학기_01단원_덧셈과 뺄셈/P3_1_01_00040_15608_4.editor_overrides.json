@@ -1,0 +1,45 @@
+{
+  "slots": {
+    "slot.choice_1.expression": {
+      "text": "① 530+140",
+      "y": 59,
+      "width": 109,
+      "height": 26,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
+    },
+    "slot.choice_2.expression": {
+      "text": "② 610+100",
+      "x": 177,
+      "y": 59,
+      "width": 109,
+      "height": 26,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
+    },
+    "slot.choice_3.expression": {
+      "text": "③ 545+235",
+      "x": 307,
+      "y": 59,
+      "width": 109,
+      "height": 26,
+      "align": "left",
+      "valign": "middle",
+      "line_height": 1.2,
+      "kind": "text_box"
+    }
+  },
+  "version": 1,
+  "deleted_slots": [
+    "slot.choice_1.number",
+    "slot.choice_1",
+    "slot.choice_2.number",
+    "slot.choice_2",
+    "slot.choice_3.number",
+    "slot.choice_3"
+  ]
+}

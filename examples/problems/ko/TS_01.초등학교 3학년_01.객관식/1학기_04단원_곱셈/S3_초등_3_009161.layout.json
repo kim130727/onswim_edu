@@ -22,8 +22,6 @@
       "role": "diagram",
       "flow": "absolute",
       "slot_ids": [
-        "slot.diagram.frame",
-        "slot.diagram.carry_box",
         "slot.diagram.sep_line",
         "slot.diagram.carry_digit",
         "slot.diagram.top.place.1",
@@ -53,46 +51,20 @@
       "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "22. 계산에서 □ 안의 숫자 2가 실제로 나타내는 수는 얼마일까요?",
+        "text": "계산에서 □ 안의 숫자 2가 실제로 나타내는 수는 얼마일까요?",
         "style_role": "body",
         "x": 32.0,
         "y": 22.0,
-        "width": 820.0,
-        "height": 44.0,
+        "width": 601,
+        "height": 36,
         "align": "left",
         "valign": "top",
         "font_size": 24,
         "font_family": "\"Noto Sans KR\", sans-serif",
         "line_height": 1.5,
-        "fill": "#202124"
-      }
-    },
-    {
-      "id": "slot.diagram.frame",
-      "kind": "rect",
-      "prompt": "",
-      "content": {
-        "x": 355.0,
-        "y": 72.0,
-        "width": 175.0,
-        "height": 178.0,
-        "stroke": "#65a30d",
-        "stroke_width": 1.5,
-        "fill": "#ffffff"
-      }
-    },
-    {
-      "id": "slot.diagram.carry_box",
-      "kind": "rect",
-      "prompt": "",
-      "content": {
-        "x": 434.0,
-        "y": 84.0,
-        "width": 28.0,
-        "height": 28.0,
-        "stroke": "#111827",
-        "stroke_width": 1.2,
-        "fill": "#ffffff"
+        "fill": "#202124",
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -102,8 +74,8 @@
       "content": {
         "text": "2",
         "style_role": "body",
-        "x": 448.0,
-        "y": 98.0,
+        "x": 168.87,
+        "y": 86.94,
         "font_size": 20,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -117,8 +89,8 @@
       "content": {
         "text": "1",
         "style_role": "diagram",
-        "x": 463.0,
-        "y": 132.0,
+        "x": 176.87,
+        "y": 122.94,
         "font_size": 24,
         "anchor": "middle",
         "fill": "#111111",
@@ -133,8 +105,8 @@
       "content": {
         "text": "8",
         "style_role": "diagram",
-        "x": 495.0,
-        "y": 132.0,
+        "x": 208.87,
+        "y": 122.94,
         "font_size": 24,
         "anchor": "middle",
         "fill": "#111111",
@@ -149,8 +121,8 @@
       "content": {
         "text": "×",
         "style_role": "body",
-        "x": 402.0,
-        "y": 166.0,
+        "x": 115.87,
+        "y": 156.94,
         "font_size": 22,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -164,8 +136,8 @@
       "content": {
         "text": "3",
         "style_role": "diagram",
-        "x": 495.0,
-        "y": 166.0,
+        "x": 208.87,
+        "y": 156.94,
         "font_size": 24,
         "anchor": "middle",
         "fill": "#111111",
@@ -178,10 +150,10 @@
       "kind": "line",
       "prompt": "",
       "content": {
-        "x1": 390.0,
-        "y1": 186.0,
-        "x2": 500.0,
-        "y2": 186.0,
+        "x1": 103.87,
+        "y1": 176.94,
+        "x2": 213.87,
+        "y2": 176.94,
         "stroke": "#111827",
         "stroke_width": 1.5
       }
@@ -193,8 +165,8 @@
       "content": {
         "text": "5",
         "style_role": "diagram",
-        "x": 463.0,
-        "y": 214.0,
+        "x": 176.87,
+        "y": 204.94,
         "font_size": 24,
         "anchor": "middle",
         "fill": "#111111",
@@ -209,8 +181,8 @@
       "content": {
         "text": "4",
         "style_role": "diagram",
-        "x": 495.0,
-        "y": 214.0,
+        "x": 208.87,
+        "y": 204.94,
         "font_size": 24,
         "anchor": "middle",
         "fill": "#111111",
@@ -225,8 +197,8 @@
       "content": {
         "text": "① 2",
         "style_role": "body",
-        "x": 32.0,
-        "y": 282.0,
+        "x": 53,
+        "y": 277,
         "font_size": 22,
         "align": "left",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -238,7 +210,9 @@
           "value": "①",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     },
     {
@@ -248,8 +222,8 @@
       "content": {
         "text": "② 20",
         "style_role": "body",
-        "x": 310.0,
-        "y": 282.0,
+        "x": 129.68,
+        "y": 278.71,
         "font_size": 22,
         "align": "left",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -261,7 +235,9 @@
           "value": "②",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     },
     {
@@ -271,8 +247,8 @@
       "content": {
         "text": "③ 22",
         "style_role": "body",
-        "x": 590.0,
-        "y": 282.0,
+        "x": 216.07,
+        "y": 278.18,
         "font_size": 22,
         "align": "left",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -284,7 +260,9 @@
           "value": "③",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     },
     {
@@ -294,8 +272,8 @@
       "content": {
         "text": "④ 24",
         "style_role": "body",
-        "x": 32.0,
-        "y": 322.0,
+        "x": 53,
+        "y": 317,
         "font_size": 22,
         "align": "left",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -307,7 +285,9 @@
           "value": "④",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     },
     {
@@ -317,8 +297,8 @@
       "content": {
         "text": "⑤ 200",
         "style_role": "body",
-        "x": 310.0,
-        "y": 322.0,
+        "x": 129.68,
+        "y": 318.71,
         "font_size": 22,
         "align": "left",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -330,7 +310,9 @@
           "value": "⑤",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     }
   ],
@@ -341,8 +323,6 @@
     "region.stem",
     "slot.stem.question",
     "region.diagram",
-    "slot.diagram.frame",
-    "slot.diagram.carry_box",
     "slot.diagram.sep_line",
     "slot.diagram.carry_digit",
     "slot.diagram.top.place.1",

@@ -2,30 +2,36 @@
   "version": 1,
   "slots": {
     "slot.question": {
-      "width": 276,
+      "width": 271.2,
       "height": 43,
       "x": 12.8,
-      "y": 11.6
+      "y": 11.6,
+      "font_family": "\"Noto Sans KR\", sans-serif"
     },
     "slot.choice1": {
       "x": 49.6,
-      "y": 65.189
+      "y": 65.189,
+      "font_family": "\"Noto Sans KR\", sans-serif"
     },
     "slot.choice2": {
       "x": 49.6,
-      "y": 87.189
+      "y": 87.189,
+      "font_family": "\"Noto Sans KR\", sans-serif"
     },
     "slot.choice3": {
       "x": 49.6,
-      "y": 109.189
+      "y": 109.189,
+      "font_family": "\"Noto Sans KR\", sans-serif"
     },
     "slot.choice4": {
       "x": 160.4,
-      "y": 65.227
+      "y": 65.227,
+      "font_family": "\"Noto Sans KR\", sans-serif"
     },
     "slot.choice5": {
       "x": 160.4,
-      "y": 87.227
+      "y": 87.227,
+      "font_family": "\"Noto Sans KR\", sans-serif"
     }
   }
 }

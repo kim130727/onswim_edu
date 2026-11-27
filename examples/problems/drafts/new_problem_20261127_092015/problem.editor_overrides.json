@@ -1,0 +1,46 @@
+{
+  "slots": {
+    "konva_1795738808281_widget_voxel_3d_21919": {
+      "x": 420,
+      "y": 220,
+      "width": 440,
+      "height": 280,
+      "widget": {
+        "kind": "voxel_3d",
+        "version": 1,
+        "mode": "sandbox",
+        "props": {
+          "baseBlocks": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              1
+            ]
+          ],
+          "extraBlocksLimit": 1,
+          "cameraPreset": "isometric",
+          "showViewButtons": true,
+          "showProjectionGrid": true,
+          "allowOverlayCompare": true
+        }
+      },
+      "kind": "interactive_widget"
+    }
+  },
+  "version": 1
+}

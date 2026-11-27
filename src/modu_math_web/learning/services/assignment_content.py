@@ -17,9 +17,47 @@ def answer_field_values(answer):
     keys = answer.get("answer_key")
     keys = keys if isinstance(keys, list) else []
     values = [key.get("value") if isinstance(key, dict) else key for key in keys]
-    if not values or values == [None]:
-        return [answer.get("value")]
-    return values
+    if values and values != [None]:
+        return values
+    raw_values = answer.get("values")
+    if isinstance(raw_values, list) and raw_values:
+        extracted = [item.get("value") if isinstance(item, dict) else item for item in raw_values]
+        if extracted and extracted != [None]:
+            return extracted
+    val = answer.get("value")
+    if isinstance(val, list) and val:
+        return list(val)
+    return [val]
+
+
+def _answer_field_meta(problem, count):
+    """Extract per-field label and unit metadata without leaking answer values."""
+    answer = problem.answer if isinstance(problem.answer, dict) else {}
+    semantic = getattr(problem, "semantic_data", None) or {}
+    solvable = getattr(problem, "solvable_data", None) or {}
+    ref_labels = {}
+    for obj in (semantic.get("domain") or {}).get("objects") or []:
+        if isinstance(obj, dict) and isinstance(obj.get("id"), str) and isinstance(obj.get("label"), str):
+            ref_labels[obj["id"]] = obj["label"].strip()
+    for unk in (solvable.get("understanding") or {}).get("unknowns") or []:
+        if isinstance(unk, dict) and isinstance(unk.get("ref"), str) and isinstance(unk.get("label"), str):
+            ref_labels.setdefault(unk["ref"], unk["label"].strip())
+
+    raw_entries = answer.get("answer_key")
+    if not isinstance(raw_entries, list) or not raw_entries:
+        raw_entries = answer.get("values")
+    if not isinstance(raw_entries, list):
+        raw_entries = []
+
+    default_unit = str(answer.get("unit") or "")
+    meta = []
+    for idx in range(count):
+        entry = raw_entries[idx] if idx < len(raw_entries) and isinstance(raw_entries[idx], dict) else {}
+        ref = entry.get("target_ref") or entry.get("ref") or entry.get("blank_id") or entry.get("id")
+        label = str(entry.get("label") or (ref_labels.get(ref, "") if isinstance(ref, str) else "") or "").strip()
+        unit = str(entry["unit"]) if "unit" in entry and entry["unit"] is not None else default_unit
+        meta.append({"label": label, "unit": unit})
+    return meta
 
 
 def with_math_input_formats(schema, answer):
@@ -30,12 +68,15 @@ def with_math_input_formats(schema, answer):
         return schema
     formatted = []
     for field, value in zip(fields, values):
+        raw_text = "" if value is None else str(value).strip()
         if field["type"] in {"number", "text"}:
             kind = math_input_type(value)
-            if re.fullmatch(r"[0-9]+", str(value).strip()):
-                field = {**field, "type": "number", "max_length": len(str(value).strip())}
+            if re.fullmatch(r"[0-9]+", raw_text):
+                field = {**field, "type": "number", "max_length": len(raw_text)}
             elif kind != "text":
                 field = {**field, "type": kind}
+        if raw_text and "display_length" not in field:
+            field = {**field, "display_length": len(raw_text)}
         formatted.append(field)
     return {**schema, "fields": formatted}
 
@@ -69,17 +110,23 @@ def input_schema(problem):
             "multiple": False,
             "unit": str(answer.get("unit") or ""),
         }
-    for index, expected in enumerate(answer_field_values(answer)):
+    expected_values = answer_field_values(answer)
+    field_meta = _answer_field_meta(problem, len(expected_values))
+    for index, expected in enumerate(expected_values):
         options = safe_choices
         if isinstance(expected, bool):
             options = [{"label": "O", "value": True}, {"label": "X", "value": False}]
-        fields.append(
-            {
-                "id": f"field-{index + 1}",
-                "type": "choice" if options else "text",
-                "choices": options,
-            }
-        )
+        meta = field_meta[index]
+        field_obj = {
+            "id": f"field-{index + 1}",
+            "type": "choice" if options else "text",
+            "choices": options,
+        }
+        if meta["label"]:
+            field_obj["label"] = meta["label"]
+        if meta["unit"] != "" or len(expected_values) > 1:
+            field_obj["unit"] = meta["unit"]
+        fields.append(field_obj)
     return with_math_input_formats({
         "fields": fields,
         "multiple": len(fields) > 1,

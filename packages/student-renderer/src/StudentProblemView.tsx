@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AnswerInputPanel } from "./AnswerInputPanel";
 import { prepareCanvasRenderer } from "./presentation";
 import { RendererCanvas } from "./RendererCanvas";
@@ -35,6 +35,11 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
   compact = false,
 }) => {
   const preparedRenderer = useMemo(() => prepareCanvasRenderer(item), [item]);
+  const [canvasWidth, setCanvasWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    setCanvasWidth(null);
+  }, [item.id, item.revision]);
 
   const fieldValues = useMemo(() => {
     if (!item.canvasInputs) return null;
@@ -80,6 +85,10 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
   const hasRendererElements =
     Array.isArray(preparedRenderer.elements) && preparedRenderer.elements.length > 0;
   const headingText = item.prompt || item.title;
+  const alignedWidthStyle: React.CSSProperties | undefined =
+    item.showCanvas && hasRendererElements && canvasWidth
+      ? { width: Math.max(canvasWidth, 320), maxWidth: "100%", margin: "0 auto" }
+      : undefined;
 
   return (
     <div className="modu-student-problem-view" style={{ display: "flex", flexDirection: "column", gap: compact ? 8 : 16 }}>
@@ -87,6 +96,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
         <div
           className="modu-student-prompt"
           style={{
+            ...alignedWidthStyle,
             fontSize: compact ? "15px" : "var(--mm-problem-font-size)",
             lineHeight: compact ? 1.38 : 1.5,
             fontWeight: 700,
@@ -117,18 +127,21 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
           onChoiceTap={item.canvasSelect ? handleCanvasChoiceTap : undefined}
           assetBaseUrl={assetBaseUrl}
           maxCanvasHeight={compact ? 210 : undefined}
+          onCanvasWidthChange={setCanvasWidth}
         />
       )}
 
       {!hidePanelInputs && !item.canvasInputs && !item.canvasSelect && (
-        <AnswerInputPanel
-          item={item}
-          value={value}
-          enabled={enabled}
-          locale={locale}
-          onChange={onChange}
-          onAnswerSelected={onAnswerSelected}
-        />
+        <div style={alignedWidthStyle}>
+          <AnswerInputPanel
+            item={item}
+            value={value}
+            enabled={enabled}
+            locale={locale}
+            onChange={onChange}
+            onAnswerSelected={onAnswerSelected}
+          />
+        </div>
       )}
 
       {(item.ownerName || item.sourceCredit || item.rightsNote) && (

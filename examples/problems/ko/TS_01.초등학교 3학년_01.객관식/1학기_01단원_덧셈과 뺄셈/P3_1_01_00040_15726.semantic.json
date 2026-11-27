@@ -48,7 +48,8 @@
       "instruction": [
         "slot.instruction"
       ],
-      "choice": []
+      "choice": [],
+      "answer_prompt": []
     },
     "presentation_prompt": "262+271을 수 모형으로 알아보시오."
   },

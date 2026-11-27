@@ -123,11 +123,21 @@ def presentation_contract(problem, schema):
         ):
             bindings[str(element["id"])] = index
     canvas_choices = []
-    if mode == "canvas_select":
+    raw_choices = answer.get("choices") or []
+    auto_canvas_select = (
+        not mode
+        and review.get("show_canvas") is not False
+        and len(fields) == 1
+        and fields[0]["type"] in {"choice", "multi_choice"}
+        and isinstance(raw_choices, list)
+        and len(raw_choices) >= 2
+    )
+    if mode == "canvas_select" or auto_canvas_select:
         elements = problem.renderer_data.get("elements", [])
-        raw_choices = answer.get("choices") or []
+        all_interactive = True
         for index, choice in enumerate(raw_choices if isinstance(raw_choices, list) else []):
             if not isinstance(choice, dict):
+                all_interactive = False
                 continue
             choice_id = str(choice.get("id") or f"choice.{index + 1}")
             refs = set()
@@ -138,6 +148,7 @@ def presentation_contract(problem, schema):
                 refs.add(choice["slot_id"].strip())
             refs.add(choice_id)
             matched_ids = []
+            has_interactive = False
             for element in elements:
                 if not isinstance(element, dict):
                     continue
@@ -147,15 +158,25 @@ def presentation_contract(problem, schema):
                 if any(candidate and candidate in refs for candidate in (el_id, source_ref, layout_slot_id)):
                     if el_id:
                         matched_ids.append(el_id)
+                        if (element.get("interaction") or {}).get("type") in {"choice", "select"}:
+                            has_interactive = True
+            if not has_interactive:
+                all_interactive = False
             if matched_ids:
                 canvas_choices.append({
                     "choice_id": choice_id,
-                    "value": choice_id if review.get("mode") == "canvas_select" else str(choice.get("text") or choice.get("label") or choice_id),
+                    "value": choice_id if review.get("mode") == "canvas_select" else str(choice.get("value") or choice.get("text") or choice.get("label") or choice_id),
                     "label": str(choice.get("text") or choice.get("label") or f"{index + 1}"),
                     "element_ids": matched_ids,
                 })
-        if not canvas_choices or len(canvas_choices) != len(raw_choices) or review.get("show_canvas") is False:
-            mode = "choice"
+        if mode == "canvas_select":
+            if not canvas_choices or len(canvas_choices) != len(raw_choices) or review.get("show_canvas") is False:
+                mode = "choice"
+        elif auto_canvas_select:
+            if all_interactive and len(canvas_choices) == len(raw_choices):
+                mode = "canvas_select"
+            else:
+                canvas_choices = []
     if not mode:
         mode = "canvas_slots" if bindings else "panel_input"
     # Keep every answer reachable when an older document has partial bindings.

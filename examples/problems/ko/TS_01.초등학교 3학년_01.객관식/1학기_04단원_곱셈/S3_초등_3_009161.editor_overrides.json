@@ -7,10 +7,6 @@
       "semantic_role": "question",
       "semantic_role_source": "explicit"
     },
-    "slot.diagram.carry_box": {
-      "x": 160.87,
-      "y": 66.94
-    },
     "slot.diagram.sep_line": {
       "x1": 103.87,
       "y1": 176.94,
@@ -68,6 +64,7 @@
   },
   "version": 1,
   "deleted_slots": [
-    "slot.diagram.frame"
+    "slot.diagram.frame",
+    "slot.diagram.carry_box"
   ]
 }
