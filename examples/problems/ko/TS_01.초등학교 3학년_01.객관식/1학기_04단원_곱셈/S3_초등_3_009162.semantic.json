@@ -4,7 +4,7 @@
   "metadata": {
     "title": "곱셈 세로셈을 바르게 계산한 것 선택하기",
     "tags": [],
-    "question": "23. 계산을 바르게 한 것을 선택하세요.",
+    "question": "계산을 바르게 한 것을 선택하세요.",
     "required_layout_ids": [
       "slot.choice.option_0",
       "slot.choice.option_1",
@@ -16,7 +16,16 @@
     "semester": 1,
     "subject": "수학",
     "chapter": "04단원_곱셈",
-    "language": "ko-KR"
+    "language": "ko-KR",
+    "presentation_sources": {
+      "question": [
+        "slot.stem.question"
+      ],
+      "instruction": [],
+      "choice": [],
+      "answer_prompt": []
+    },
+    "presentation_prompt": "계산을 바르게 한 것을 선택하세요."
   },
   "domain": {
     "objects": [
@@ -46,13 +55,6 @@
     "confidence": 1.0
   },
   "answer": {
-    "type": "choice",
-    "value": "72 × 6 = 432",
-    "unit": "",
-    "answer_index": 1,
-    "values": [
-      "72 × 6 = 432"
-    ],
     "blanks": [],
     "choices": [
       {
@@ -73,6 +75,14 @@
         "slot_id": "slot.choice.option_1",
         "value": "72 × 6 = 432"
       }
+    ],
+    "confidence": 1.0,
+    "type": "choice",
+    "value": "72 × 6 = 432",
+    "unit": "",
+    "answer_index": 1,
+    "values": [
+      "72 × 6 = 432"
     ]
   }
 }

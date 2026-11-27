@@ -21,9 +21,7 @@
       "id": "region.diagram",
       "role": "diagram",
       "flow": "absolute",
-      "slot_ids": [
-        "slot.diagram.bg"
-      ]
+      "slot_ids": []
     },
     {
       "id": "region.choices",
@@ -41,32 +39,20 @@
       "kind": "text_box",
       "prompt": "",
       "content": {
-        "text": "24. 크기가 더 큰 것을 선택하세요.",
+        "text": "크기가 더 큰 것을 선택하세요.",
         "style_role": "body",
         "x": 32.0,
         "y": 22.0,
-        "width": 820.0,
-        "height": 44.0,
+        "width": 295,
+        "height": 36,
         "align": "left",
         "valign": "top",
         "font_size": 24,
         "font_family": "\"Noto Sans KR\", sans-serif",
         "line_height": 1.5,
-        "fill": "#202124"
-      }
-    },
-    {
-      "id": "slot.diagram.bg",
-      "kind": "rect",
-      "prompt": "",
-      "content": {
-        "x": 365.0,
-        "y": 72.0,
-        "width": 495.0,
-        "height": 76.0,
-        "stroke": "none",
-        "stroke_width": 0.0,
-        "fill": "#e0e7ff"
+        "fill": "#202124",
+        "semantic_role": "question",
+        "semantic_role_source": "explicit"
       }
     },
     {
@@ -76,7 +62,7 @@
       "content": {
         "text": "㉠ 34 × 9",
         "style_role": "body",
-        "x": 505.0,
+        "x": 49.56,
         "y": 110.0,
         "font_size": 24,
         "align": "center",
@@ -89,7 +75,9 @@
           "value": "㉠",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     },
     {
@@ -99,8 +87,8 @@
       "content": {
         "text": "㉡ 290",
         "style_role": "body",
-        "x": 725.0,
-        "y": 110.0,
+        "x": 184.53,
+        "y": 109.23,
         "font_size": 24,
         "align": "center",
         "font_family": "\"Noto Sans KR\", sans-serif",
@@ -112,7 +100,9 @@
           "value": "㉡",
           "group_id": "slot.choice.group",
           "include_in_submission": true
-        }
+        },
+        "semantic_role": "choice",
+        "semantic_role_source": "inferred"
       }
     }
   ],
@@ -123,7 +113,6 @@
     "region.stem",
     "slot.stem.question",
     "region.diagram",
-    "slot.diagram.bg",
     "region.choices",
     "slot.choice.option_0",
     "slot.choice.option_1"

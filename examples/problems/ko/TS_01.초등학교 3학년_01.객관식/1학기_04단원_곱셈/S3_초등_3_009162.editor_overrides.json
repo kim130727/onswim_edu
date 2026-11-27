@@ -1,0 +1,53 @@
+{
+  "slots": {
+    "slot.stem.question": {
+      "text": "계산을 바르게 한 것을 선택하세요.",
+      "semantic_role": "question",
+      "semantic_role_source": "explicit"
+    },
+    "slot.diagram.line1": {
+      "x1": 497,
+      "y1": 159,
+      "x2": 619,
+      "y2": 159
+    },
+    "slot.diagram.top1.place.1": {
+      "x": 582,
+      "y": 103
+    },
+    "slot.diagram.top1.place.0": {
+      "x": 614,
+      "y": 103
+    },
+    "slot.diagram.mul1": {
+      "x": 509,
+      "y": 139
+    },
+    "slot.diagram.bot1.place.0": {
+      "x": 614,
+      "y": 139
+    },
+    "slot.diagram.res1.place.2": {
+      "x": 550,
+      "y": 187
+    },
+    "slot.diagram.res1.place.1": {
+      "x": 582,
+      "y": 187
+    },
+    "slot.diagram.res1.place.0": {
+      "x": 614,
+      "y": 187
+    },
+    "slot.choice.option_1": {
+      "x": 485.919,
+      "y": 76.39,
+      "width": 150.01
+    },
+    "slot.choice.option_0": {
+      "x": 296.81,
+      "width": 158.19
+    }
+  },
+  "version": 1
+}

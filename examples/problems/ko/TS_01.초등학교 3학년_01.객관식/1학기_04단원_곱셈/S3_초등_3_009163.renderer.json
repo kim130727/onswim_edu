@@ -15,50 +15,37 @@
         "fill": "#202124",
         "font-family": "\"Noto Sans KR\", sans-serif",
         "font-size": 24.0,
-        "width": 820.0,
-        "height": 44.0,
-        "max_width": 820.0,
+        "width": 295.0,
+        "height": 36.0,
+        "max_width": 295.0,
         "data-slot-kind": "text_box",
         "data-box-x": 32.0,
         "data-box-y": 22.0,
-        "data-box-width": 820.0,
-        "data-box-height": 44.0,
+        "data-box-width": 295.0,
+        "data-box-height": 36.0,
         "data-text-align": "left",
         "data-vertical-align": "top",
-        "data-line-height": 1.5
+        "data-line-height": 1.5,
+        "data-semantic-role": "question",
+        "data-semantic-role-source": "explicit"
       },
       "source_ref": "slot.stem.question",
       "refs": {
         "layout_slot_id": "slot.stem.question"
       },
-      "text": "24. 크기가 더 큰 것을 선택하세요."
-    },
-    {
-      "id": "slot.diagram.bg.rect",
-      "type": "rect",
-      "attributes": {
-        "x": 365.0,
-        "y": 72.0,
-        "width": 495.0,
-        "height": 76.0,
-        "fill": "#e0e7ff",
-        "stroke": "none",
-        "stroke-width": 0.0
-      },
-      "source_ref": "slot.diagram.bg",
-      "refs": {
-        "layout_slot_id": "slot.diagram.bg"
-      }
+      "text": "크기가 더 큰 것을 선택하세요."
     },
     {
       "id": "slot.choice.option_0.text",
       "type": "text",
       "attributes": {
-        "x": 505.0,
+        "x": 49.56,
         "y": 110.0,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 24.0
+        "font-size": 24.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "inferred"
       },
       "source_ref": "slot.choice.option_0",
       "refs": {
@@ -78,11 +65,13 @@
       "id": "slot.choice.option_1.text",
       "type": "text",
       "attributes": {
-        "x": 725.0,
-        "y": 110.0,
+        "x": 184.53,
+        "y": 109.23,
         "fill": "#111827",
         "font-family": "\"Noto Sans KR\", sans-serif",
-        "font-size": 24.0
+        "font-size": 24.0,
+        "data-semantic-role": "choice",
+        "data-semantic-role-source": "inferred"
       },
       "source_ref": "slot.choice.option_1",
       "refs": {
