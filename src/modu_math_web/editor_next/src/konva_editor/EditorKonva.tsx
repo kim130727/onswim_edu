@@ -310,6 +310,7 @@ export function EditorKonva() {
         solvable: detail.solvable,
         layout: detail.layout,
         renderer: detail.renderer,
+        canvas_presentation: detail.canvas_presentation,
       });
       setProblemListVersion((version) => version + 1);
     } catch (error) {
@@ -748,7 +749,28 @@ export function EditorKonva() {
 
   const addInteractiveWidget = useCallback(
     (kind: InteractiveWidgetKind) => {
-      const box = fitInsertBox(440, 280, 72, 96);
+      const defaultBox = fitInsertBox(440, 280, 72, 96);
+      const answerBlank = document.shapes.find((s) => s.id === "slot.answer" || s.id === "slot.answer.blank");
+      const workArea = document.shapes.find((s) => s.id === "slot.work_area" || s.id === "slot.work_area.text");
+      const hasOtherVisuals = document.shapes.some(
+        (s) =>
+          s.id !== "slot.question" &&
+          s.id !== "slot.question.text" &&
+          s.id !== "slot.instruction" &&
+          s.id !== "slot.instruction.text" &&
+          s.id !== "slot.work_area" &&
+          s.id !== "slot.work_area.text" &&
+          s.id !== "slot.answer" &&
+          s.id !== "slot.answer.blank",
+      );
+      const box =
+        !hasOtherVisuals && (answerBlank || workArea)
+          ? {
+              ...defaultBox,
+              x: answerBlank ? answerBlank.x : workArea ? workArea.x : defaultBox.x,
+              y: workArea ? workArea.y : defaultBox.y,
+            }
+          : defaultBox;
       const props =
         kind === "protractor_2d"
           ? defaultProtractorProps(box.width, box.height)
@@ -774,7 +796,7 @@ export function EditorKonva() {
       };
       addShape(shape);
     },
-    [addShape, fitInsertBox, nextId],
+    [addShape, document.shapes, fitInsertBox, nextId],
   );
 
   const deleteSelected = useCallback(() => {
@@ -1276,8 +1298,24 @@ export function EditorKonva() {
         studentPreviewDisabled={!!openingProblemId || saveStatus === "saving" || saveStatus === "building"}
         onAnswerReviewModeChange={changeAnswerReviewMode}
         onStudentPreviewModeChange={(enabled) => {
-          setStudentPreviewOpen(enabled);
-          if (enabled) setDrawingPreset(null);
+          if (!enabled) {
+            setStudentPreviewOpen(false);
+            return;
+          }
+          setDrawingPreset(null);
+          const needsSaveAndBuild =
+            selectedProblemId !== initialProblem.id &&
+            (saveStatus === "unsaved" ||
+              Boolean(draftReview) ||
+              Boolean(draftTutorFlow) ||
+              builtDocumentRef.current !== document);
+          if (needsSaveAndBuild) {
+            void buildCurrentProblem().then((ok) => {
+              if (ok) setStudentPreviewOpen(true);
+            });
+          } else {
+            setStudentPreviewOpen(true);
+          }
         }}
         onInsertShape={insertShape}
         onOpenAvatarMaker={() => {

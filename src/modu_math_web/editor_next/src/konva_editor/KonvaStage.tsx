@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Circle, Group, Layer, Line, Path, Rect, Stage, Text, Transformer } from "react-konva";
 import type Konva from "konva";
+import { InteractiveWidgetHost } from "@modu/student-renderer";
 import type { CanvasPresentation, TutorRendererOverlay } from "../api/editorApi";
 import type { BaseTenBlockKind, ConnectorShape, EditorShape, LineShape } from "../types/editorShape";
 import { scalePathData } from "../utils/pathData";
@@ -107,6 +108,10 @@ export function KonvaStage({
     fontSize: number;
     color: string;
   } | null>(null);
+  const [liveWidgetTransforms, setLiveWidgetTransforms] = useState<
+    Record<string, { x: number; y: number; width: number; height: number; rotation: number }>
+  >({});
+  const [interactingWidgetId, setInteractingWidgetId] = useState<string | null>(null);
   const [, setFontLoadRevision] = useState(0);
 
   useEffect(() => {
@@ -185,7 +190,23 @@ export function KonvaStage({
     setDrawingPreview(null);
     setContextMenu(null);
     setEditingTutorLabel(null);
+    setInteractingWidgetId(null);
   }, [answerReviewMode]);
+
+  useEffect(() => {
+    if (!interactingWidgetId) return;
+    if (!selectedShapeIds.includes(interactingWidgetId)) {
+      setInteractingWidgetId(null);
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setInteractingWidgetId(null);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [interactingWidgetId, selectedShapeIds]);
 
   useEffect(() => {
     if (!editingTutorLabel) return;
@@ -197,10 +218,22 @@ export function KonvaStage({
     () => new Set(answerReviewMode ? [] : selectedShapeIds),
     [answerReviewMode, selectedShapeIds],
   );
-  const promptShapes = useMemo(
-    () => shapes.filter(isTopPresentationShape),
-    [shapes],
-  );
+  const promptShapes = useMemo(() => {
+    const hidden = canvasPresentation ? new Set(canvasPresentation.hidden_slot_ids) : null;
+    return shapes.filter((shape): shape is Extract<EditorShape, { type: "text" }> => {
+      if (shape.type !== "text") return false;
+      const textShape: Extract<EditorShape, { type: "text" }> = shape;
+      if (isTopPresentationShape(shape)) return true;
+      return Boolean(
+        hidden?.has(textShape.id) &&
+        textShape.semanticRole !== "answer_prompt" &&
+        !isChoiceShape(textShape) &&
+        !isChoiceDecoration(textShape) &&
+        textShape.text.trim().length > 0 &&
+        !/(?:^|[._])(?:choice|choices|option|options)(?:[._]|$)/i.test(textShape.sourceRegionId ?? ""),
+      );
+    });
+  }, [canvasPresentation, shapes]);
   const answerPromptShapes = useMemo(
     () => shapes.filter((shape) => shape.type === "text" && shape.semanticRole === "answer_prompt"),
     [shapes],
@@ -234,6 +267,15 @@ export function KonvaStage({
       : kept;
     return visible.sort(compareRenderOrder);
   }, [answerChoices.length, canvasPresentation, diagramRegionIds, isCanvasSelect, shapes]);
+  const interactiveWidgetShapes = useMemo(
+    () =>
+      renderedShapes.filter(
+        (shape): shape is Extract<EditorShape, { type: "interactiveWidget" }> =>
+          shape.type === "interactiveWidget" && shape.visible !== false,
+      ),
+    [renderedShapes],
+  );
+  const hasInteractiveWidgets = interactiveWidgetShapes.length > 0;
   const [fitContent, setFitContent] = useState(true);
   const [showMobileGuide, setShowMobileGuide] = useState(false);
   const [zoom, setZoom] = useState<number | null>(null);
@@ -242,8 +284,8 @@ export function KonvaStage({
     [canvasPresentation, fitContent, height, renderedShapes, width],
   );
   const contentWidth = Math.max(0, Math.round(crop.width - 40));
-  const isMobileWidthWarning = contentWidth > 600;
-  const mobileGuideX = crop.x + 20 + 560;
+  const isMobileWidthWarning = contentWidth > 760;
+  const mobileGuideX = crop.x + 20 + 720;
   const presentationPanel = answerReviewMode ? reviewPanel : editorPanel;
   // Measure the canvas grid cell so prompt, answer and panel sizes are all respected.
   const canvasGutter = 32;
@@ -359,6 +401,24 @@ export function KonvaStage({
       const node = shapeRefs.current[id];
       if (start && node) node.position({ x: start.x + dx, y: start.y + dy });
     }
+    if (hasInteractiveWidgets) {
+      const nextTransforms: Record<string, { x: number; y: number; width: number; height: number; rotation: number }> = {};
+      for (const widgetShape of interactiveWidgetShapes) {
+        if (!dragStart.ids.includes(widgetShape.id)) continue;
+        const start = dragStart.positions.get(widgetShape.id);
+        if (!start) continue;
+        nextTransforms[widgetShape.id] = {
+          x: start.x + dx,
+          y: start.y + dy,
+          width: widgetShape.width,
+          height: widgetShape.height,
+          rotation: widgetShape.rotation ?? 0,
+        };
+      }
+      if (Object.keys(nextTransforms).length > 0) {
+        setLiveWidgetTransforms(nextTransforms);
+      }
+    }
     layer?.batchDraw();
   };
 
@@ -390,6 +450,7 @@ export function KonvaStage({
     dragFrameRef.current = null;
     pendingDragMoveRef.current = null;
     dragStartRef.current = null;
+    setLiveWidgetTransforms({});
     const activeStart = dragStart?.positions.get(shapeId);
     if (!dragStart || !activeStart) return;
     positionSelectedDragNodes(dragStart, shapeId, event.target.x(), event.target.y(), event.target.getLayer());
@@ -519,13 +580,13 @@ export function KonvaStage({
           <span
             className="mobile-width-warning-badge"
             role="status"
-            title="모바일(380px)에서 캔버스가 크게 축소될 수 있습니다. 콘텐츠 폭을 560~600px 이내로 권장합니다."
+            title="모바일 가로(760px)에서 캔버스가 축소될 수 있습니다. 콘텐츠 폭을 720~760px 이내로 권장합니다."
           >
             모바일 축소 주의 · 가로 {contentWidth}px
           </span>
         ) : null}
         <label className="review-fit-toggle"><input type="checkbox" checked={fitContent} onChange={(event) => { setFitContent(event.target.checked); setZoom(null); }} />내용에 맞춰 보기</label>
-        <label className="review-mobile-guide-toggle"><input type="checkbox" checked={showMobileGuide} onChange={(event) => setShowMobileGuide(event.target.checked)} />모바일 폭 가이드 (560px)</label>
+        <label className="review-mobile-guide-toggle"><input type="checkbox" checked={showMobileGuide} onChange={(event) => setShowMobileGuide(event.target.checked)} />모바일 가로 가이드 (720px)</label>
         <div className="canvas-zoom-controls" aria-label="캔버스 확대 및 축소">
           <button type="button" aria-label="캔버스 축소" disabled={scale <= 0.1} onClick={() => setZoom(Math.max(0.1, scale - 0.25))}>−</button>
           <span aria-live="polite">{Math.round(scale * 100)}%</span>
@@ -537,12 +598,132 @@ export function KonvaStage({
       <div className={`konva-canvas-viewport${showEmptyCanvasNotice ? " is-empty-canvas" : ""}`} ref={surfaceRef}>
       {showEmptyCanvasNotice ? (
         <div className="konva-canvas-empty-notice" role="status">
-          <strong>{answerChoices.length > 0 ? "지문과 보기만으로 구성된 문제입니다" : "캔버스에 표시할 그림·도형이 없습니다"}</strong>
-          <p>학생 화면에서는 캔버스 없이 상단 지문과 하단 답안 영역만 표시됩니다. 도형이나 이미지를 추가하면 여기에 나타납니다.</p>
+          <strong>빈 캔버스</strong>
+          <p>상단 도구에서 텍스트·도형·이미지·위젯을 추가하거나 바로 그릴 수 있습니다.</p>
+        </div>
+      ) : null}
+      <div
+        className={`konva-canvas-surface-stack${hasInteractiveWidgets ? " has-live-widgets" : ""}`}
+        style={{ position: "relative", width: stageWidth, height: stageHeight }}
+      >
+      {hasInteractiveWidgets ? (
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            left: offsetX + crop.x * scale,
+            top: offsetY + crop.y * scale,
+            width: crop.width * scale,
+            height: crop.height * scale,
+            background: "#ffffff",
+            border: "1px solid #cbd5e1",
+            boxSizing: "border-box",
+            pointerEvents: "none",
+          }}
+        />
+      ) : null}
+      {hasInteractiveWidgets ? (
+        <div
+          className="konva-live-widgets-layer"
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: interactingWidgetId ? 2 : 0,
+            pointerEvents: "none",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ position: "absolute", left: offsetX, top: offsetY }}>
+            {interactiveWidgetShapes.map((shape) => {
+              const live = liveWidgetTransforms[shape.id];
+              const wx = live?.x ?? shape.x;
+              const wy = live?.y ?? shape.y;
+              const ww = live?.width ?? shape.width;
+              const wh = live?.height ?? shape.height;
+              const rot = live?.rotation ?? (shape.rotation ?? 0);
+              const isInteracting = interactingWidgetId === shape.id && !answerReviewMode;
+              return (
+                <div
+                  key={shape.id}
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    top: 0,
+                    opacity: shape.opacity ?? 1,
+                    pointerEvents: isInteracting ? "auto" : "none",
+                    transform: rot
+                      ? `translate(${wx * scale}px, ${wy * scale}px) rotate(${rot}deg) translate(${-wx * scale}px, ${-wy * scale}px)`
+                      : undefined,
+                    filter: isInteracting ? "drop-shadow(0 6px 18px rgba(2, 132, 199, 0.22))" : undefined,
+                  }}
+                >
+                  <InteractiveWidgetHost
+                    element={{
+                      id: shape.id,
+                      type: "interactive_widget",
+                      attributes: { x: wx, y: wy, width: ww, height: wh },
+                      widget: shape.widget,
+                    }}
+                    scale={scale}
+                    interactive={true}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+      {hasInteractiveWidgets && !answerReviewMode ? (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 3,
+            pointerEvents: "none",
+          }}
+        >
+          {interactiveWidgetShapes
+            .filter((shape) => selectedIdSet.has(shape.id) && selectedShapeIds.length === 1)
+            .map((shape) => {
+              const live = liveWidgetTransforms[shape.id];
+              const wx = live?.x ?? shape.x;
+              const wy = live?.y ?? shape.y;
+              const isInteracting = interactingWidgetId === shape.id;
+              const pillLeft = Math.max(8, offsetX + wx * scale);
+              const pillTop = Math.max(6, offsetY + wy * scale - 32);
+              return (
+                <button
+                  key={`${shape.id}.interact-toggle`}
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setInteractingWidgetId(isInteracting ? null : shape.id);
+                  }}
+                  style={{
+                    position: "absolute",
+                    left: pillLeft,
+                    top: pillTop,
+                    pointerEvents: "auto",
+                    padding: "4px 10px",
+                    borderRadius: 999,
+                    border: isInteracting ? "1px solid #047857" : "1px solid #0284c7",
+                    background: isInteracting ? "#059669" : "#0284c7",
+                    color: "#ffffff",
+                    fontSize: 11,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    boxShadow: "0 2px 8px rgba(15, 23, 42, 0.16)",
+                  }}
+                >
+                  {isInteracting ? "조작 완료 (ESC)" : "위젯 직접 조작 (회전 · 값 드래그)"}
+                </button>
+              );
+            })}
         </div>
       ) : null}
       <Stage
-        className="konva-canvas-surface"
+        className={`konva-canvas-surface${hasInteractiveWidgets ? " has-live-widgets" : ""}`}
+        style={{ position: "relative", zIndex: 1 }}
         width={stageWidth}
         height={stageHeight}
         onMouseDown={(event) => {
@@ -614,7 +795,7 @@ export function KonvaStage({
         }}
       >
         <Layer x={offsetX} y={offsetY} scaleX={scale} scaleY={scale}>
-          <Rect x={crop.x} y={crop.y} width={crop.width} height={crop.height} fill="#ffffff" stroke="#cbd5e1" strokeWidth={1} listening={false} />
+          <Rect x={crop.x} y={crop.y} width={crop.width} height={crop.height} fill={hasInteractiveWidgets ? undefined : "#ffffff"} stroke="#cbd5e1" strokeWidth={1} listening={false} />
           {showMobileGuide ? (
             <Group listening={false}>
               <Line
@@ -627,7 +808,7 @@ export function KonvaStage({
               <Text
                 x={mobileGuideX + 4 / Math.max(0.25, scale)}
                 y={crop.y + 6 / Math.max(0.25, scale)}
-                text="560px"
+                text="720px"
                 fontSize={11 / Math.max(0.25, scale)}
                 fill={isMobileWidthWarning ? "#d97706" : "#4f46e5"}
                 opacity={0.85}
@@ -644,6 +825,15 @@ export function KonvaStage({
                 shapeRefs.current[shape.id] = node;
               }}
               onSelect={(event) => selectShape(shape.id, event)}
+              onDoubleClick={
+                shape.type === "interactiveWidget" && !answerReviewMode
+                  ? (event) => {
+                      event.cancelBubble = true;
+                      onSelectShapes([shape.id]);
+                      setInteractingWidgetId(shape.id);
+                    }
+                  : undefined
+              }
               onDragStart={() => startShapeDrag(shape.id)}
               onDragMove={(event) => moveSelectedShapes(shape.id, event)}
               onDragEnd={(event) => finishSelectedDrag(shape.id, event)}
@@ -795,7 +985,27 @@ export function KonvaStage({
               if (newBox.width < 6 || newBox.height < 6) return _oldBox;
               return newBox;
             }}
+            onTransform={() => {
+              if (!hasInteractiveWidgets) return;
+              const nextTransforms: Record<string, { x: number; y: number; width: number; height: number; rotation: number }> = {};
+              for (const id of selectedShapeIds) {
+                const shape = interactiveWidgetShapes.find((candidate) => candidate.id === id);
+                const node = shapeRefs.current[id];
+                if (!shape || !node) continue;
+                nextTransforms[id] = {
+                  x: node.x(),
+                  y: node.y(),
+                  width: Math.max(40, shape.width * Math.abs(node.scaleX())),
+                  height: Math.max(40, shape.height * Math.abs(node.scaleY())),
+                  rotation: node.rotation(),
+                };
+              }
+              if (Object.keys(nextTransforms).length > 0) {
+                setLiveWidgetTransforms(nextTransforms);
+              }
+            }}
             onTransformEnd={() => {
+              setLiveWidgetTransforms({});
               const transformed = selectedShapeIds
                 .map((id) => {
                   const node = shapeRefs.current[id];
@@ -815,6 +1025,7 @@ export function KonvaStage({
           ) : null}
         </Layer>
       </Stage>
+      </div>
       </div>
       {(answerPromptShapes.length > 0 || (!isCanvasSelect && answerChoices.length > 0)) && !answerReviewMode ? (
         <div className="konva-answer-prompt-preview" role="region" aria-label="정답 선택 영역">

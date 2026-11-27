@@ -59,13 +59,57 @@ export const Solid3DWidget: React.FC<Solid3DWidgetProps> = ({
   const targetAnglesRef = useRef<SphericalAngles | null>(null);
   const pointerDownRef = useRef<{ x: number; y: number; yaw: number; pitch: number } | null>(null);
 
-  const frustumSize = useMemo(() => {
-    const maxDim = Math.max(
-      4,
-      ...spec.solids.map((s) => Math.max(s.dimensions.w, s.dimensions.d, s.dimensions.h)),
-    );
-    return overlayMode ? maxDim * 1.9 : Math.max(maxDim * 2.1, spec.solids.length * 3.4);
+  const cameraFraming = useMemo(() => {
+    const gap = 1.8;
+    const widths = spec.solids.map((s) => (s.shape === "cube" ? s.dimensions.w : s.dimensions.w));
+    const totalSpanW = widths.reduce((sum, w) => sum + w, 0) + Math.max(0, widths.length - 1) * gap;
+    let cursorX = -totalSpanW / 2;
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+
+    spec.solids.forEach((s) => {
+      const w = s.dimensions.w;
+      const h = s.shape === "cube" ? w : s.dimensions.h;
+      const d = s.shape === "cube" || s.shape === "cylinder" || s.shape === "prism" ? w : s.dimensions.d;
+      const ox = s.position?.x ?? 0;
+      const oy = s.position?.y ?? 0;
+      const oz = s.position?.z ?? 0;
+      const baseX = overlayMode ? w / 2 - 1.5 : cursorX + w / 2;
+      const baseY = h / 2;
+      const baseZ = overlayMode ? d / 2 - 1 : 0;
+      const cx = baseX + (overlayMode ? 0 : ox);
+      const cy = baseY + (overlayMode ? 0 : oy);
+      const cz = baseZ + (overlayMode ? 0 : oz);
+      cursorX += w + gap;
+
+      minX = Math.min(minX, cx - w / 2);
+      maxX = Math.max(maxX, cx + w / 2);
+      minY = Math.min(minY, cy - h / 2);
+      maxY = Math.max(maxY, cy + h / 2);
+      minZ = Math.min(minZ, cz - d / 2);
+      maxZ = Math.max(maxZ, cz + d / 2);
+    });
+
+    if (!Number.isFinite(minX)) {
+      return { frustumSize: 10, target: new THREE.Vector3(0, 1.5, 0) };
+    }
+
+    const spanX = Math.max(2, maxX - minX);
+    const spanY = Math.max(2, maxY - minY);
+    const spanZ = Math.max(2, maxZ - minZ);
+    const diag = Math.hypot(spanX, spanY, spanZ);
+    const frustumSize = Math.max(spanY * 1.9, diag * 1.15, 6);
+    const target = new THREE.Vector3((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+    return { frustumSize, target };
   }, [spec.solids, overlayMode]);
+
+  const frustumSize = cameraFraming.frustumSize;
+  const cameraTargetRef = useRef<THREE.Vector3>(cameraFraming.target);
+  cameraTargetRef.current = cameraFraming.target;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -88,7 +132,7 @@ export const Solid3DWidget: React.FC<Solid3DWidgetProps> = ({
     rootGroupRef.current = rootGroup;
 
     const camera = createOrthoCamera(w, h, frustumSize);
-    applyCameraOrbit(camera, anglesRef.current, new THREE.Vector3(0, 1.5, 0), 18);
+    applyCameraOrbit(camera, anglesRef.current, cameraTargetRef.current, 24);
 
     let rafId = 0;
     const animate = () => {
@@ -105,7 +149,7 @@ export const Solid3DWidget: React.FC<Solid3DWidgetProps> = ({
         }
       }
       updateOrthoCameraAspect(camera, container.clientWidth || w, container.clientHeight || h, frustumSize);
-      applyCameraOrbit(camera, anglesRef.current, new THREE.Vector3(0, 1.5, 0), 18);
+      applyCameraOrbit(camera, anglesRef.current, cameraTargetRef.current, 24);
       renderer.render(scene, camera);
     };
     animate();
@@ -137,8 +181,11 @@ export const Solid3DWidget: React.FC<Solid3DWidgetProps> = ({
     disposeGroup(root);
     root.clear();
 
-    const spacing = 4.5;
-    const totalW = (spec.solids.length - 1) * spacing;
+    const gap = 1.8;
+    const totalW =
+      spec.solids.reduce((sum, s) => sum + s.dimensions.w, 0) +
+      Math.max(0, spec.solids.length - 1) * gap;
+    let cursorX = -totalW / 2;
 
     spec.solids.forEach((item, idx) => {
       const geom = buildSolidGeometry(item);
@@ -150,18 +197,20 @@ export const Solid3DWidget: React.FC<Solid3DWidgetProps> = ({
         showHiddenEdges: item.showHiddenEdges !== false,
       });
 
-      const h = item.shape === "cube"
-        ? Math.max(item.dimensions.w, item.dimensions.d, item.dimensions.h)
-        : item.dimensions.h;
-      const w = item.shape === "cube" ? h : item.dimensions.w;
-      const d = item.shape === "cube" ? h : item.dimensions.d;
+      const w = item.dimensions.w;
+      const h = item.shape === "cube" ? w : item.dimensions.h;
+      const d = item.shape === "cube" || item.shape === "cylinder" || item.shape === "prism" ? w : item.dimensions.d;
+      const ox = item.position?.x ?? 0;
+      const oy = item.position?.y ?? 0;
+      const oz = item.position?.z ?? 0;
 
       if (overlayMode) {
         // Align bottom-left-front corner of all solids for direct height/volume comparison
         meshGroup.position.set(w / 2 - 1.5, h / 2, d / 2 - 1);
       } else {
-        meshGroup.position.set(idx * spacing - totalW / 2, h / 2, 0);
+        meshGroup.position.set(cursorX + w / 2 + ox, h / 2 + oy, oz);
       }
+      cursorX += w + gap;
 
       root.add(meshGroup);
 
@@ -396,7 +445,13 @@ export const Solid3DWidget: React.FC<Solid3DWidgetProps> = ({
               }}
             >
               {s.label ? `${s.label}: ` : ""}
-              {s.dimensions.w}×{s.dimensions.d}×{s.dimensions.h} {s.dimensions.unit ?? "cm"}
+              {s.shape === "cube"
+                ? `한 모서리 ${s.dimensions.w} ${s.dimensions.unit ?? "cm"}`
+                : s.shape === "cylinder"
+                  ? `지름 ${s.dimensions.w} · 높이 ${s.dimensions.h} ${s.dimensions.unit ?? "cm"}`
+                  : s.shape === "prism"
+                    ? `밑면 ${s.dimensions.w} · 높이 ${s.dimensions.h} ${s.dimensions.unit ?? "cm"}`
+                    : `${s.dimensions.w}×${s.dimensions.d}×${s.dimensions.h} ${s.dimensions.unit ?? "cm"}`}
             </span>
           ) : null,
         )}

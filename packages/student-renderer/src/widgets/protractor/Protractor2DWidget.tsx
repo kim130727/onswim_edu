@@ -83,7 +83,7 @@ export const Protractor2DWidget: React.FC<Protractor2DWidgetProps> = ({
     let angleHit = false;
 
     const tolPx = spec.snapTolerancePx ?? 14;
-    if (spec.anchorPoint) {
+    if (spec.showBaseLine && spec.anchorPoint) {
       const dist = Math.hypot(x - spec.anchorPoint.x, y - spec.anchorPoint.y);
       if (dist <= tolPx) {
         x = spec.anchorPoint.x;
@@ -92,15 +92,17 @@ export const Protractor2DWidget: React.FC<Protractor2DWidgetProps> = ({
       }
     }
 
-    const tolDeg = spec.snapToleranceDeg ?? 4;
-    const diff0 = Math.abs(shortestAngleDiffDeg(angle, baseLineAngle));
-    const diff180 = Math.abs(shortestAngleDiffDeg(angle, baseLineAngle + 180));
-    if (diff0 <= tolDeg) {
-      angle = baseLineAngle;
-      angleHit = true;
-    } else if (diff180 <= tolDeg) {
-      angle = normalizeAngleDeg(baseLineAngle + 180);
-      angleHit = true;
+    if (spec.showBaseLine) {
+      const tolDeg = spec.snapToleranceDeg ?? 4;
+      const diff0 = Math.abs(shortestAngleDiffDeg(angle, baseLineAngle));
+      const diff180 = Math.abs(shortestAngleDiffDeg(angle, baseLineAngle + 180));
+      if (diff0 <= tolDeg) {
+        angle = baseLineAngle;
+        angleHit = true;
+      } else if (diff180 <= tolDeg) {
+        angle = normalizeAngleDeg(baseLineAngle + 180);
+        angleHit = true;
+      }
     }
 
     return { pose: { x, y, angle }, centerHit, angleHit };
@@ -220,38 +222,40 @@ export const Protractor2DWidget: React.FC<Protractor2DWidgetProps> = ({
         height="100%"
         style={{ display: "block", touchAction: "none" }}
       >
-        {/* Base line */}
-        <line
-          x1={spec.baseLine.x1}
-          y1={spec.baseLine.y1}
-          x2={spec.baseLine.x2}
-          y2={spec.baseLine.y2}
-          stroke="#1e293b"
-          strokeWidth={2.2}
-          strokeLinecap="round"
-        />
-
-        {/* Anchor point on base line */}
-        {spec.anchorPoint && (
-          <g>
-            <circle
-              cx={spec.anchorPoint.x}
-              cy={spec.anchorPoint.y}
-              r={snappedCenter ? 7 : 4.5}
-              fill={snappedCenter ? "#10b981" : "#0f172a"}
-              fillOpacity={snappedCenter ? 0.35 : 1}
-              stroke={snappedCenter ? "#059669" : "none"}
-              strokeWidth={1.5}
+        {/* Optional Base line & Anchor point */}
+        {spec.showBaseLine && (
+          <>
+            <line
+              x1={spec.baseLine.x1}
+              y1={spec.baseLine.y1}
+              x2={spec.baseLine.x2}
+              y2={spec.baseLine.y2}
+              stroke="#1e293b"
+              strokeWidth={2.2}
+              strokeLinecap="round"
             />
-            {snappedCenter && (
-              <circle
-                cx={spec.anchorPoint.x}
-                cy={spec.anchorPoint.y}
-                r={3}
-                fill="#059669"
-              />
+            {spec.anchorPoint && (
+              <g>
+                <circle
+                  cx={spec.anchorPoint.x}
+                  cy={spec.anchorPoint.y}
+                  r={snappedCenter ? 7 : 4.5}
+                  fill={snappedCenter ? "#10b981" : "#0f172a"}
+                  fillOpacity={snappedCenter ? 0.35 : 1}
+                  stroke={snappedCenter ? "#059669" : "none"}
+                  strokeWidth={1.5}
+                />
+                {snappedCenter && (
+                  <circle
+                    cx={spec.anchorPoint.x}
+                    cy={spec.anchorPoint.y}
+                    r={3}
+                    fill="#059669"
+                  />
+                )}
+              </g>
             )}
-          </g>
+          </>
         )}
 
         {/* Drawn perpendicular lines */}

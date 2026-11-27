@@ -32,6 +32,7 @@ export const App: React.FC<AppProps> = ({ apiClient }) => {
   const [practiceCtx, setPracticeCtx] = useState<PracticeSessionContext | null>(null);
   const [activeAssignmentId, setActiveAssignmentId] = useState<number | null>(null);
   const [refreshTick, setRefreshTick] = useState(0);
+  const [dismissedPortraitGate, setDismissedPortraitGate] = useState(false);
 
   useEffect(() => {
     void getStorageItem(LOCALE_KEY).then((saved) => {
@@ -80,6 +81,22 @@ export const App: React.FC<AppProps> = ({ apiClient }) => {
 
   return (
     <div className="student-app-shell">
+      {!dismissedPortraitGate && (
+        <div className="student-portrait-gate" role="dialog" aria-modal="true" aria-label="가로 화면 안내">
+          <div className="student-portrait-gate-card">
+            <div className="student-portrait-gate-icon" aria-hidden="true">📱↻</div>
+            <strong>가로 화면으로 돌려 주세요</strong>
+            <p>수학 문제와 도형을 선명하게 볼 수 있도록 가로 화면에 최적화되어 있습니다.</p>
+            <button
+              type="button"
+              className="student-btn small"
+              onClick={() => setDismissedPortraitGate(true)}
+            >
+              세로로 계속 보기
+            </button>
+          </div>
+        </div>
+      )}
       <header className="student-topbar">
         <div className="student-topbar-left">
           <span className="student-brand">{translateStudent(locale, "appName")}</span>

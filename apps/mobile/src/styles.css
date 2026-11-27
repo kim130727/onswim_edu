@@ -996,3 +996,85 @@ body,
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
 }
+
+/* Mobile landscape compact layout: fit problem + canvas + choices on one screen without scrolling */
+@media (orientation: landscape) and (max-height: 520px) {
+  .student-topbar {
+    min-height: 38px;
+    padding: 4px 12px;
+  }
+
+  .student-main {
+    padding: 6px 12px 10px;
+  }
+
+  .student-card,
+  .student-problem-card {
+    padding: 10px 14px;
+  }
+
+  .modu-student-problem-view {
+    gap: 8px !important;
+  }
+
+  .modu-student-prompt {
+    font-size: 15px !important;
+    line-height: 1.38 !important;
+  }
+
+  .modu-student-credits {
+    display: none !important;
+  }
+}
+
+/* Portrait phone rotate prompt for mobile web browsers */
+.student-portrait-gate {
+  display: none;
+}
+
+@media (orientation: portrait) and (max-width: 600px) and (pointer: coarse) {
+  .student-portrait-gate {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.88);
+    backdrop-filter: blur(6px);
+  }
+
+  .student-portrait-gate-card {
+    max-width: 320px;
+    width: 100%;
+    padding: 24px 20px;
+    border-radius: 16px;
+    background: #ffffff;
+    color: #0f172a;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .student-portrait-gate-icon {
+    font-size: 36px;
+    line-height: 1;
+  }
+
+  .student-portrait-gate-card strong {
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .student-portrait-gate-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #475569;
+    word-break: keep-all;
+  }
+}

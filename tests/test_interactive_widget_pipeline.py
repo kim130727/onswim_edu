@@ -68,3 +68,32 @@ def test_validate_interactive_widget_requires_kind():
     }
     with pytest.raises(RendererValidationError, match="widget.kind"):
         validate_renderer_json(invalid_payload)
+
+
+def test_project_canvas_crops_viewport_for_interactive_widget():
+    from modu_math_web.learning.services.canvas_presentation import project_canvas
+
+    elements = [
+        {
+            "id": "w1",
+            "type": "interactive_widget",
+            "attributes": {"x": 220, "y": 180, "width": 380, "height": 240},
+            "widget": {"kind": "solid_3d", "version": 1, "props": {}},
+        },
+        {
+            "id": "ans1",
+            "type": "rect",
+            "attributes": {"x": 220, "y": 440, "width": 110, "height": 44},
+            "interaction": {"type": "input", "role": "answer"},
+        },
+    ]
+    kept, canvas = project_canvas(
+        elements,
+        {"canvas": {"width": 928, "height": 426}},
+        {"width": 928, "height": 426},
+        {"mode": "canvas_slots"},
+        {"fields": [{"id": "answer", "type": "text", "choices": []}]},
+        "문제를 입력하세요.",
+    )
+    assert len(kept) == 2
+    assert canvas["viewport"] == {"x": 200.0, "y": 160.0, "width": 420.0, "height": 344.0}

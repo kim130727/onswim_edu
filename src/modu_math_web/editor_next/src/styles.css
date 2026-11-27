@@ -705,8 +705,13 @@ input {
   box-shadow: 0 2px 10px #0f172a0a;
   transition: width 160ms ease;
 }
-.student-preview-surface.viewport-tablet { width: min(820px, calc(100% - 24px)); }
-.student-preview-surface.viewport-mobile { width: min(430px, calc(100% - 24px)); }
+.student-preview-surface.viewport-tablet { width: min(960px, calc(100% - 24px)); }
+.student-preview-surface.viewport-mobile { width: min(760px, calc(100% - 24px)); max-height: 410px; }
+.student-preview-surface.viewport-mobile .student-preview-toolbar { padding: 6px 12px; }
+.student-preview-surface.viewport-mobile .student-preview-submit-btn,
+.student-preview-surface.viewport-mobile .student-preview-reset-btn { min-height: 32px; padding: 4px 12px; font-size: 13px; }
+.student-preview-surface.viewport-mobile .student-preview-body { padding: 10px 14px; }
+.student-preview-surface.viewport-mobile .modu-student-credits { display: none; }
 
 .student-preview-loading {
   flex: 1;
@@ -1993,24 +1998,27 @@ input {
 .presentation-role-badge { flex: 0 0 auto; margin-top: 4px; padding: 2px 7px; border-radius: 999px; background: rgba(255, 255, 255, .2); color: #eef2ff; font-size: 10px; font-weight: 800; }
 .presentation-zone-empty { margin: 4px 0; color: #e0e7ff; font-size: 14px; font-weight: 700; }
 .konva-canvas-viewport { position: relative; grid-column: 1; grid-row: 3; min-width: 0; min-height: 0; overflow: auto; background: #fff; border: 1px solid #e2e7ef; border-radius: 10px; }
-.konva-canvas-viewport.is-empty-canvas { background: #f8fafc; }
-.konva-canvas-viewport.is-empty-canvas .konva-canvas-surface { opacity: 0.25; }
+.konva-canvas-viewport.is-empty-canvas { background: #ffffff; }
 .konva-canvas-empty-notice {
   position: absolute;
-  inset: 0;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 2;
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 6px;
-  padding: 20px 28px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px dashed #cbd5e1;
+  background: rgba(248, 250, 252, 0.94);
   text-align: center;
+  white-space: nowrap;
   pointer-events: none;
   color: #475569;
 }
-.konva-canvas-empty-notice strong { font-size: 15px; font-weight: 700; color: #334155; }
-.konva-canvas-empty-notice p { max-width: 460px; margin: 0; font-size: 13px; line-height: 1.5; color: #64748b; }
+.konva-canvas-empty-notice strong { font-size: 12px; font-weight: 700; color: #334155; }
+.konva-canvas-empty-notice p { margin: 0; font-size: 12px; line-height: 1.4; color: #64748b; }
 .konva-canvas-surface { width: max-content; }
 .presentation-layout > .konva-side-panel { grid-column: 2; grid-row: 1 / -1; width: 100%; height: 100%; box-sizing: border-box; align-self: stretch; border: 1px solid #cbd5e1; border-radius: 14px; }
 .presentation-review .answer-review-panel { position: static; grid-column: 2; grid-row: 1 / -1; min-width: 0; width: 100%; max-width: 100%; align-self: stretch; height: 100%; min-height: 0; max-height: 100%; overflow-x: hidden; overflow-y: auto; border-color: #cbd5e1; box-shadow: none; }
@@ -3065,7 +3073,12 @@ input {
 }
 
 /* Keep the actual Konva problem sheet crisp white for student/print accuracy */
-[data-mm-surface="editor"][data-theme="dark"] .konva-canvas-surface {
+[data-mm-surface="editor"][data-theme="dark"] .konva-canvas-surface:not(.has-live-widgets) {
+  background: #ffffff;
+  border-color: var(--mm-color-border-strong);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+[data-mm-surface="editor"][data-theme="dark"] .konva-canvas-surface-stack.has-live-widgets {
   background: #ffffff;
   border-color: var(--mm-color-border-strong);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);

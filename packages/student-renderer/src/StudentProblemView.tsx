@@ -14,6 +14,7 @@ export interface StudentProblemViewProps {
   onAnswerSelected?: (nextValue: unknown) => void;
   assetBaseUrl?: string;
   hidePanelInputs?: boolean;
+  compact?: boolean;
 }
 
 /**
@@ -31,6 +32,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
   onAnswerSelected,
   assetBaseUrl,
   hidePanelInputs = false,
+  compact = false,
 }) => {
   const preparedRenderer = useMemo(() => prepareCanvasRenderer(item), [item]);
 
@@ -80,18 +82,18 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
   const headingText = item.prompt || item.title;
 
   return (
-    <div className="modu-student-problem-view" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="modu-student-problem-view" style={{ display: "flex", flexDirection: "column", gap: compact ? 8 : 16 }}>
       {headingText && (
         <div
           className="modu-student-prompt"
           style={{
-            fontSize: "var(--mm-problem-font-size)",
-            lineHeight: 1.5,
+            fontSize: compact ? "15px" : "var(--mm-problem-font-size)",
+            lineHeight: compact ? 1.38 : 1.5,
             fontWeight: 700,
             color: "var(--mm-color-text-primary)",
             wordBreak: "keep-all",
             letterSpacing: "-0.01em",
-            textAlign: "center",
+            textAlign: "left",
           }}
         >
           {headingText}
@@ -114,6 +116,7 @@ export const StudentProblemView: React.FC<StudentProblemViewProps> = ({
           selectedChoices={selectedChoices}
           onChoiceTap={item.canvasSelect ? handleCanvasChoiceTap : undefined}
           assetBaseUrl={assetBaseUrl}
+          maxCanvasHeight={compact ? 210 : undefined}
         />
       )}
 

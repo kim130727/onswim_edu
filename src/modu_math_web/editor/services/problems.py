@@ -788,6 +788,9 @@ def create_blank_problem(problem_id: str, title: str | None = None) -> dict[str,
         encoding="utf-8",
     )
     invalidate_problem_list_cache()
+    from .build import build_with_artifacts
+
+    build_with_artifacts(display_id)
     return read_problem_detail(display_id)
 
 

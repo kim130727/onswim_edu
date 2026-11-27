@@ -23,6 +23,7 @@ export interface ProtractorToolSpec {
 
 export interface ProtractorWidgetProps {
   baseLine: ProtractorLineSpec;
+  showBaseLine?: boolean;
   anchorPoint?: { x: number; y: number };
   protractor: ProtractorToolSpec;
   allowDrawPerpendicular?: boolean;
@@ -55,6 +56,10 @@ export interface GraphWidgetProps {
 
 export interface Voxel3DWidgetProps {
   baseBlocks: Array<[number, number, number]>;
+  gridCols?: number;
+  gridRows?: number;
+  maxLayers?: number;
+  blockColor?: string;
   extraBlocksLimit?: number;
   compareShapes?: Array<{
     label: string;
@@ -71,6 +76,7 @@ export interface Solid3DItemSpec {
   label?: string;
   shape: "cuboid" | "cube" | "cylinder" | "prism" | "slanted_prism";
   dimensions: { w: number; d: number; h: number; unit?: string };
+  position?: { x: number; y: number; z: number };
   color?: string;
   showDimensions?: boolean;
   showHiddenEdges?: boolean;
@@ -104,10 +110,11 @@ export function defaultProtractorProps(width = 420, height = 280): ProtractorWid
       x2: cx + dx,
       y2: cy - dy,
     },
+    showBaseLine: false,
     anchorPoint: { x: cx, y: cy },
     protractor: {
-      initialX: Math.round(width * 0.32),
-      initialY: Math.round(height * 0.62),
+      initialX: cx,
+      initialY: cy,
       initialAngle: 0,
       radius: Math.max(60, Math.min(130, Math.round(Math.min(width, height) * 0.36))),
       opacity: 0.78,
@@ -158,6 +165,10 @@ export function normalizeProtractorProps(
 
   return {
     baseLine,
+    showBaseLine:
+      typeof raw.showBaseLine === "boolean"
+        ? raw.showBaseLine
+        : fallback.showBaseLine ?? false,
     anchorPoint,
     protractor: {
       initialX: num(rawTool.initialX, fallback.protractor.initialX),
@@ -223,11 +234,23 @@ export function normalizeVoxel3DProps(raw: Record<string, unknown> | undefined):
         .filter((s) => s.blocks.length > 0)
     : undefined;
 
+  const clampGrid = (v: unknown, fb: number, min: number, max: number) =>
+    typeof v === "number" && Number.isFinite(v) ? Math.max(min, Math.min(max, Math.trunc(v))) : fb;
+
+  const resolvedBlocks = baseBlocks.length > 0 ? baseBlocks : fallback.baseBlocks;
+  const maxBlockX = Math.max(0, ...resolvedBlocks.map((b) => b[0]));
+  const maxBlockY = Math.max(0, ...resolvedBlocks.map((b) => b[1]));
+  const maxBlockZ = Math.max(0, ...resolvedBlocks.map((b) => b[2]));
+
   return {
-    baseBlocks: baseBlocks.length > 0 ? baseBlocks : fallback.baseBlocks,
+    baseBlocks: resolvedBlocks,
+    gridCols: clampGrid(raw.gridCols, Math.max(3, maxBlockX + 1), 2, 6),
+    gridRows: clampGrid(raw.gridRows, Math.max(3, maxBlockZ + 1), 2, 6),
+    maxLayers: clampGrid(raw.maxLayers, Math.max(3, maxBlockY + 1), 1, 6),
+    blockColor: typeof raw.blockColor === "string" && raw.blockColor.trim() ? raw.blockColor : "#f3be7a",
     extraBlocksLimit:
       typeof raw.extraBlocksLimit === "number" && Number.isFinite(raw.extraBlocksLimit)
-        ? Math.max(0, Math.trunc(raw.extraBlocksLimit))
+        ? Math.max(0, Math.min(20, Math.trunc(raw.extraBlocksLimit)))
         : fallback.extraBlocksLimit,
     compareShapes,
     cameraPreset:
@@ -281,19 +304,27 @@ export function normalizeSolid3DProps(raw: Record<string, unknown> | undefined):
         .filter((s): s is Record<string, unknown> => Boolean(s && typeof s === "object"))
         .map((s, idx) => {
           const dims = (s.dimensions && typeof s.dimensions === "object" ? s.dimensions : {}) as Record<string, unknown>;
+          const rawPos = (s.position && typeof s.position === "object" ? s.position : null) as Record<string, unknown> | null;
+          const posNum = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : 0);
           const shape = typeof s.shape === "string" && validShapes.has(s.shape)
             ? (s.shape as Solid3DItemSpec["shape"])
             : "cuboid";
+          const w = num(dims.w, 3);
+          const d = shape === "cube" ? w : shape === "cylinder" || shape === "prism" ? w : num(dims.d, 2);
+          const h = shape === "cube" ? w : num(dims.h, 3);
           return {
             id: typeof s.id === "string" && s.id ? s.id : `solid_${idx + 1}`,
             label: typeof s.label === "string" ? s.label : undefined,
             shape,
             dimensions: {
-              w: num(dims.w, 3),
-              d: num(dims.d, 2),
-              h: num(dims.h, 3),
+              w,
+              d,
+              h,
               unit: typeof dims.unit === "string" ? dims.unit : "cm",
             },
+            position: rawPos
+              ? { x: posNum(rawPos.x), y: posNum(rawPos.y), z: posNum(rawPos.z) }
+              : { x: 0, y: 0, z: 0 },
             color: typeof s.color === "string" ? s.color : idx % 2 === 0 ? "#7dd3fc" : "#fdba74",
             showDimensions: typeof s.showDimensions === "boolean" ? s.showDimensions : true,
             showHiddenEdges: typeof s.showHiddenEdges === "boolean" ? s.showHiddenEdges : true,

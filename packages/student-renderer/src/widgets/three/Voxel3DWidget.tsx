@@ -40,6 +40,7 @@ function ProjectionMiniGrid({
 }) {
   const rows = grid.length;
   const cols = grid[0]?.length ?? 0;
+  const cellSize = Math.max(9, Math.min(14, Math.floor(66 / Math.max(cols, rows, 1))));
   return (
     <div
       data-testid={`voxel-projection-${title}`}
@@ -65,8 +66,8 @@ function ProjectionMiniGrid({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: `repeat(${cols}, 14px)`,
-          gridTemplateRows: `repeat(${rows}, 14px)`,
+          gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
+          gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
           border: "1px dashed #93c5fd",
           background: "#ffffff",
         }}
@@ -76,8 +77,8 @@ function ProjectionMiniGrid({
             <div
               key={`${r}-${c}`}
               style={{
-                width: 14,
-                height: 14,
+                width: cellSize,
+                height: cellSize,
                 boxSizing: "border-box",
                 border: filled ? "1px solid #0284c7" : "0.5px dashed #cbd5e1",
                 background: filled ? color : "transparent",
@@ -107,7 +108,33 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
     () => dedupeVoxels([...spec.baseBlocks, ...extraBlocks]),
     [spec.baseBlocks, extraBlocks],
   );
-  const projections = useMemo(() => computeVoxelProjections(allBlocks, 3), [allBlocks]);
+  const projectionSize = Math.max(
+    spec.gridCols ?? 3,
+    spec.gridRows ?? 3,
+    spec.maxLayers ?? 3,
+  );
+  const projections = useMemo(
+    () => computeVoxelProjections(allBlocks, projectionSize),
+    [allBlocks, projectionSize],
+  );
+  const frustumSize = useMemo(() => {
+    const xs = allBlocks.map((b) => b[0]);
+    const ys = allBlocks.map((b) => b[1]);
+    const zs = allBlocks.map((b) => b[2]);
+    const spanX = xs.length ? Math.max(...xs) - Math.min(...xs) + 1 : 1;
+    const spanY = ys.length ? Math.max(...ys) - Math.min(...ys) + 1 : 1;
+    const spanZ = zs.length ? Math.max(...zs) - Math.min(...zs) + 1 : 1;
+    const diag = Math.hypot(spanX, spanY, spanZ);
+    return Math.max(5.8, spanY * 1.9 + 1.5, diag * 1.25 + 1.2);
+  }, [allBlocks]);
+  const frustumRef = useRef(frustumSize);
+  frustumRef.current = frustumSize;
+
+  useEffect(() => {
+    const preset = spec.cameraPreset ?? "isometric";
+    setActivePreset(preset);
+    targetAnglesRef.current = { ...CAMERA_PRESET_ANGLES[preset] };
+  }, [spec.cameraPreset]);
 
   const compareShape =
     compareIdx !== null && spec.compareShapes ? spec.compareShapes[compareIdx] ?? null : null;
@@ -149,7 +176,8 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
     const scene = new THREE.Scene();
     addTextbookLighting(scene);
 
-    const gridHelper = new THREE.GridHelper(6, 6, 0xcbd5e1, 0xe2e8f0);
+    const gridSize = Math.max(6, Math.max(spec.gridCols ?? 3, spec.gridRows ?? 3) * 2);
+    const gridHelper = new THREE.GridHelper(gridSize, gridSize, 0xcbd5e1, 0xe2e8f0);
     gridHelper.position.y = -0.5;
     scene.add(gridHelper);
 
@@ -158,7 +186,7 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
     scene.add(blockGroup);
     scene.add(ghostGroup);
 
-    const camera = createOrthoCamera(w, h, 5.8);
+    const camera = createOrthoCamera(w, h, frustumRef.current);
     applyCameraOrbit(camera, anglesRef.current, centerRef.current);
 
     sceneRef.current = scene;
@@ -181,6 +209,7 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
           targetAnglesRef.current = null;
         }
       }
+      updateCamera(camera, container.clientWidth || w, container.clientHeight || h, frustumRef.current);
       applyCameraOrbit(camera, anglesRef.current, centerRef.current);
       renderer.render(scene, camera);
     };
@@ -192,7 +221,7 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
         const nw = Math.max(120, container.clientWidth || 320);
         const nh = Math.max(120, container.clientHeight || 220);
         renderer.setSize(nw, nh, false);
-        updateCamera(camera, nw, nh);
+        updateCamera(camera, nw, nh, frustumRef.current);
       });
       ro.observe(container);
     }
@@ -235,7 +264,7 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
       const isExtra = !baseSet.has(voxelKey(coord));
       const boxGeom = new THREE.BoxGeometry(0.98, 0.98, 0.98);
       const cube = createOutlinedMesh(boxGeom, {
-        color: isExtra ? "#38bdf8" : "#f3be7a",
+        color: isExtra ? "#38bdf8" : (spec.blockColor ?? "#f3be7a"),
         edgeColor: isExtra ? "#0369a1" : "#92400e",
       });
       cube.position.set(coord[0], coord[1], coord[2]);
@@ -260,7 +289,7 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
         ghostGroup.add(ghostCube);
       }
     }
-  }, [allBlocks, spec.baseBlocks, compareShape]);
+  }, [allBlocks, spec.baseBlocks, spec.blockColor, compareShape]);
 
   const handleSelectPreset = (preset: CameraPreset) => {
     setActivePreset(preset);
@@ -584,9 +613,8 @@ export const Voxel3DWidget: React.FC<Voxel3DWidgetProps> = ({
   );
 };
 
-function updateCamera(camera: THREE.OrthographicCamera, w: number, h: number): void {
+function updateCamera(camera: THREE.OrthographicCamera, w: number, h: number, frustum = 5.8): void {
   const aspect = Math.max(1, w) / Math.max(1, h);
-  const frustum = 5.8;
   camera.left = (-frustum * aspect) / 2;
   camera.right = (frustum * aspect) / 2;
   camera.top = frustum / 2;

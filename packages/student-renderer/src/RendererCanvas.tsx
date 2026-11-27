@@ -181,6 +181,7 @@ export interface RendererCanvasProps {
   selectedChoices?: Set<string>;
   onChoiceTap?: (choiceValue: string) => void;
   assetBaseUrl?: string;
+  maxCanvasHeight?: number;
 }
 
 export const RendererCanvas: React.FC<RendererCanvasProps> = ({
@@ -194,9 +195,13 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   selectedChoices = new Set(),
   onChoiceTap,
   assetBaseUrl,
+  maxCanvasHeight,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState<number>(640);
+  const [viewportHeight, setViewportHeight] = useState<number>(() =>
+    typeof window !== "undefined" ? window.innerHeight : 900,
+  );
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const operatorRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -207,14 +212,18 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
     const update = () => {
       const w = el.clientWidth;
       if (w > 0) setContainerWidth(w);
+      if (typeof window !== "undefined") setViewportHeight(window.innerHeight);
     };
     update();
+    window.addEventListener("resize", update);
     if (typeof ResizeObserver !== "undefined") {
       const ro = new ResizeObserver(update);
       ro.observe(el);
-      return () => ro.disconnect();
+      return () => {
+        ro.disconnect();
+        window.removeEventListener("resize", update);
+      };
     }
-    window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
@@ -224,9 +233,19 @@ export const RendererCanvas: React.FC<RendererCanvasProps> = ({
   );
   const hasOperatorSlots = useMemo(() => slots.some((s) => s.operatorOnly), [slots]);
 
+  const effectiveMaxHeight = useMemo(() => {
+    if (typeof maxCanvasHeight === "number" && Number.isFinite(maxCanvasHeight)) {
+      return Math.max(120, maxCanvasHeight);
+    }
+    if (typeof window !== "undefined" && viewportHeight <= 520 && window.innerWidth > viewportHeight) {
+      return Math.max(150, viewportHeight - 175);
+    }
+    return hasOperatorSlots ? 360 : 420;
+  }, [hasOperatorSlots, maxCanvasHeight, viewportHeight]);
+
   const metrics = useMemo(
-    () => computeCanvasMetrics(renderer, containerWidth, hasOperatorSlots ? 360 : 420),
-    [renderer, containerWidth, hasOperatorSlots],
+    () => computeCanvasMetrics(renderer, containerWidth, effectiveMaxHeight),
+    [renderer, containerWidth, effectiveMaxHeight],
   );
 
   const bindings = renderer.field_bindings;

@@ -33,7 +33,7 @@ def _bounds(element):
 
     kind = element.get("type")
     x, y = number("x"), number("y")
-    if kind in {"rect", "image", "text_box"}:
+    if kind in {"rect", "image", "text_box", "interactive_widget"}:
         return x, y, x + number("width"), y + number("height")
     if kind == "line":
         x1, y1, x2, y2 = (number(key) for key in ("x1", "y1", "x2", "y2"))

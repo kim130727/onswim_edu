@@ -185,6 +185,7 @@ export function ReactStudentPreview({
                     value={answer}
                     enabled={!isLocked}
                     locale={locale}
+                    compact={viewport === "mobile"}
                     onChange={changeAnswer}
                     onAnswerSelected={(nextValue) => {
                       if (grading && nextValue === answer) return;

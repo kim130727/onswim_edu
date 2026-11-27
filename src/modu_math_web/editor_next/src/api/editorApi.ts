@@ -66,6 +66,7 @@ export interface LayoutSlot {
 export interface RendererDocument {
   problem_id?: string;
   canvas?: { width: number; height: number };
+  view_box?: { width: number; height: number; background?: string };
   elements?: RendererElement[];
   tutor_flow?: TutorRendererStep[];
 }
@@ -236,23 +237,71 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function answerElementProps(element: RendererElement): Record<string, unknown> {
+const KNOWN_STYLE_SEMANTIC_ROLES: Record<string, string> = {
+  question: "question",
+  instruction: "instruction",
+  answer_prompt: "answer_prompt",
+  choice: "choice",
+  choices: "choice",
+  option: "choice",
+  options: "choice",
+};
+
+function slotRoleMap(layout: LayoutDocument | null | undefined): Map<string, { role: string; source: "explicit" | "inferred" }> {
+  const map = new Map<string, { role: string; source: "explicit" | "inferred" }>();
+  for (const slot of layout?.slots ?? []) {
+    const content = isRecord(slot.content) ? slot.content : {};
+    const explicitRole = typeof content.semantic_role === "string" && content.semantic_role ? content.semantic_role : undefined;
+    const rawStyleRole = typeof content.style_role === "string" ? content.style_role.toLowerCase() : "";
+    const styleRole = KNOWN_STYLE_SEMANTIC_ROLES[rawStyleRole];
+    const role = explicitRole ?? styleRole;
+    if (!role) continue;
+    const source =
+      content.semantic_role_source === "explicit" || content.semantic_role_source === "inferred"
+        ? content.semantic_role_source
+        : "explicit";
+    map.set(slot.id, { role, source });
+  }
+  return map;
+}
+
+function answerElementProps(
+  element: RendererElement,
+  fallbackRole?: { role: string; source: "explicit" | "inferred" },
+): Record<string, unknown> {
+  const semanticRole =
+    typeof element.attributes["data-semantic-role"] === "string" && element.attributes["data-semantic-role"]
+      ? element.attributes["data-semantic-role"]
+      : fallbackRole?.role;
+  const semanticRoleSource =
+    element.attributes["data-semantic-role-source"] === "explicit" || element.attributes["data-semantic-role-source"] === "inferred"
+      ? element.attributes["data-semantic-role-source"]
+      : semanticRole
+        ? fallbackRole?.source
+        : undefined;
   return {
-    ...(typeof element.attributes["data-semantic-role"] === "string" ? { semantic_role: element.attributes["data-semantic-role"] } : {}),
-    ...(element.attributes["data-semantic-role-source"] === "explicit" || element.attributes["data-semantic-role-source"] === "inferred"
-      ? { semantic_role_source: element.attributes["data-semantic-role-source"] }
-      : {}),
+    ...(semanticRole ? { semantic_role: semanticRole } : {}),
+    ...(semanticRoleSource ? { semantic_role_source: semanticRoleSource } : {}),
     ...(isRecord(element.interaction) ? { interaction: element.interaction } : {}),
     ...(isRecord(element.input_style) ? { input_style: element.input_style } : {}),
   };
 }
 
 function answerContentProps(content: Record<string, unknown>): Record<string, unknown> {
+  const rawStyleRole = typeof content.style_role === "string" ? content.style_role.toLowerCase() : "";
+  const semanticRole =
+    typeof content.semantic_role === "string" && content.semantic_role
+      ? content.semantic_role
+      : KNOWN_STYLE_SEMANTIC_ROLES[rawStyleRole];
+  const semanticRoleSource =
+    content.semantic_role_source === "explicit" || content.semantic_role_source === "inferred"
+      ? content.semantic_role_source
+      : semanticRole
+        ? "explicit"
+        : undefined;
   return {
-    ...(typeof content.semantic_role === "string" ? { semantic_role: content.semantic_role } : {}),
-    ...(content.semantic_role_source === "explicit" || content.semantic_role_source === "inferred"
-      ? { semantic_role_source: content.semantic_role_source }
-      : {}),
+    ...(semanticRole ? { semantic_role: semanticRole } : {}),
+    ...(semanticRoleSource ? { semantic_role_source: semanticRoleSource } : {}),
     ...(isRecord(content.interaction) ? { interaction: content.interaction } : {}),
     ...(isRecord(content.input_style) ? { input_style: content.input_style } : {}),
   };
@@ -396,8 +445,9 @@ export async function synthesizeTutorSpeech(options: { text: string; locale: str
 export function problemDetailToCanonicalProblem(detail: ProblemDetailResponse): ProblemJson {
   const layout = detail.layout;
   const renderer = detail.renderer;
-  const canvas = renderer?.canvas ?? layout?.canvas ?? { width: 1280, height: 720 };
+  const canvas = renderer?.canvas ?? renderer?.view_box ?? layout?.canvas ?? { width: 900, height: 420 };
   const slotRegions = slotRegionMap(layout);
+  const slotRoles = slotRoleMap(layout);
 
   let objects: ProblemObject[] = [];
   if (renderer?.elements?.length) {
@@ -409,7 +459,14 @@ export function problemDetailToCanonicalProblem(detail: ProblemDetailResponse): 
     const remaining = renderer.elements.filter((el) => !fracConsumed.has(sourceId(el)));
     objects = [
       ...fracObjects,
-      ...remaining.flatMap((element) => rendererElementToProblemObject(detail.problem_id, element, slotRegions.get(sourceId(element)))),
+      ...remaining.flatMap((element) =>
+        rendererElementToProblemObject(
+          detail.problem_id,
+          element,
+          slotRegions.get(sourceId(element)),
+          slotRoles.get(sourceId(element)),
+        ),
+      ),
     ];
   } else if (layout?.slots?.length) {
     const { objects: fracObjects, consumedSlotIds: fracConsumed } = layoutSlotsToFractionObjects(
@@ -763,9 +820,15 @@ function layoutTableGroupToProblemObject(base: string, slots: LayoutSlot[]): Pro
   };
 }
 
-function rendererElementToProblemObject(problemId: string, element: RendererElement, sourceRegionId?: string): ProblemObject[] {
+function rendererElementToProblemObject(
+  problemId: string,
+  element: RendererElement,
+  sourceRegionId?: string,
+  fallbackRole?: { role: string; source: "explicit" | "inferred" },
+): ProblemObject[] {
   const attrs = element.attributes;
   const regionProps = sourceRegionId ? { sourceRegionId } : {};
+  const elementAnswerProps = answerElementProps(element, fallbackRole);
   switch (element.type) {
     case "text": {
       const text = stringValue(element.text, "");
@@ -795,7 +858,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             sourceKind: "text",
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];
@@ -829,7 +892,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             sourceKind: "text_box",
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];
@@ -851,7 +914,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             strokeDasharray: stringValue(attrs["stroke-dasharray"], ""),
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];
@@ -874,7 +937,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             strokeWidth: numberValue(attrs["stroke-width"], 1),
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];
@@ -898,7 +961,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             strokeWidth: numberValue(attrs["stroke-width"], 1),
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];
@@ -911,7 +974,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
         strokeDasharray: stringValue(attrs["stroke-dasharray"], ""),
         transform: stringValue(attrs.transform, ""),
         ...regionProps,
-        ...answerElementProps(element),
+        ...elementAnswerProps,
       });
     }
     case "image": {
@@ -930,7 +993,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
           preserveAspectRatio: stringValue(attrs.preserveAspectRatio, stringValue(attrs.preserve_aspect_ratio, "xMidYMid meet")),
           transform: stringValue(attrs.transform, ""),
           ...regionProps,
-          ...answerElementProps(element),
+          ...elementAnswerProps,
         },
       },
       ];
@@ -953,7 +1016,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             widget: widgetRaw as unknown as import("@modu/student-renderer").InteractiveWidgetSpec,
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];
@@ -976,7 +1039,7 @@ function rendererElementToProblemObject(problemId: string, element: RendererElem
             strokeDasharray: stringValue(attrs["stroke-dasharray"], ""),
             transform: stringValue(attrs.transform, ""),
             ...regionProps,
-            ...answerElementProps(element),
+            ...elementAnswerProps,
           },
         },
       ];

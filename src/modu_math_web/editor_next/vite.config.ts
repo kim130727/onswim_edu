@@ -27,6 +27,11 @@ export default defineConfig({
       output: {
         entryFileNames: (chunk) => chunk.name === "teacher" ? "teacher.js" : "editor-konva.js",
         chunkFileNames: "editor-konva-[name]-[hash].js",
+        manualChunks(id) {
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/") || id.includes("node_modules/scheduler/")) {
+            return "react-vendor";
+          }
+        },
         assetFileNames: (assetInfo) => {
           if (assetInfo.names?.some((name) => name === "teacher.css")) return "teacher[extname]";
           if (assetInfo.names?.some((name) => name.endsWith(".css"))) return "editor-konva[extname]";

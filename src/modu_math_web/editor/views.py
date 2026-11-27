@@ -93,6 +93,7 @@ def create_problem(request: HttpRequest) -> JsonResponse:
             name = PurePosixPath(safe_id).name.removesuffix(".dsl.py")
             problem_id = f"{language}/authors/user_{request.user.pk}/{uuid4().hex}/{name}.dsl.py"
         detail = create_blank_problem(problem_id, title=title)
+        detail["canvas_presentation"] = _canvas_presentation(detail)
         if getattr(request, "user", None) and request.user.is_authenticated:
             from modu_math_web.learning.services.authoring_access import register_source
             publication = register_source(request.user, resolve_problem_paths(detail["problem_id"]), title)
